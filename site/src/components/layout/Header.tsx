@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { ChevronDownIcon } from "lucide-react";
 import { exteriorLinks, navLinks, phone, renovationLinks } from "../../data/site";
 import type { NavLink } from "../../types/site";
@@ -166,7 +167,8 @@ export function Header({ current = "/" }: { current?: string }) {
         </button>
       </div>
 
-      {drawer && (
+      {/* The header's backdrop-filter makes it the containing block for fixed children, so the drawer must render outside it. */}
+      {drawer && createPortal(
         <div
           id="mobile-menu"
           ref={drawerRef}
@@ -235,7 +237,8 @@ export function Header({ current = "/" }: { current?: string }) {
               Call <span className="font-mono">{phone.display}</span>
             </a>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </header>
   );
