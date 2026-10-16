@@ -1,0 +1,72 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import CTABand from "../components/ui/CTABand.astro";
+import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import Disruption from "../components/ui/Disruption.astro";
+import FAQ from "../components/ui/FAQ.astro";
+import { ScheduleView } from "../components/tools/ScheduleView";
+import { faqSchema, serviceSchema, siteUrl } from "../lib/schema";
+
+const site = siteUrl(Astro.site);
+const types = [
+  ["Second storey", "Adding a floor over an existing bungalow or rancher. Foundations are checked first; many 1950s footings need underpinning to carry it."],
+  ["Rear addition", "A single-storey extension for a bigger kitchen or family room, tied into the existing roof and floor."],
+  ["Garage conversion", "Turning an attached garage into living space: slab insulation, a raised floor, new windows and a parking review."],
+  ["Laneway house", "A detached second dwelling on the lane, where the municipality permits it. Its own services and its own permit path."],
+  ["Load-bearing wall removal", "Opening a kitchen to the dining room: an engineered beam, posts to footing, temporary shoring and an inspection."],
+  ["Structural underpinning", "Deepening or strengthening foundations under an existing house, in sections, under an engineer's direction."],
+];
+const faqs = [
+  { q: "How long before construction can start?", a: "<p>For a beam or a rear addition within current zoning, 2–5 months of design and permits. Where rezoning or a development permit is required, 6–18 months in some of our municipalities — before construction begins.</p>" },
+  { q: "Why do I hire the engineer and not you?", a: "<p>Because the engineer's duty should run to you, the owner. An engineer hired by the contractor answers to the contractor, and that is a conflict you should not accept. We will recommend engineers we work well with; you sign their contract.</p>" },
+  { q: "What contingency do you carry on structural work?", a: "<p>15%, shown as its own line in the price. Existing foundations and framing are the least predictable part of any building. <a href=\"/pricing/#contingency\">How contingency works</a>.</p>" },
+  { q: "Can we stay in the house?", a: "<p>Usually, until the tie-in — the weeks when the new structure is opened into the old. Expect 3–6 weeks of real disruption at the back of the house, more for a second storey.</p>" },
+];
+const title = "Home Additions & Structural Work — Vancouver & Fraser Valley | Stonecroft";
+const description = "Second storeys, rear additions, garage conversions, laneway houses and load-bearing wall removal across Vancouver and the Fraser Valley. Honest timelines, 15% contingency.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Additions & structural" }]} schema={[serviceSchema(site, "Additions and structural work", description, "/additions/"), faqSchema(faqs)]}>
+  <PageHero eyebrow="Additions & structural" title="Additions and structural work" lede="Second storeys, rear additions, beams and underpinning. The city's queue comes first — sometimes by more than a year.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Temporary shoring under the floor while a bearing wall comes out" caption="Fig. 1 — temporary shoring, Burnaby" />
+  </PageHero>
+
+  <Section id="types" num="01" tab="Types" title="What we build">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {types.map(([h, t]) => <li class="bg-white p-6"><h3 class="font-display text-[21px] font-medium">{h}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{t}</p></li>)}
+    </ul>
+  </Section>
+
+  <Section id="timelines" num="02" tab="Timelines" title="The honest timeline" tone="clay">
+    <Disruption label="Rezoning or development permit: 6–18 months">
+      <p>In some of these municipalities, an addition that needs rezoning or a development permit can add six to eighteen months before construction begins. That time belongs to the city's queue, not to us — and we would rather you knew it before you hired anyone.</p>
+    </Disruption>
+    <div class="prose-sc mt-8">
+      <p>Additions within current zoning go straight to a building permit, typically 2–5 months including design. We check zoning, setbacks, height and floor-area limits on your address before the site visit, so the first conversation is about what is actually possible.</p>
+    </div>
+  </Section>
+
+  <Section id="engineer" num="03" tab="Engineer" title="When an engineer is mandatory, and who hires them">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <p>A structural engineer is required for any change to the load path: removing or altering a bearing wall, a new beam, a second storey, foundation work, and most additions. The municipality will ask for the engineer's drawings and letters of assurance, and for field reviews during construction.</p>
+        <p><strong>You engage the engineer directly.</strong> Their professional duty runs to the person who hires them. If the contractor hires the engineer, the engineer is reviewing the work of their own client — a conflict you, the owner, should not accept. We recommend engineers we know; you sign with them; they review our work on your behalf.</p>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="Engineer's field review at the new beam pocket" />
+    </div>
+  </Section>
+
+  <Section id="contingency" num="04" tab="Contingency" title="Fifteen percent, and we say so" tone="concrete">
+    <p class="lede max-w-[64ch]">Structural work carries a <span class="font-mono">15%</span> contingency rather than the <span class="font-mono">8%</span> standard or <span class="font-mono">12%</span> pre-1980 rate. It is a separate line in the price and included in the total. Unspent contingency is yours, returned on the final invoice. <a href="/pricing/#contingency" class="link">How contingency works</a></p>
+  </Section>
+
+  <Section id="schedule" num="05" tab="Schedule" title="A rear addition, stage by stage">
+    <ScheduleView initial="addition" headingLevel="h3" />
+  </Section>
+
+  <Section id="faq" num="06" tab="FAQ" title="Addition questions" tone="concrete">
+    <FAQ items={faqs} />
+  </Section>
+  <CTABand />
+</Base>

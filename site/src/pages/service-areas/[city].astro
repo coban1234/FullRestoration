@@ -1,0 +1,58 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import ProjectCard from "../../components/ui/ProjectCard.astro";
+import { cities, type City } from "../../data/cities";
+import { getProject } from "../../data/projects";
+import { siteUrl } from "../../lib/schema";
+
+export function getStaticPaths() {
+  return cities.map((c) => ({ params: { city: c.slug }, props: { c } }));
+}
+const { c } = Astro.props as { c: City };
+const site = siteUrl(Astro.site);
+const project = getProject(c.projectSlug);
+const title = `Renovation & General Contracting in ${c.name}, BC | Stonecroft`;
+const description = `Kitchen, bathroom, suite and whole-home renovation in ${c.name}: local housing stock, the ${c.name} permit process and fees, and a Stonecroft project nearby.`;
+const schema = { "@context": "https://schema.org", "@type": "Service", name: `Renovation in ${c.name}`, provider: { "@id": `${site}/#org` }, areaServed: { "@type": "City", name: c.name, containedInPlace: { "@type": "AdministrativeArea", name: "British Columbia" } } };
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Service areas", href: "/service-areas/" }, { label: c.name }]} schema={[schema]}>
+  <PageHero eyebrow={`Service areas / ${c.name}`} title={`Renovation in ${c.name}`} lede={c.intro}>
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label={`A Stonecroft job in ${c.name}, street view`} caption={`Taken in ${c.name}`} />
+  </PageHero>
+
+  <Section id="stock" num="01" tab="Housing" title={`${c.name}'s housing stock, and what it hides`}>
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2">
+      {c.stock.map((s) => <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">{s.era}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{s.hides}</p></li>)}
+    </ul>
+  </Section>
+
+  <Section id="permits" num="02" tab="Permits" title={`Permits in ${c.name}`} tone="concrete" note={`Verified ${c.permit.verified}. Re-checked quarterly.`}>
+    <dl class="grid gap-px border border-line bg-line md:grid-cols-3">
+      <div class="bg-white p-6"><dt class="text-[13px] font-medium text-slate">Process</dt><dd class="mt-2 text-[15px] leading-relaxed">{c.permit.process}</dd></div>
+      <div class="bg-white p-6"><dt class="text-[13px] font-medium text-slate">Fees</dt><dd class="mt-2 font-mono text-[15px] leading-relaxed">{c.permit.fees}</dd></div>
+      <div class="bg-white p-6"><dt class="text-[13px] font-medium text-slate">Current timeline</dt><dd class="mt-2 font-mono text-[15px] leading-relaxed">{c.permit.timeline}</dd></div>
+    </dl>
+    <p class="mt-4 text-[15px]"><a href={c.permit.url} class="link" rel="noopener">{c.name}'s own permit page</a> · <a href="/permits/" class="link">How permits work across our area</a></p>
+    <p class="mt-2 font-mono text-[12px] text-slate">Permit timelines verified: {c.permit.verified}</p>
+  </Section>
+
+  <Section id="project" num="03" tab="Nearby" title={`A Stonecroft project in or near ${c.name}`}>
+    <div class="max-w-[440px]"><ProjectCard project={project} /></div>
+  </Section>
+
+  <Section id="local" num="04" tab="Local rules" title={`What is different in ${c.name}`} tone="concrete">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {c.specifics.map((s) => <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">{s.title}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{s.text}</p></li>)}
+    </ul>
+  </Section>
+
+  <Section id="travel" num="05" tab="Travel" title="Travel and mobilisation">
+    <p class="lede max-w-[60ch]">{c.travel}</p>
+  </Section>
+
+  <CTABand title={`Book a site visit in ${c.name}.`} />
+</Base>

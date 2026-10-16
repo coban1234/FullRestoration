@@ -1,0 +1,42 @@
+---
+import Base from "../../../../layouts/Base.astro";
+import CTABand from "../../../../components/ui/CTABand.astro";
+import LogEntryFull from "../../../../components/ui/LogEntryFull.astro";
+import { STAGE_RAIL, money, pad2, projects, type Project } from "../../../../data/projects";
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Project };
+const latest = p.log[p.log.length - 1];
+const title = `${p.title} — Weekly Build Log | Stonecroft`;
+const description = `Every week of ${p.title}: spend against the ${money(p.signed)} signed budget, delays with their causes, and every change order.`;
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Projects", href: "/projects/" }, { label: p.short, href: `/projects/${p.slug}/` }, { label: "Log" }]}>
+  <section class="ruled border-b border-line">
+    <div class="container-x py-10 md:py-14">
+      <p class="eyebrow">Build log · {p.municipality} · {p.vintage}</p>
+      <h1 class="h1 mt-4 max-w-[24ch]">{p.title}: the log</h1>
+      <p class="lede mt-4 text-slate">{p.log.length} entries · <span class="font-mono text-char">{money(latest.spent)}</span> of <span class="font-mono text-char">{money(p.signed)}</span> · {p.live ? "updated every Friday" : "complete"}</p>
+      <ol aria-label="Stage rail" class="mt-8 grid grid-cols-7 gap-1">
+        {STAGE_RAIL.map((s, i) => (
+          <li>
+            <span class:list={["block h-2", i < p.stageNow ? "bg-char" : i === p.stageNow ? (p.live ? (latest.status === "behind" ? "bg-clay" : "bg-green") : "bg-oak") : "bg-concrete"]}></span>
+            <span class:list={["mt-2 hidden text-[12px] md:block", i === p.stageNow ? "font-medium text-char" : "text-slate"]}>{s}</span>
+            <span class="sr-only">{s}{i === p.stageNow ? " — current" : i < p.stageNow ? " — done" : ""}</span>
+          </li>
+        ))}
+      </ol>
+      <p class="mt-3 text-[14px] md:hidden">Now: <span class="font-medium">{STAGE_RAIL[p.stageNow]}</span></p>
+    </div>
+  </section>
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x">
+      <ol class="mx-auto grid max-w-[860px] gap-6">
+        {p.log.map((e) => <li><LogEntryFull project={p} entry={e} /></li>)}
+      </ol>
+      <p class="mx-auto mt-8 max-w-[860px]"><a href={`/projects/${p.slug}/`} class="link">Back to the case study</a> · <a href="/build-log/" class="link">All live jobs</a></p>
+    </div>
+  </section>
+  <CTABand />
+</Base>

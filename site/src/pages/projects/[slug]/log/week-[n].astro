@@ -1,0 +1,30 @@
+---
+import Base from "../../../../layouts/Base.astro";
+import CTABand from "../../../../components/ui/CTABand.astro";
+import LogEntryFull from "../../../../components/ui/LogEntryFull.astro";
+import { money, pad2, projects, type Project, type WeekEntry } from "../../../../data/projects";
+import { articleSchema, siteUrl } from "../../../../lib/schema";
+
+export function getStaticPaths() {
+  return projects.flatMap((p) => p.log.map((e, i) => ({ params: { slug: p.slug, n: String(e.week) }, props: { p, e, prev: p.log[i - 1], next: p.log[i + 1] } })));
+}
+const { p, e, prev, next } = Astro.props as { p: Project; e: WeekEntry; prev?: WeekEntry; next?: WeekEntry };
+const site = siteUrl(Astro.site);
+const headline = `Week ${pad2(e.week)} — ${e.title.charAt(0).toLowerCase() + e.title.slice(1)}, ${p.vintage} ${p.municipality} ${p.scope.toLowerCase()}`;
+const title = `${headline} | Stonecroft`;
+const description = `${p.title}, week ${pad2(e.week)} (${e.date}): ${e.statusLabel.toLowerCase()}, ${money(e.spent)} of ${money(p.signed)} spent. ${e.body[0].slice(0, 80)}…`;
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Projects", href: "/projects/" }, { label: p.short, href: `/projects/${p.slug}/` }, { label: "Log", href: `/projects/${p.slug}/log/` }, { label: `Week ${pad2(e.week)}` }]} schema={[articleSchema(site, { headline, path: `/projects/${p.slug}/log/week-${e.week}/`, datePublished: e.date, author: "Daniel Okafor", description })]}>
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x mx-auto max-w-[900px]">
+      <p class="eyebrow mb-4">{p.title}</p>
+      <LogEntryFull project={p} entry={e} headingLevel="h1" link={false} />
+      <nav aria-label="Log entries" class="mt-6 grid gap-3 sm:grid-cols-2">
+        {prev ? <a href={`/projects/${p.slug}/log/week-${prev.week}/`} class="chamfer border border-line bg-white p-4 hover:border-char"><span class="font-mono text-[12px] text-slate">← Week {pad2(prev.week)}</span><span class="mt-1 block text-[15px] font-medium">{prev.title}</span></a> : <span />}
+        {next && <a href={`/projects/${p.slug}/log/week-${next.week}/`} class="chamfer border border-line bg-white p-4 text-right hover:border-char"><span class="font-mono text-[12px] text-slate">Week {pad2(next.week)} →</span><span class="mt-1 block text-[15px] font-medium">{next.title}</span></a>}
+      </nav>
+      <p class="mt-6"><a href={`/projects/${p.slug}/log/`} class="link">Whole log</a> · <a href={`/projects/${p.slug}/`} class="link">Case study</a> · <a href="/build-log/" class="link">All live jobs</a></p>
+    </div>
+  </section>
+  <CTABand />
+</Base>

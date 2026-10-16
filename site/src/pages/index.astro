@@ -1,0 +1,33 @@
+---
+import Base from "../layouts/Base.astro";
+import { Hero } from "../components/hero/Hero";
+import { HomeNav } from "../components/HomeNav";
+import { Promises } from "../components/Promises";
+import { BuildLog } from "../components/buildLog/BuildLog";
+import { Services } from "../components/Services";
+import { Pricing } from "../components/Pricing";
+import { FinishedJobs } from "../components/FinishedJobs";
+import { Verify } from "../components/Verify";
+import { ServiceArea } from "../components/ServiceArea";
+import { BookingForm } from "../components/booking/BookingForm";
+
+const site = Astro.site?.toString().replace(/\/$/, "") ?? "";
+const website = { "@context": "https://schema.org", "@type": "WebSite", name: "Stonecroft", url: `${site}/`, publisher: { "@id": `${site}/#org` } };
+---
+<Base
+  title="Renovation & General Contracting — Vancouver & Fraser Valley | Stonecroft"
+  description="Full interior and exterior renovation in Vancouver and the Fraser Valley. Fixed price before we start, a published weekly build log, every permit pulled."
+  schema={[website]}
+  hideBarWhileVisible={["s08"]}
+>
+  <Hero client:load />
+  <HomeNav client:idle />
+  <Promises />
+  <BuildLog />
+  <Services />
+  <Pricing />
+  <FinishedJobs />
+  <Verify />
+  <ServiceArea />
+  <BookingForm client:visible />
+</Base>

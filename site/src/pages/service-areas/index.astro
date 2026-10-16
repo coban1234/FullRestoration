@@ -1,0 +1,47 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import { regions, slugify, phone } from "../../data/site";
+import { launchCities } from "../../data/cities";
+
+const title = "Service Areas — Vancouver & Fraser Valley Renovation | Stonecroft";
+const description = "Stonecroft renovates across 11 municipalities: Vancouver, North and West Vancouver, Burnaby, Richmond, New Westminster, Coquitlam, Surrey, Langley, Abbotsford and Chilliwack.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Service areas" }]}>
+  <PageHero eyebrow="Service areas" title="Where we work" lede="Eleven municipalities, run from our Burnaby yard. Travel charges, where there are any, are published on each city page." primary={null} secondary={null} />
+  <Section id="map" num="01" tab="Map" title="Coverage">
+    <figure class="chamfer border border-line bg-white p-4">
+      <svg viewBox="0 0 800 360" role="img" aria-labelledby="map-title" class="h-auto w-full">
+        <title id="map-title">Schematic map of the Stonecroft service area from Vancouver east to Chilliwack</title>
+        <rect width="800" height="360" fill="#F4F1EC" />
+        <path d="M0 250 C 120 230, 160 290, 260 270 S 420 300, 520 285 S 700 300, 800 290 V360 H0Z" fill="#E2DCD3" />
+        <path d="M0 120 C 60 110, 90 140, 120 130" stroke="#908374" stroke-width="2" fill="none" stroke-dasharray="4 6" />
+        <path d="M40 200 C 200 205, 420 230, 760 215" stroke="#6B645C" stroke-width="3" fill="none" />
+        {[["Vancouver", 70, 180], ["North Van", 90, 120], ["West Van", 40, 125], ["Burnaby", 130, 185], ["New West", 165, 205], ["Richmond", 80, 240], ["Coquitlam", 190, 160], ["Surrey", 230, 240], ["Langley", 330, 245], ["Abbotsford", 540, 255], ["Chilliwack", 720, 235]].map(([n, x, y]) => (
+          <g><circle cx={x} cy={y} r="6" fill={["Vancouver", "Burnaby", "Surrey", "Langley"].includes(n as string) ? "#B5512E" : "#1C1A18"} /><text x={(x as number) + 10} y={(y as number) + 4} font-family="JetBrains Mono, monospace" font-size="13" fill="#1C1A18">{n}</text></g>
+        ))}
+        <rect x="120" y="178" width="14" height="14" fill="none" stroke="#1C1A18" stroke-width="2" /><text x="96" y="172" font-family="Satoshi, sans-serif" font-size="12" fill="#6B645C">yard</text>
+      </svg>
+      <figcaption class="mt-2 font-mono text-[11px] text-slate">Schematic, not to scale · clay dots have a full city page</figcaption>
+    </figure>
+  </Section>
+  <Section id="list" num="02" tab="Areas" title="Eleven municipalities" tone="concrete" note="Four have full city pages today. We add one a month, as we have real local projects and photographs to show.">
+    <div class="grid gap-10 lg:grid-cols-[3fr_1fr]">
+      {regions.map((r) => (
+        <div>
+          <h3 class="border-b border-char pb-2 text-[13px] font-medium text-slate">{r.label}</h3>
+          <ul class="mt-4 flex flex-wrap gap-2">
+            {r.places.map((pl) => {
+              const s = slugify(pl);
+              return <li id={s}>{launchCities.includes(s) ? <a href={`/service-areas/${s}/`} class="inline-flex h-11 items-center gap-2 rounded-[2px] border border-char bg-white px-4 text-[15px] font-medium hover:bg-char hover:text-plaster">{pl} →</a> : <span class="inline-flex h-11 items-center rounded-[2px] border border-line bg-white px-4 text-[15px]">{pl}</span>}</li>;
+            })}
+          </ul>
+        </div>
+      ))}
+    </div>
+    <p class="mt-8 text-[15px] text-slate">Just outside the line? Call <a href={phone.href} class="font-mono text-char underline underline-offset-4">{phone.display}</a> and we will tell you straight.</p>
+  </Section>
+  <CTABand />
+</Base>

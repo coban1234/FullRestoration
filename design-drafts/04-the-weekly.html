@@ -1,0 +1,430 @@
+<!doctype html>
+<html lang="en-CA" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draft 04 · The Weekly — Stonecroft</title>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  body { background: var(--r-white); }
+  .rule { border: 0; border-top: 1px solid var(--r-char); }
+  .rule2 { border: 0; border-top: 3px double var(--r-char); }
+  .kick { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; color: var(--r-clay-dk); }
+
+  .hdr { position: sticky; top: 0; z-index: 50; height: var(--hdr); display: flex; align-items: center; gap: 20px; padding: 0 var(--pad); background: var(--r-white); border-bottom: 1px solid var(--r-char); }
+  .wm { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; letter-spacing: -.01em; text-decoration: none; }
+  .grow { flex: 1; }
+  .nav, .hdr .tel, .hdr .hbtn { display: none; }
+  @media (min-width: 900px) {
+    .nav { display: flex; gap: 26px; font-size: .9375rem; font-weight: 500; }
+    .nav a { text-decoration: none; padding: 6px 0; border-bottom: 2px solid transparent; }
+    .nav a:hover { border-color: var(--r-char); }
+    .hdr .tel { display: inline; font-family: var(--font-mono); font-size: .875rem; text-decoration: none; }
+    .hdr .hbtn { display: inline-flex; min-height: 44px; }
+  }
+  @media (min-width: 900px) and (max-width: 1199px) { .hdr .tel { display: none; } .nav { gap: 18px; } }
+
+  /* ===== front page ===== */
+  .seq { position: relative; min-height: 110vh; min-height: 110svh; }
+  @media (min-width: 900px) { .seq { min-height: 150vh; min-height: 150svh; } }
+  .pin { position: sticky; top: var(--hdr); height: calc(100vh - var(--hdr)); height: calc(100svh - var(--hdr)); display: flex; flex-direction: column; gap: 8px; padding: 8px var(--pad) 12px; }
+  .mast { flex: none; display: flex; justify-content: space-between; align-items: baseline; gap: 8px; padding-bottom: 6px; border-bottom: 3px double var(--r-char); font-family: var(--font-mono); font-size: .6875rem; }
+  .mast .title { font-family: var(--font-display); font-weight: 600; font-size: 1.0625rem; letter-spacing: -.01em; }
+  .mast .dl2, .mast .full { display: none; }
+  .lead { flex: 1 1 auto; min-height: 110px; display: flex; flex-direction: column; gap: 4px; }
+  .photo { position: relative; flex: 1 1 auto; min-height: 0; overflow: hidden; background: var(--r-concrete); }
+  .photo .stage-stack { position: absolute; inset: 0; }
+  .fig { font-size: .75rem; line-height: 1.35; color: var(--r-slate); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fig b { color: var(--r-char); font-weight: 700; }
+  .contact { flex: none; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+  .contact::-webkit-scrollbar { display: none; }
+  .pip { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: grid; grid-template-columns: 52px auto; align-items: center; gap: 8px; min-height: 48px; padding: 3px 10px 3px 3px; border: 1px solid var(--r-line-strong); }
+  .pip .th { width: 52px; height: 40px; overflow: hidden; filter: grayscale(1) contrast(.9); opacity: .7; transition: filter 160ms, opacity 160ms; }
+  .pip .th svg { width: 100%; height: 100%; display: block; }
+  .pip .tl { display: grid; font-size: .6875rem; letter-spacing: .1em; text-transform: uppercase; font-weight: 500; white-space: nowrap; line-height: 1.2; }
+  .pip .tl .num { letter-spacing: 0; color: var(--r-slate); font-size: .6875rem; }
+  .pip.is-done .th { opacity: 1; }
+  .pip.is-active { border: 2px solid var(--r-char); padding: 2px 9px 2px 2px; }
+  .pip.is-active .th { filter: none; opacity: 1; }
+  .pip.is-active .tl .num { color: var(--r-clay-dk); }
+  .pip:focus-visible { outline: 3px solid var(--r-focus); outline-offset: 2px; }
+  .hed .h1 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-mega); line-height: .94; letter-spacing: -.03em; }
+  .hed .sub { margin-top: 8px; font-size: var(--t-lead); line-height: 1.5; color: var(--r-slate); }
+  .hed .btn-row { margin-top: 12px; }
+  .hed .kick, .ledger, .hed .byl { display: none; }
+  .skip { position: absolute; right: calc(var(--pad) + 6px); top: 46px; font-size: .75rem; background: var(--r-white); padding: 0 4px; z-index: 3; }
+  .mast .skipgap { display: none; }
+  .is-static { min-height: 0 !important; } .is-static .pin { position: static; height: auto; } .is-static .lead, .is-static .contact, .is-static .skip { display: none; }
+  .is-static [data-seq-static] { margin-top: 16px; }
+
+  @media (min-width: 900px) {
+    .pin { display: grid; grid-template-columns: 8fr 4fr; grid-template-rows: auto 1fr auto; column-gap: 0; row-gap: 14px; padding: 18px var(--pad) 20px; }
+    .mast { grid-column: 1 / -1; display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; padding-bottom: 10px; font-size: .75rem; }
+    .mast .title { font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: .9; letter-spacing: -.035em; text-align: center; }
+    .mast .dl2, .mast .full { display: inline; } .mast .short { display: none; }
+    .mast .r { text-align: right; } .mast .skipgap { display: none; }
+    .lead { grid-column: 1; grid-row: 2; padding-right: 28px; border-right: 1px solid var(--r-char); min-height: 0; }
+    .fig { white-space: normal; font-size: var(--t-small); }
+    .contact { grid-column: 1; grid-row: 3; padding-right: 28px; border-right: 1px solid var(--r-char); display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; overflow: visible; }
+    .pip { grid-template-columns: 1fr; padding: 4px; gap: 6px; } .pip.is-active { padding: 3px; }
+    .pip .th { width: 100%; height: auto; aspect-ratio: 16/9; }
+    .pip .tl { grid-auto-flow: column; justify-content: space-between; padding: 0 2px 2px; }
+    .hed { grid-column: 2; grid-row: 2 / 4; padding-left: 28px; display: flex; flex-direction: column; min-height: 0; }
+    .hed .kick { display: block; margin-bottom: 10px; }
+    .hed .h1 { font-size: clamp(2.5rem, 4.1vw, 4rem); }
+    .hed .byl { display: block; margin-top: 12px; font-family: var(--font-mono); font-size: .75rem; color: var(--r-slate); }
+    .hed .sub { margin-top: 14px; }
+    .hed .btn-row { margin-top: 18px; flex-wrap: wrap; }
+    .ledger { display: block; margin-top: auto; border-top: 3px double var(--r-char); padding-top: 10px; }
+    .ledger h2 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+    .ledger dl { margin-top: 6px; }
+    .ledger dl > div { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px dotted var(--r-line-strong); font-size: var(--t-small); }
+    .ledger dd { font-family: var(--font-mono); text-align: right; }
+    .skip { position: static; align-self: flex-start; margin-top: 12px; background: none; font-size: var(--t-small); }
+  }
+  @media (min-width: 900px) and (max-height: 980px) { .ledger dl > div:nth-child(n+5) { display: none; } .hed .byl { display: none; } }
+  @media (min-width: 900px) and (max-height: 860px) { .hed .sub { font-size: 1rem; } .ledger dl > div:nth-child(n+4) { display: none; } .mast .title { font-size: clamp(2.25rem, 4vw, 3.5rem); } }
+
+  /* ===== inside pages ===== */
+  .sec { padding-top: var(--sec); }
+  .shead { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; border-top: 3px double var(--r-char); padding-top: 10px; }
+  .shead h2 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+  .shead .num { font-size: .75rem; color: var(--r-slate); }
+  .h2 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-h2); line-height: 1.06; letter-spacing: -.02em; margin-top: 16px; max-width: 22ch; }
+  .dek { margin-top: 10px; color: var(--r-slate); font-size: var(--t-lead); line-height: 1.5; max-width: 36rem; }
+
+  .stand { margin-top: 20px; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--r-char); border-left: 1px solid var(--r-char); }
+  .stand li { padding: 14px 12px 18px; border-right: 1px solid var(--r-char); border-bottom: 1px solid var(--r-char); }
+  .stand .n { font-family: var(--font-display); font-weight: 600; font-size: 2.5rem; line-height: 1; color: var(--r-clay); }
+  .stand h3 { margin-top: 10px; font-size: 1rem; font-weight: 700; line-height: 1.25; }
+  .stand p { margin-top: 4px; font-size: var(--t-small); color: var(--r-slate); }
+  @media (min-width: 900px) { .stand { grid-template-columns: repeat(4, 1fr); margin-top: 32px; } .stand li { padding: 24px 22px 28px; } .stand .n { font-size: 4rem; } .stand h3 { font-size: 1.125rem; } }
+
+  .story { margin-top: 20px; display: grid; gap: 16px; }
+  .story .ph { aspect-ratio: 3/2; }
+  .story .cap { font-size: .8125rem; color: var(--r-slate); margin-top: 6px; }
+  .story .shed { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.625rem, 3.4vw, 2.75rem); line-height: 1.05; letter-spacing: -.02em; }
+  .story .byl { font-family: var(--font-mono); font-size: .75rem; color: var(--r-slate); margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px 12px; }
+  .story .body { margin-top: 14px; font-size: 1.0625rem; line-height: 1.6; }
+  .story .body p + p { margin-top: 12px; }
+  .story .body p:first-child::first-letter { font-family: var(--font-display); font-weight: 600; float: left; font-size: 3.6em; line-height: .8; margin: 6px 8px 0 0; color: var(--r-clay); }
+  .pull { margin: 18px 0; padding: 14px 0; border-top: 1px solid var(--r-char); border-bottom: 1px solid var(--r-char); font-family: var(--font-display); font-weight: 500; font-size: 1.375rem; line-height: 1.25; break-inside: avoid; }
+  .facts { margin-top: 16px; border: 1px solid var(--r-char); }
+  .facts h4 { padding: 8px 12px; background: var(--r-char); color: var(--r-plaster); font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+  .facts dl > div { display: flex; justify-content: space-between; gap: 12px; padding: 10px 12px; border-top: 1px solid var(--r-line); font-size: var(--t-small); }
+  .facts dd { font-family: var(--font-mono); text-align: right; }
+  .also { margin-top: 28px; }
+  .also h3 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding-bottom: 8px; border-bottom: 1px solid var(--r-char); }
+  .also article { padding: 14px 0; border-bottom: 1px solid var(--r-line); display: grid; grid-template-columns: 96px 1fr; gap: 12px; }
+  .also .ph { aspect-ratio: 4/3; }
+  .also h4 { font-size: 1.0625rem; font-weight: 700; line-height: 1.3; }
+  .also p { font-size: var(--t-small); color: var(--r-slate); margin-top: 4px; }
+  .also .status { margin-top: 6px; }
+  @media (min-width: 900px) {
+    .story { grid-template-columns: 8fr 4fr; gap: 0; margin-top: 28px; }
+    .story > .main { padding-right: 32px; border-right: 1px solid var(--r-char); }
+    .story > .side { padding-left: 32px; }
+    .story .body { column-count: 2; column-gap: 32px; column-rule: 1px solid var(--r-line); font-size: 1rem; }
+    .also { margin-top: 0; }
+    .facts { margin-top: 0; margin-bottom: 28px; }
+  }
+
+  .index { margin-top: 16px; }
+  .index a { display: flex; align-items: baseline; gap: 8px; min-height: 48px; padding: 12px 0; border-bottom: 1px solid var(--r-line); text-decoration: none; }
+  .index a .k { font-weight: 700; font-size: 1.0625rem; white-space: nowrap; }
+  .index a .dots { flex: 1; border-bottom: 1px dotted var(--r-slate); transform: translateY(-4px); min-width: 16px; }
+  .index a .v { font-family: var(--font-mono); font-size: var(--t-small); white-space: nowrap; }
+  .index a:hover .k { text-decoration: underline; text-underline-offset: 3px; }
+  @media (max-width: 420px) { .index a { flex-wrap: wrap; } .index a .dots { display: none; } .index a .v { flex-basis: 100%; color: var(--r-slate); } }
+  @media (min-width: 900px) { .index { columns: 2; column-gap: 48px; column-rule: 1px solid var(--r-char); margin-top: 28px; } .index a { break-inside: avoid; } }
+
+  .rates { margin-top: 20px; border-top: 1px solid var(--r-char); }
+  .rates th { font-size: .625rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--r-char); }
+  .rates td { padding: 14px 12px 14px 0; border-bottom: 1px solid var(--r-line); font-size: var(--t-small); }
+  .rates td.rh { font-weight: 700; font-size: 1.0625rem; }
+  .rates td.rg { font-family: var(--font-mono); font-size: 1rem; white-space: nowrap; }
+  .rates td.nt { color: var(--r-slate); }
+  .rates-meta { margin-top: 14px; display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: center; font-family: var(--font-mono); font-size: .75rem; color: var(--r-slate); }
+  @media (max-width: 599px) { .rates { border: 0; } .rates tr { border-top: 1px solid var(--r-char) !important; border-bottom: 0 !important; padding: 12px 0; } .rates td { border: 0; } .rates td.rg { white-space: normal; } }
+
+  .accts { margin-top: 20px; display: grid; gap: 28px; }
+  .acct .ph { aspect-ratio: 16/9; }
+  .acct h3 { margin-top: 12px; font-family: var(--font-display); font-weight: 600; font-size: var(--t-h3); line-height: 1.2; }
+  .acct .where { font-size: var(--t-small); color: var(--r-slate); margin-top: 4px; }
+  .acct table { margin-top: 12px; width: 100%; border-collapse: collapse; font-size: var(--t-small); }
+  .acct th { text-align: left; font-weight: 400; padding: 9px 0; border-top: 1px solid var(--r-line); }
+  .acct td { text-align: right; font-family: var(--font-mono); padding: 9px 0; border-top: 1px solid var(--r-line); }
+  .acct tr.tot th, .acct tr.tot td { border-top: 1px solid var(--r-char); font-weight: 700; }
+  .acct td.ov { color: var(--r-clay-dk); } .acct td.ok { color: var(--r-ontrack-dk); }
+  .acct .why { margin-top: 10px; font-size: var(--t-small); }
+  @media (min-width: 900px) { .accts { grid-template-columns: 1fr 1fr; gap: 0; margin-top: 28px; } .acct:first-child { padding-right: 32px; border-right: 1px solid var(--r-char); } .acct:last-child { padding-left: 32px; } }
+
+  .notices { background: var(--r-char); color: var(--r-plaster); margin-top: var(--sec); padding: 48px 0 56px; }
+  .notices .shead { border-color: var(--r-plaster); }
+  .notices .dek { color: var(--r-mist); }
+  .nlist { margin-top: 20px; display: grid; gap: 12px; }
+  .nlist article { border: 1px solid var(--r-mist); padding: 14px; }
+  .nlist h3 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; text-align: center; padding-bottom: 8px; border-bottom: 1px solid #4a443d; }
+  .nlist .big { display: block; text-align: center; margin-top: 10px; font-family: var(--font-mono); font-size: 1.25rem; }
+  .nlist p { margin-top: 6px; text-align: center; font-size: var(--t-small); color: var(--r-mist); }
+  .nlist .v { display: block; text-align: center; margin-top: 8px; font-family: var(--font-mono); font-size: .75rem; color: var(--r-ontrack-br); }
+  .notices .btn { white-space: normal; text-align: left; padding: 12px 20px; margin-top: 24px; }
+  @media (min-width: 900px) { .notices { padding: 72px 0 80px; } .nlist { grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 32px; } }
+
+  .chips { margin-top: 16px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { min-height: 48px; display: inline-flex; align-items: center; padding: 0 16px; border: 1px solid var(--r-char); border-radius: 2px; text-decoration: none; font-weight: 500; }
+  .chips a:hover { background: var(--r-char); color: var(--r-white); }
+
+  .reply { margin-top: 20px; display: grid; gap: 24px; }
+  .card { border: 2px solid var(--r-char); padding: 16px; position: relative; }
+  .card::before { content: "REPLY CARD · POSTAGE PAID"; position: absolute; top: -9px; left: 12px; background: var(--r-white); padding: 0 6px; font-family: var(--font-mono); font-size: .6875rem; }
+  .steps li { display: grid; grid-template-columns: 40px 1fr; padding: 12px 0; border-top: 1px solid var(--r-line); font-size: var(--t-small); }
+  .steps .num { font-size: 1.125rem; color: var(--r-clay-dk); }
+  @media (min-width: 900px) { .reply { grid-template-columns: 4fr 8fr; gap: 48px; margin-top: 28px; } .card { padding: 28px; } }
+
+  .ftr { margin-top: var(--sec); border-top: 3px double var(--r-char); padding: 32px 0 24px; }
+  .ftr .big { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.5rem, 9vw, 7rem); letter-spacing: -.035em; line-height: .9; }
+  .ftr .cols { margin-top: 28px; display: grid; gap: 28px; font-size: var(--t-small); }
+  .ftr h4 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding-bottom: 6px; border-bottom: 1px solid var(--r-char); margin-bottom: 4px; }
+  .ftr ul a { display: flex; align-items: center; min-height: 44px; text-decoration: none; border-bottom: 1px solid var(--r-line); }
+  .ftr .pf { color: var(--r-slate); }
+  .ftr .bar { margin-top: 32px; padding-top: 14px; border-top: 1px solid var(--r-char); display: flex; flex-wrap: wrap; gap: 10px 24px; font-family: var(--font-mono); font-size: .75rem; color: var(--r-slate); }
+  @media (min-width: 600px) { .ftr .cols { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .ftr .cols { grid-template-columns: 4fr 2fr 2fr 3fr; gap: 40px; } .ftr ul a { min-height: 32px; border: 0; } }
+</style>
+</head>
+<body>
+<a class="skip-main" href="#main">Skip to main content</a>
+<a class="draft-tag" href="index.html">04 · The Weekly ↩</a>
+
+<header class="hdr">
+  <a class="wm" href="#">Stonecroft</a>
+  <span class="grow"></span>
+  <nav class="nav" aria-label="Primary"><a href="#">Renovations</a><a href="#">Exterior</a><a href="#">Pricing</a><a href="#">Projects</a><a href="#">Build log</a><a href="#">Verify</a></nav>
+  <a class="tel" href="tel:+16045550142">604-555-0142</a>
+  <a class="btn btn--secondary hbtn" href="#book">Book a site visit</a>
+  <button class="menu-btn" data-drawer-btn aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Menu</button>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="d-top"><span class="wm">Stonecroft</span><button class="menu-btn" data-drawer-close>Close</button></div>
+  <nav aria-label="Mobile">
+    <p class="d-group">Renovations</p><a href="#">Kitchens</a><a href="#">Bathrooms</a><a href="#">Whole home</a><a href="#">Basements &amp; suites</a>
+    <p class="d-group">Exterior</p><a href="#">Siding &amp; cladding</a><a href="#">Windows &amp; doors</a><a href="#">Decks &amp; outdoor</a>
+    <p class="d-group">The paper</p><a href="#">Build log</a><a href="#">Pricing</a><a href="#">Projects</a><a href="#">Verify</a><a href="#">Permits</a>
+  </nav>
+  <div class="d-foot"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="tel:+16045550142">Call 604-555-0142</a></div>
+</div>
+
+<main id="main">
+  <section class="seq" data-seq-track id="seq" aria-label="Kitchen renovation, five construction stages">
+    <div class="pin">
+      <div class="mast">
+        <span><span class="full">No. 42 · Friday 16 October 2026</span><span class="short">No. 42 · Fri 2026-10-16</span></span>
+        <span class="title"><span class="full">The Stonecroft Weekly</span><span class="short">The Weekly</span></span>
+        <span class="r dl2">Vancouver &amp; the Fraser Valley · Published every Friday</span>
+        <span class="skipgap" aria-hidden="true"></span>
+      </div>
+      <figure class="lead">
+        <div class="photo"><div class="stage-stack" data-seq-stack></div></div>
+        <figcaption class="fig" id="fig"><b>Fig. 1</b> — Week 00, before. 1968 Burnaby split-level.</figcaption>
+      </figure>
+      <nav class="contact" aria-label="Construction stages" data-rail-scroll>
+        <button class="pip" data-seq-pip="0"><span class="th" data-kitchen="0" aria-hidden="true"></span><span class="tl">Before <span class="num">WK 00</span></span></button>
+        <button class="pip" data-seq-pip="1"><span class="th" data-kitchen="1" aria-hidden="true"></span><span class="tl">Demolition <span class="num">WK 01</span></span></button>
+        <button class="pip" data-seq-pip="2"><span class="th" data-kitchen="2" aria-hidden="true"></span><span class="tl">Services <span class="num">WK 03</span></span></button>
+        <button class="pip" data-seq-pip="3"><span class="th" data-kitchen="3" aria-hidden="true"></span><span class="tl">Close-in <span class="num">WK 06</span></span></button>
+        <button class="pip" data-seq-pip="4"><span class="th" data-kitchen="4" aria-hidden="true"></span><span class="tl">Complete <span class="num">WK 13</span></span></button>
+      </nav>
+      <div class="hed">
+        <p class="kick">Front page · the build log</p>
+        <h1 class="h1">See what week three actually looks like.</h1>
+        <p class="byl">Job 2026-014 · permit BP-2026-04418 · photographed from tripod mark A</p>
+        <p class="sub">Full interior and exterior renovation, Vancouver and the Fraser Valley. Fixed price. Published weekly.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="#">Get a budget range</a></div>
+        <a class="skip btn--tertiary" href="#s01">Skip to content</a>
+        <aside class="ledger" aria-label="This week's ledger"><h2>This week’s ledger</h2>
+          <dl><div><dt>Week</dt><dd id="lg-wk">00 of 11</dd></div><div><dt>Spent of $71,000</dt><dd id="lg-sp">$0</dd></div><div><dt>Status</dt><dd><span id="lg-st" class="status status--ontrack">on schedule</span></dd></div><div><dt>Change orders</dt><dd id="lg-co">0</dd></div><div><dt>Next inspection</dt><dd id="lg-in">—</dd></div></dl>
+        </aside>
+      </div>
+      <div data-seq-static></div>
+      <div class="visually-hidden" aria-live="polite" data-seq-live></div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec reveal" id="s01">
+      <div class="shead"><h2>Standing notice</h2><span class="num">p. 2</span></div>
+      <h2 class="h2">Four things, every job.</h2>
+      <ol class="stand">
+        <li><span class="n num">1</span><h3>A fixed price</h3><p>A fixed scope and a fixed price, signed before we start.</p></li>
+        <li><span class="n num">2</span><h3>A weekly log</h3><p>Every Friday: spend, schedule, and anything that went wrong.</p></li>
+        <li><span class="n num">3</span><h3>Every permit</h3><p>Every permit pulled. Every number on this site checkable.</p></li>
+        <li><span class="n num">4</span><h3>One person</h3><p>One person who answers the phone, named before you sign.</p></li>
+      </ol>
+    </section>
+
+    <section class="sec reveal">
+      <div class="shead"><h2>Delay report · this week on site</h2><span class="num">p. 3 · 2026-10-16</span></div>
+      <div class="story">
+        <article class="main">
+          <div class="ph" data-kitchen="2" data-alt="Coquitlam kitchen, week 06: open studs, new wiring and plumbing rough-in"></div>
+          <p class="cap">Week 06, Coquitlam. Services rough-in with the ceiling bay open.</p>
+          <p class="kick" style="margin-top:18px"><span class="status status--behind">4 days behind</span></p>
+          <h3 class="shed">Coquitlam kitchen runs four days late after knob-and-tube found above the ceiling</h3>
+          <p class="byl"><span>By the project manager</span><span>Week 06 of 11</span><span>$48,200 of $71,000 spent</span></p>
+          <div class="body">
+            <p>The panel upgrade on the 1972 rancher opened a live knob-and-tube run in the ceiling bay over the kitchen. It was not visible at the site visit and it was not in the price. We stopped, photographed it, and called the owners the same afternoon.</p>
+            <p>Change order 02 — <span class="num">$2,100</span> to remove the run and rewire the bay — was signed on Tuesday. The electrical inspection moves from Thursday to the following Monday, which is where the four days come from.</p>
+            <blockquote class="pull">“We would rather publish a delay than explain one later.”</blockquote>
+            <p>Insulation starts week 07. Drywall is booked for the week after, and the cabinet delivery date has not moved. We will report against the new date next Friday.</p>
+          </div>
+          <p style="margin-top:16px"><a class="btn btn--tertiary" href="#">Read week 06 in full →</a></p>
+        </article>
+        <div class="side">
+          <aside class="facts"><h4>The numbers</h4><dl>
+            <div><dt>Signed</dt><dd>$71,000</dd></div><div><dt>Spent to date</dt><dd><data value="48200">$48,200</data></dd></div><div><dt>Change orders</dt><dd>2 · $3,400</dd></div><div><dt>Planned finish</dt><dd>week 11</dd></div><div><dt>Forecast finish</dt><dd style="color:var(--r-clay-dk)">week 11 + 4 d</dd></div></dl></aside>
+          <div class="also"><h3>Also on site</h3>
+            <article><div class="ph" data-kitchen="1"></div><div><h4>North Vancouver bathroom, week 03</h4><p>Tub out, subfloor sound. <span class="num">$9,800</span> of <span class="num">$31,500</span>.</p><span class="status status--ontrack">on schedule</span></div></article>
+            <article><div class="ph" data-kitchen="3"></div><div><h4>Langley suite, week 11</h4><p>Fire separation passed first visit. <span class="num">$96,300</span> of <span class="num">$98,000</span>.</p><span class="status status--complete">stage complete</span></div></article>
+            <p style="margin-top:14px"><a class="btn btn--tertiary" href="#">The full build log →</a></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="sec reveal">
+      <div class="shead"><h2>Index · what we build</h2><span class="num">p. 4</span></div>
+      <h2 class="h2">Eight departments.</h2>
+      <nav class="index" aria-label="Services">
+        <a href="#"><span class="k">Kitchens</span><span class="dots"></span><span class="v">$28,000 – $120,000+</span></a>
+        <a href="#"><span class="k">Bathrooms</span><span class="dots"></span><span class="v">$20,000 – $40,000+</span></a>
+        <a href="#"><span class="k">Whole home</span><span class="dots"></span><span class="v">$150 – $400+ / sq ft</span></a>
+        <a href="#"><span class="k">Basements &amp; suites</span><span class="dots"></span><span class="v">$50 – $150 / sq ft</span></a>
+        <a href="#"><span class="k">Siding &amp; cladding</span><span class="dots"></span><span class="v">by material</span></a>
+        <a href="#"><span class="k">Windows &amp; doors</span><span class="dots"></span><span class="v">$1,000 – $1,500 each</span></a>
+        <a href="#"><span class="k">Additions &amp; structural</span><span class="dots"></span><span class="v">engineer-led</span></a>
+        <a href="#"><span class="k">General contracting</span><span class="dots"></span><span class="v">strata · commercial</span></a>
+      </nav>
+    </section>
+
+    <section class="sec reveal">
+      <div class="shead"><h2>Rates</h2><span class="num">p. 5 · reviewed 2026-10-14</span></div>
+      <h2 class="h2">What it costs.</h2>
+      <p class="dek">These are the ranges we actually contract at in this market. Your range depends on scope, finish and what the building is hiding.</p>
+      <table class="t-stack rates">
+        <thead><tr><th scope="col">Scope</th><th scope="col">Range</th><th scope="col">What moves it</th></tr></thead>
+        <tbody>
+          <tr><td class="rh">Kitchen</td><td class="rg" data-label="Range">$28,000 – $120,000+</td><td class="nt" data-label="Moves it">Layout changes, cabinet line, appliance package</td></tr>
+          <tr><td class="rh">Bathroom</td><td class="rg" data-label="Range">$20,000 – $40,000+</td><td class="nt" data-label="Moves it">Standard 5′×8′ vs. curbless shower, heated floor</td></tr>
+          <tr><td class="rh">Whole home</td><td class="rg" data-label="Range">$150 – $400+ / sq ft</td><td class="nt" data-label="Moves it">What the walls are hiding in a 1950s–1980s house</td></tr>
+          <tr><td class="rh">Basement</td><td class="rg" data-label="Range">$50 – $150 / sq ft</td><td class="nt" data-label="Moves it">Legal suite adds 15–30% for fire separation and egress</td></tr>
+        </tbody>
+      </table>
+      <div class="rates-meta"><span>EXCLUDE 5% GST</span><span>“+” = OPEN-ENDED</span><a class="btn btn--secondary" href="#">Get a budget range</a></div>
+    </section>
+
+    <section class="sec reveal">
+      <div class="shead"><h2>Final accounts</h2><span class="num">p. 6</span></div>
+      <h2 class="h2">Two finished jobs. One went over.</h2>
+      <div class="accts">
+        <article class="acct"><div class="ph" data-kitchen="4"></div>
+          <h3>1968 Burnaby split-level — kitchen and main bath</h3><p class="where">Burnaby · permit <span class="num">BP-2026-04418</span></p>
+          <table><tbody>
+            <tr><th scope="row">Signed price</th><td>$71,000</td></tr>
+            <tr><th scope="row">Change orders (2)</th><td>+$3,400</td></tr>
+            <tr class="tot"><th scope="row">Final price</th><td class="ov">$74,400</td></tr>
+            <tr><th scope="row">Weeks, planned / actual</th><td class="ov">11 / 13</td></tr>
+          </tbody></table>
+          <p class="why"><span class="status status--behind">Over by <span class="num">$3,400</span></span> Knob-and-tube in the ceiling (<span class="num">$2,100</span>) and a quartz upgrade the client asked for (<span class="num">$1,300</span>).</p>
+        </article>
+        <article class="acct"><div class="ph"><div class="slot"><span>PHOTO SLOT · 16:9 · Langley ensuite</span></div></div>
+          <h3>1991 Langley townhouse — two bathrooms</h3><p class="where">Langley · permit <span class="num">BP-26-01173</span></p>
+          <table><tbody>
+            <tr><th scope="row">Signed price</th><td>$46,000</td></tr>
+            <tr><th scope="row">Change orders (1)</th><td>−$800</td></tr>
+            <tr class="tot"><th scope="row">Final price</th><td class="ok">$45,200</td></tr>
+            <tr><th scope="row">Weeks, planned / actual</th><td>7 / 7</td></tr>
+          </tbody></table>
+          <p class="why"><span class="status status--ontrack">Under by <span class="num">$800</span></span> Tile came in under allowance; the difference went back to the client.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+
+  <section class="notices on-dark reveal">
+    <div class="wrap">
+      <div class="shead"><h2>Public notices</h2><span class="num" style="color:var(--r-mist)">p. 7 · checked monthly</span></div>
+      <h2 class="h2">Check us. Every number is printed.</h2>
+      <p class="dek">BC has no renovation licence to hold. So we publish the documents you can check yourself.</p>
+      <div class="nlist">
+        <article><h3>Registration</h3><span class="big">BC1428817</span><p>Stonecroft Renovation Ltd., BC Registry.</p><span class="v">● verified 2026-10-01</span></article>
+        <article><h3>WorkSafeBC</h3><span class="big">4471902</span><p>Clearance letter, re-issued monthly.</p><span class="v">● verified 2026-10-01</span></article>
+        <article><h3>Liability</h3><span class="big">$5,000,000</span><p>Policy <span class="num">CGL-0048817</span>.</p><span class="v">● verified 2026-09-15</span></article>
+        <article><h3>Warranty</h3><span class="big">2 yrs · 5 yrs</span><p>Workmanship · envelope of new work.</p><span class="v">● terms 2026-08-01</span></article>
+      </div>
+      <a class="btn btn--secondary" href="#">Download the licence &amp; insurance pack (PDF, 1.2 MB, Oct 2026)</a>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="shead"><h2>Circulation</h2><span class="num">p. 8 · 11 municipalities</span></div>
+      <h2 class="h2">Where we work.</h2>
+      <div class="chips"><a href="#">Vancouver</a><a href="#">North Vancouver</a><a href="#">West Vancouver</a><a href="#">Burnaby</a><a href="#">Richmond</a><a href="#">New Westminster</a><a href="#">Coquitlam</a><a href="#">Surrey</a><a href="#">Langley</a><a href="#">Abbotsford</a><a href="#">Chilliwack</a></div>
+    </section>
+
+    <section class="sec reveal" id="book">
+      <div class="shead"><h2>Reply</h2><span class="num">p. 9</span></div>
+      <div class="reply">
+        <div><h2 class="h2">Book a site visit.</h2>
+          <ol class="steps" style="margin-top:16px"><li><span class="num">01</span><span>We call within one business day.</span></li><li><span class="num">02</span><span>We visit for <span class="num">60–90</span> minutes, usually within two to three weeks.</span></li><li><span class="num">03</span><span>A fixed-price proposal in <span class="num">5–10</span> business days.</span></li></ol></div>
+        <form class="card form-grid" onsubmit="return false" novalidate>
+          <div class="field"><label for="w1">Name</label><input id="w1" type="text" autocomplete="name"></div>
+          <div class="field"><label for="w2">Phone</label><input id="w2" type="tel" inputmode="tel" autocomplete="tel"></div>
+          <div class="field"><label for="w3">Email</label><input id="w3" type="email" inputmode="email" autocomplete="email"></div>
+          <div class="field"><label for="w4">Municipality</label><select id="w4" autocomplete="address-level2"><option value="">Choose…</option><option>Vancouver</option><option>Burnaby</option><option>Surrey</option><option>Langley</option></select></div>
+          <div class="field full"><label for="w5">What are you renovating?</label><select id="w5"><option>Kitchen</option><option>Bathroom</option><option>Whole home</option><option>Basement or suite</option><option>Exterior</option><option>Addition</option></select></div>
+          <label class="check full"><input type="checkbox" required> I agree to Stonecroft contacting me about this enquiry.</label>
+          <label class="check full"><input type="checkbox"> Send me the monthly build log summary.</label>
+          <div class="full"><button class="btn btn--primary submit">Request a site visit</button></div>
+        </form>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <p class="big">The Stonecroft Weekly</p>
+    <div class="cols">
+      <div><p class="pf"><b style="color:var(--r-char)">Four things, every job.</b> A fixed scope and a fixed price before we start. A published weekly log — spend, schedule, and anything that went wrong. Every permit pulled, every number on this site checkable. One person who answers the phone, named before you sign.</p></div>
+      <div><h4>Services</h4><ul><li><a href="#">Kitchens</a></li><li><a href="#">Bathrooms</a></li><li><a href="#">Whole home</a></li><li><a href="#">Basements &amp; suites</a></li><li><a href="#">Exterior</a></li><li><a href="#">Additions</a></li><li><a href="#">General contracting</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Process</a></li><li><a href="#">Pricing</a></li><li><a href="#">Build log</a></li><li><a href="#">Verify</a></li><li><a href="#">Permits</a></li></ul></div>
+      <div><h4>Office</h4><p class="pf">Unit 4, 3871 North Fraser Way<br>Burnaby, BC V5J 5G6<br><a class="num" href="tel:+16045550142" style="color:var(--r-char)">604-555-0142</a><br>Mon–Fri <span class="num">07:30–17:00</span></p></div>
+    </div>
+    <div class="bar"><span>© 2026 Stonecroft Renovation Ltd.</span><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Accessibility</a><span>BC1428817 · WSBC 4471902</span></div>
+  </div>
+</footer>
+
+<div class="mbar"><a class="btn btn--primary" href="tel:+16045550142">Call</a><a class="btn btn--secondary" href="#book">Book a site visit</a></div>
+
+<script src="assets/kitchen.js"></script>
+<script src="assets/site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const FIG = ["Week 00, before. 1968 Burnaby split-level.", "Week 01, demolition. Down to plaster and subfloor.", "Week 03, services. Rough-in inspected 07-24.", "Week 06, close-in. Drywall taped, floor protected.", "Week 13, complete. Two weeks late, $3,400 over."];
+  const LED = [["00 of 11", "$0", "ontrack", "on schedule", "0", "—"], ["01 of 11", "$11,400", "ontrack", "on schedule", "0", "Rough-in, wk 03"], ["03 of 11", "$29,800", "behind", "4 days behind", "1", "Electrical, Mon"], ["06 of 11", "$52,100", "behind", "2 days behind", "2", "Insulation, wk 07"], ["13 of 11", "$74,400", "behind", "over by $3,400", "2", "Final, passed"]];
+  const pin = $("seq").querySelector(".pin");
+  initSequence($("seq"), { uid: "w", pinHeight: () => pin.offsetHeight,
+    onStage(n) {
+      $("fig").innerHTML = `<b>Fig. 1</b> — ${FIG[n]}`;
+      const l = LED[n];
+      $("lg-wk").textContent = l[0]; $("lg-sp").textContent = l[1];
+      $("lg-st").className = "status status--" + l[2]; $("lg-st").textContent = l[3];
+      $("lg-co").textContent = l[4]; $("lg-in").textContent = l[5];
+    } });
+  initCommon();
+</script>
+</body>
+</html>

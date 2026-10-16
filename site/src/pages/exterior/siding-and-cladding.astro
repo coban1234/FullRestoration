@@ -1,0 +1,61 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+import { pricingReviewed } from "../../data/site";
+
+const site = siteUrl(Astro.site);
+const materials = [
+  ["Fibre cement", "$12 – $20", "50+ years", "Repaint every 12–15 years; non-combustible"],
+  ["Engineered wood", "$10 – $18", "30–50 years", "Repaint every 10–15 years; keep cut ends sealed"],
+  ["Vinyl", "$9 – $14", "25–40 years", "Wash yearly; can warp near heat; limited colours"],
+  ["Cedar", "$18 – $35", "30–60 years", "Stain every 3–7 years; needs drying space behind"],
+  ["Metal (steel or aluminium panel)", "$22 – $40", "50+ years", "Minimal; dents rather than rots"],
+];
+const faqs = [
+  { q: "Do I need a permit to replace siding?", a: "<p>Like-for-like replacement often does not; changing material, adding a rainscreen that changes wall thickness, or touching windows often does. It varies by municipality — we confirm with yours. <a href=\"/permits/\">Permits explained</a>.</p>" },
+  { q: "Can you go over the old siding?", a: "<p>We do not. Removing it is the only way to see the sheathing and the flashing, which is the part that decides whether the new cladding lasts.</p>" },
+  { q: "What if you find rot behind the siding?", a: "<p>We stop, photograph it, and price the repair as a change order before going further. Where the damage suggests a wider envelope problem, we recommend an envelope engineer's assessment rather than guessing.</p>" },
+];
+const title = "Siding & Cladding Vancouver — Materials, Cost & Rainscreen | Stonecroft";
+const description = "Fibre cement, engineered wood, vinyl, cedar and metal siding across Vancouver and the Fraser Valley. Cost per square foot, lifespan and maintenance compared.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Exterior", href: "/exterior/" }, { label: "Siding & cladding" }]} schema={[serviceSchema(site, "Siding and cladding", description, "/exterior/siding-and-cladding/"), faqSchema(faqs)]}>
+  <PageHero eyebrow="Exterior / Siding & cladding" title="Siding and cladding, over a proper rainscreen" lede="Five materials compared on cost, life and upkeep — and the drained gap behind them that matters more than any of them.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Rainscreen strapping over housewrap, before cladding" />
+  </PageHero>
+
+  <Section id="materials" num="01" tab="Materials" title="Materials compared" note="Installed cost per sq ft of wall, including removal, housewrap, rainscreen and trim.">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Siding materials compared</caption>
+        <thead><tr><th scope="col">Material</th><th scope="col">Installed / sq ft</th><th scope="col">Expected life</th><th scope="col">Maintenance</th></tr></thead>
+        <tbody>
+          {materials.map(([a, b, c, d]) => <tr><td data-label="Material" class="font-display text-[18px] font-medium">{a}</td><td data-label="Cost" class="font-mono">{b}</td><td data-label="Life" class="font-mono">{c}</td><td data-label="Maintenance" class="text-slate">{d}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 max-w-[70ch] text-[15px]"><span class="font-medium">What pushes it to the top: </span>tall walls needing scaffold, lots of corners and openings, and sheathing repairs found once the old siding is off.</p>
+    <p class="mt-2 font-mono text-[12px] text-slate">Ranges last reviewed: {pricingReviewed} · All figures exclude 5% GST</p>
+  </Section>
+
+  <Section id="rainscreen" num="02" tab="Rainscreen" title="Why the rainscreen matters here" tone="concrete">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <p>A rainscreen is a 10–19 mm drained, vented gap between the cladding and the weather barrier, made with vertical strapping. Water that gets past the siding — and in a Vancouver winter, some always does — runs down the back of the cladding and out at the bottom instead of soaking into the wall.</p>
+        <p>The BC Building Code requires a capillary break on most new walls in this climate. Older houses were built without one. When we re-clad, we add it: housewrap lapped shingle-style, strapping, insect screen top and bottom, and flashings at every window head and floor line.</p>
+        <p>This is renovation work, not remediation. If your house shows signs of long-term water damage inside the walls — soft sheathing, staining around windows, mould — we will recommend an envelope engineer's assessment before anyone prices new siding.</p>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="Window head flashing lapped under housewrap" />
+    </div>
+  </Section>
+
+  <Section id="faq" num="03" tab="FAQ" title="Siding questions">
+    <FAQ items={faqs} />
+  </Section>
+  <CTABand />
+</Base>

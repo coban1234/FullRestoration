@@ -1,0 +1,13 @@
+---
+import { KitchenArt } from "../KitchenArt";
+import { STAGES } from "../../lib/kitchen";
+interface Props { stage: number; uid: string; caption?: string; ratio?: string; class?: string; label?: string }
+const { stage, uid, caption, ratio = "aspect-[4/3]", class: cls = "", label } = Astro.props;
+---
+<figure class:list={["border border-line bg-white p-2.5 md:p-3", cls]}>
+  <div class:list={["relative overflow-hidden bg-concrete", ratio]}>
+    <KitchenArt stage={stage} uid={uid} className="absolute inset-0" />
+    {label && <span class="absolute left-0 top-0 bg-char px-2 py-1 font-mono text-[11px] text-plaster">{label}</span>}
+  </div>
+  <figcaption class="px-0.5 pb-0.5 pt-2.5 font-mono text-[11px] leading-snug text-slate">{caption ?? STAGES[stage].cap}</figcaption>
+</figure>

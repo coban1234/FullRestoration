@@ -1,0 +1,27 @@
+---
+import Legal from "../layouts/Legal.astro";
+import { company, office, phone } from "../data/site";
+---
+<Legal title="Privacy Policy | Stonecroft Renovation" description="How Stonecroft Renovation collects, uses and protects personal information under BC PIPA and PIPEDA." heading="Privacy policy" updated="2026-10-16" crumb="Privacy">
+  <p class="rounded-sm border border-clay bg-clay-tint p-4 text-[15px]"><strong>Draft for legal review.</strong> This policy must be reviewed by a BC lawyer before launch.</p>
+  <p>{company.legalName} ("Stonecroft", "we") follows British Columbia's <em>Personal Information Protection Act</em> (PIPA) and, where it applies, the federal <em>Personal Information Protection and Electronic Documents Act</em> (PIPEDA). This page explains what we collect, why, and what you can ask us to do with it.</p>
+  <h2>What we collect</h2>
+  <ul>
+    <li><strong>When you book a site visit or contact us:</strong> name, phone, email, municipality, optional address, project details, budget band, timing, building type and year, and any photographs you upload.</li>
+    <li><strong>When you use the budget estimator:</strong> your answers are processed in your browser. We receive them only if you choose "Email me this range" or carry them into the booking form.</li>
+    <li><strong>When you subscribe to the build log:</strong> your email address.</li>
+    <li><strong>Automatically:</strong> anonymous analytics (pages viewed, device type, approximate region). We do not use advertising cookies.</li>
+  </ul>
+  <h2>Why we use it</h2>
+  <p>To reply to you, prepare and carry out a site visit and proposal, run a contract if you sign one, and meet our legal obligations (tax, WorkSafeBC, warranty). We do not sell personal information, and we do not use it for anything you have not asked for.</p>
+  <h2>Photographs of your home</h2>
+  <p>We photograph every job for the weekly log. A project only appears in the public build log with the owner's written consent, and we never publish a street address, house number or anything that identifies you or your neighbours. You can withdraw consent at any time and we will unpublish within five business days.</p>
+  <h2>Who we share it with</h2>
+  <p>Only the subtrades, designers and engineers working on your job, the municipality for permits, and the service providers who host our website and email (in Canada or the United States). Each is bound to use it only for your project.</p>
+  <h2>How long we keep it</h2>
+  <p>Enquiries that do not become jobs: 24 months. Contract records: seven years after completion, for tax and warranty.</p>
+  <h2>Your rights</h2>
+  <p>You may ask to see the personal information we hold about you, correct it, or withdraw consent for any use not required by law. We respond within 30 days.</p>
+  <h2>Contact our privacy officer</h2>
+  <p>Daniel Okafor, Privacy Officer — <a href={`mailto:${company.email}`}>{company.email}</a>, <a href={phone.href}>{phone.display}</a>, {office.line1}, {office.city} {office.region} {office.postal}. If you are not satisfied with our answer, you may contact the Office of the Information and Privacy Commissioner for British Columbia.</p>
+</Legal>

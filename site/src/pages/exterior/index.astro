@@ -1,0 +1,58 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import { serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const cards = [
+  { name: "Siding & cladding", href: "/exterior/siding-and-cladding/", range: "$9–40 / sq ft", note: "Fibre cement, engineered wood, cedar, metal — over a drained rainscreen.", label: "Rainscreen strapping before cladding" },
+  { name: "Windows & doors", href: "/exterior/windows-and-doors/", range: "$1,000–1,500 each", note: "Full-frame or insert replacement, as part of a renovation scope.", label: "Full-frame window opening, flashed" },
+  { name: "Decks & outdoor", href: "/exterior/decks-and-outdoor/", range: "Permitted", note: "Decks that pass inspection: footings, beams, guards and ledgers.", label: "Deck ledger flashing and joist hangers" },
+];
+const title = "Exterior Renovation Vancouver — Siding, Windows & Decks | Stonecroft";
+const description = "Siding, cladding, window replacement and decks across Vancouver and the Fraser Valley, built as part of a renovation scope. Published prices and a weekly log.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Exterior" }]} schema={[serviceSchema(site, "Exterior renovation", description, "/exterior/")]}>
+  <PageHero eyebrow="Exterior" title="Exterior renovation, Vancouver and the Fraser Valley" lede="Cladding, windows and decks — built as part of a renovation, to the standard this climate actually demands." />
+
+  <Section id="what" num="01" tab="What we do" title="The outside of the house, done once">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <p>Coastal BC is one of the hardest climates in Canada on a building's skin: eight months of wind-driven rain, little drying, and a housing stock built before anyone drained a wall. We replace siding over a proper rainscreen, replace windows with the flashing done right, and build decks that pass inspection.</p>
+        <p>We do this work as part of a renovation scope — new cladding with new windows, or a deck with a kitchen that opens onto it. We are not a building-envelope remediation firm and do not take on leaky-condo litigation work; if your building needs an envelope engineer's report, start there and we will happily bid the scope it produces.</p>
+        <p>Glass and sealed-unit repairs are a different trade from window replacement, and not one we offer.</p>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="Fibre-cement cladding going up over rainscreen strapping, Coquitlam" />
+    </div>
+  </Section>
+
+  <Section id="ways-in" num="02" tab="Ways in" title="Three ways in" tone="concrete">
+    <ul class="grid gap-4 md:grid-cols-3">
+      {cards.map((c) => (
+        <li>
+          <a href={c.href} class="chamfer group flex h-full flex-col border border-line bg-white hover:border-char">
+            <div class="photo-slot flex aspect-[4/3] items-center justify-center border-b border-line p-4 text-center" role="img" aria-label={`Photograph to come: ${c.label}`}>
+              <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{c.label}</span></span>
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <h3 class="font-display text-[24px] font-medium group-hover:underline group-hover:underline-offset-4">{c.name}</h3>
+              <p class="mt-1 font-mono text-[17px]">{c.range}</p>
+              <p class="mt-3 text-[15px] leading-relaxed text-slate">{c.note}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="season" num="03" tab="Season" title="When exterior work happens">
+    <div class="prose-sc">
+      <p>We schedule cladding and window work between <strong>April and October</strong> where we can, and protect openings with temporary weather barriers when we cannot. Decks are year-round for framing, but stain and sealers need dry weeks. Booking a site visit in winter is the way to start in spring.</p>
+    </div>
+  </Section>
+
+  <CTABand />
+</Base>

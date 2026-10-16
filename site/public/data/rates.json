@@ -1,0 +1,24 @@
+{
+  "updated": "2026-10-14",
+  "currency": "CAD",
+  "base": {
+    "kitchen": { "small": [28000, 42000], "medium": [45000, 70000], "large": [72000, 120000] },
+    "bathroom": { "small": [19000, 28000], "medium": [27000, 40000], "large": [42000, 68000] },
+    "wholehome": { "perSqFt": { "builder": [145, 195], "mid": [195, 300], "high": [300, 420] } },
+    "basement": { "perSqFt": { "builder": [55, 85], "mid": [85, 125], "high": [125, 170] } }
+  },
+  "finishMultiplier": { "builder": 0.82, "mid": 1.0, "high": 1.38, "custom": 1.75 },
+  "buildingMultiplier": { "detached": 1.0, "townhouse": 1.04, "condo": 1.12, "strata": 1.18 },
+  "contingencyPct": { "default": 0.08, "pre1980": 0.12, "structural": 0.15 },
+  "permits": {
+    "vancouver": [2600, 5200],
+    "burnaby": [2400, 4100],
+    "surrey": [2100, 3800],
+    "richmond": [2200, 3900],
+    "northVancouver": [2500, 4400],
+    "langley": [1900, 3400],
+    "abbotsford": [1800, 3200],
+    "chilliwack": [1700, 3000]
+  },
+  "designPctOfConstruction": [0.05, 0.08]
+}

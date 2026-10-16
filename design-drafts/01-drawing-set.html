@@ -1,0 +1,466 @@
+<!doctype html>
+<html lang="en-CA" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draft 01 · Drawing Set — Stonecroft</title>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  /* ===== header ===== */
+  .hdr { position: sticky; top: 0; z-index: 50; height: var(--hdr); display: flex; align-items: center; gap: 24px; padding: 0 var(--pad);
+    background: rgba(244,241,236,.94); border-bottom: 1px solid var(--r-line); }
+  @supports (backdrop-filter: blur(1px)) { .hdr { backdrop-filter: blur(8px); } }
+  .mark { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+  .mark i { width: 20px; height: 20px; background: var(--r-char); clip-path: polygon(6px 0, 100% 0, 100% 100%, 0 100%, 0 6px); }
+  .mark b { font-family: var(--font-display); font-weight: 600; font-size: 1.125rem; letter-spacing: .06em; }
+  .nav, .hdr .tel, .hdr .hbtn { display: none; }
+  .grow { flex: 1; }
+  @media (min-width: 900px) {
+    .nav { display: flex; gap: 22px; font-size: .9375rem; font-weight: 500; }
+    .nav a { text-decoration: none; display: inline-flex; align-items: center; gap: 6px; } .nav a:hover { color: var(--r-clay-dk); }
+    .nav .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--r-ontrack); }
+    .hdr .tel { display: inline; font-family: var(--font-mono); font-size: .875rem; color: var(--r-slate); text-decoration: none; }
+    .hdr .hbtn { display: inline-flex; min-height: 44px; }
+  }
+  @media (min-width: 900px) and (max-width: 1099px) { .hdr .tel { display: none; } }
+
+  /* ===== INT-1 — svh throughout (§3.6 v1.1) ===== */
+  .seq { position: relative; background: var(--r-char); color: var(--r-plaster); min-height: 110vh; min-height: 110svh; }
+  @media (min-width: 900px) { .seq { min-height: 150vh; min-height: 150svh; } }
+  .pin { position: sticky; top: var(--hdr); height: calc(100vh - var(--hdr)); height: calc(100svh - var(--hdr)); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+  .pin .stage-stack { position: absolute; inset: 0; }
+  .scrim { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(28,26,24,.96) 0%, rgba(28,26,24,.86) 48%, rgba(28,26,24,.25) 78%, rgba(28,26,24,0) 100%); }
+  .skip { position: absolute; top: 14px; right: var(--pad); z-index: 2; font-size: var(--t-small); color: var(--r-plaster) !important; background: rgba(28,26,24,.6); padding: 6px 10px; border-radius: 2px; }
+  .hero-copy { position: relative; padding: 0 var(--pad); }
+  .readout { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .readout .wk { font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); border: 1px solid rgba(201,194,184,.4); padding: 3px 8px; border-radius: 2px; }
+  .readout .nm { font-family: var(--font-display); font-weight: 500; font-size: 1.375rem; letter-spacing: -.02em; line-height: 1.1; }
+  .readout .nm span { color: var(--r-clay-br); }
+  .h1 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-mega); line-height: .94; letter-spacing: -.03em; max-width: 12ch; }
+  .sub { margin-top: 14px; font-size: var(--t-lead); line-height: 1.5; color: var(--r-mist); max-width: 34rem; }
+  .hero-copy .btn-row { margin-top: 20px; }
+  .sheet { display: none; }
+  .rail { position: relative; margin-top: 16px; border-top: 1px solid rgba(226,220,211,.18); }
+  .rail ol { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; padding: 0 var(--pad); }
+  .rail ol::-webkit-scrollbar { display: none; }
+  .rail li { flex: none; scroll-snap-align: center; }
+  .pip { all: unset; box-sizing: border-box; cursor: pointer; display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 16px 0 0; color: var(--r-mist); }
+  .pip:focus-visible { outline: 3px solid var(--r-plaster); outline-offset: -3px; }
+  .pip .dot { width: 10px; height: 10px; border: 2px solid currentColor; flex: none; transition: all 220ms var(--ease-in); }
+  .pip.is-done .dot { background: var(--r-clay-br); border-color: var(--r-clay-br); }
+  .pip.is-active { color: var(--r-plaster); }
+  .pip.is-active .dot { background: var(--r-clay); border-color: var(--r-plaster); }
+  .pip[data-seq-pip="4"].is-active .dot { background: var(--r-oak); border-color: var(--r-oak); }
+  .pip .lbl { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 500; white-space: nowrap; }
+  .pip .w { font-family: var(--font-mono); font-size: .75rem; opacity: .7; }
+  .fill { position: absolute; left: 0; top: -1px; height: 2px; width: calc(var(--seq-p, 0) * 100%); background: var(--r-clay-br); }
+  .is-static { min-height: 0 !important; padding: 32px 0 48px; }
+  .is-static .pin { position: static; height: auto; }
+  .is-static .stage-stack, .is-static .scrim, .is-static .rail, .is-static .readout, .is-static .skip { display: none; }
+  .is-static [data-seq-static] { margin: 32px var(--pad) 0; }
+  @media (min-width: 900px) {
+    .pin { padding-bottom: 0; }
+    .scrim { background: linear-gradient(0deg, rgba(28,26,24,.92) 0%, rgba(28,26,24,.5) 40%, rgba(28,26,24,0) 65%), linear-gradient(90deg, rgba(28,26,24,.55), rgba(28,26,24,0) 55%); }
+    .hero-copy { display: grid; grid-template-columns: minmax(0, 1fr) 340px; gap: 48px; align-items: end; }
+    .readout .nm { font-size: 1.75rem; }
+    .h1 { max-width: 13ch; } .sub { margin-top: 24px; } .hero-copy .btn-row { margin-top: 32px; }
+    .sheet { display: block; background: rgba(28,26,24,.78); border: 1px solid rgba(201,194,184,.28); border-radius: 2px; padding: 18px 20px; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); }
+    .sheet .t { font-family: var(--font-body); color: var(--r-plaster); font-weight: 700; font-size: .9375rem; margin-bottom: 12px; }
+    .sheet dl { display: grid; grid-template-columns: 76px 1fr; row-gap: 8px; } .sheet dd { color: var(--r-plaster); }
+    .sheet .bar { height: 6px; background: var(--r-char-lt); margin: 14px 0 8px; position: relative; }
+    .sheet .bar i { position: absolute; inset: 0 auto 0 0; width: var(--spend, 0%); background: var(--r-clay); transition: width 420ms var(--ease-in); }
+    .sheet .bar.over i { background: var(--r-clay-br); }
+    .rail { margin: 32px var(--pad) 0; border: 0; }
+    .rail ol { display: grid; grid-template-columns: repeat(5, 1fr); padding: 0; overflow: visible; border-top: 2px solid rgba(226,220,211,.2); }
+    .fill { top: 0; }
+    .pip { flex-direction: column; align-items: flex-start; gap: 6px; padding: 14px 0 24px; min-height: 0; }
+    .pip .dot { margin-top: -21px; background: var(--r-char); }
+  }
+
+  /* ===== drawing-sheet sections ===== */
+  .sec { padding: var(--sec) 0; }
+  .sec-rail { display: flex; gap: 8px; align-items: baseline; margin-bottom: 12px; color: var(--r-slate); }
+  .sec-rail .n { font-family: var(--font-mono); font-size: var(--t-num-sm); }
+  .sec-rail .n::after { content: " /"; }
+  .h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-h2); line-height: 1.08; letter-spacing: -.02em; max-width: 20ch; }
+  .intro { margin-top: 16px; max-width: 34rem; font-size: var(--t-lead); line-height: 1.55; color: var(--r-slate); }
+  @media (min-width: 900px) {
+    .sec { display: grid; grid-template-columns: 2fr 10fr; column-gap: 24px; }
+    .sec-rail { display: block; border-right: 1px solid var(--r-line); margin: 0; }
+    .sec-rail .in { position: sticky; top: calc(var(--hdr) + 32px); display: grid; gap: 6px; }
+    .sec-rail .n::after { content: none; }
+    .sec-body { padding-left: 24px; min-width: 0; }
+    .intro { margin-top: 24px; }
+  }
+  .band { background: var(--r-concrete); border-top: 1px solid var(--r-line); border-bottom: 1px solid var(--r-line); --bg: var(--r-concrete); }
+  .band .sec-rail { color: var(--r-slate-dk); } .band .intro { color: var(--r-slate-dk); }
+
+  /* 01 — 2×2 on mobile (§7.1 mobile note) */
+  .four { margin-top: 32px; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  .four .chamfer { padding: 18px 16px 20px; }
+  .four svg { width: 24px; height: 24px; color: var(--r-clay); margin-bottom: 24px; }
+  .four h3 { font-size: var(--t-h4); font-weight: 700; line-height: 1.3; }
+  .four p { margin-top: 6px; font-size: .875rem; color: var(--r-slate); line-height: 1.5; }
+  @media (min-width: 900px) { .four { grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 48px; } .four .chamfer { padding: 28px 24px 32px; } .four svg { width: 28px; height: 28px; margin-bottom: 40px; } .four p { font-size: var(--t-small); } }
+
+  /* 02 — log entry §3.10; mobile order: photo, week, stage, status, figures */
+  .logs { margin-top: 32px; display: grid; gap: 16px; }
+  .logs > li { display: flex; }
+  .entry { flex: 1; }
+  .entry .chamfer { padding: 0 0 20px; display: flex; flex-direction: column; }
+  .entry .ph { order: -1; aspect-ratio: 3/2; }
+  .entry .in { padding: 16px 18px 0; display: flex; flex-direction: column; gap: 10px; flex: 1; }
+  .entry .top { display: flex; justify-content: space-between; gap: 12px; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-slate); }
+  .entry .top b { color: var(--r-char); font-weight: 500; }
+  .entry h3 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-h3); letter-spacing: -.01em; line-height: 1.2; }
+  .entry .proj { font-size: var(--t-small); color: var(--r-slate); margin-top: -8px; }
+  .entry .note { font-size: var(--t-small); color: var(--r-slate); line-height: 1.6; }
+  .entry dl { border-top: 1px solid var(--r-line); padding-top: 12px; display: grid; gap: 8px; }
+  .entry dl div { display: grid; grid-template-columns: 80px 1fr; gap: 8px; }
+  .entry dt { font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-slate); padding-top: 3px; }
+  .entry dd { font-size: var(--t-small); }
+  .entry .btn--tertiary { margin-top: auto; padding-top: 6px; font-size: var(--t-small); }
+  .entry.is-delay .chamfer-wrap { background: var(--r-clay); }
+  @media (min-width: 900px) { .logs { grid-template-columns: repeat(3, 1fr); margin-top: 48px; } .entry .chamfer { padding: 20px 0 22px; } .entry .ph { order: 0; margin: 0 20px; border-radius: 2px; } .entry .in { padding: 0 20px; } .entry .in:first-child { padding-bottom: 14px; } }
+
+  /* 03 — dense list */
+  .build { margin-top: 28px; border-top: 1px solid var(--r-char); }
+  .build a { display: grid; grid-template-columns: 1fr 20px; gap: 2px 12px; padding: 16px 0; border-bottom: 1px solid var(--r-line); text-decoration: none; min-height: 48px; }
+  .build h3 { font-size: 1.125rem; font-weight: 700; }
+  .build .num { grid-column: 1; font-size: var(--t-num-sm); color: var(--r-slate); }
+  .build p { grid-column: 1; font-size: var(--t-small); color: var(--r-slate); }
+  .build svg { grid-row: 1 / 4; grid-column: 2; width: 20px; height: 20px; color: var(--r-clay); align-self: center; }
+  .build a:hover h3 { color: var(--r-clay-dk); }
+  @media (min-width: 900px) { .build { display: grid; grid-template-columns: 1fr 1fr; column-gap: 48px; margin-top: 40px; } .build a { padding: 20px 0; } }
+
+  /* 04 — price table (stack pattern) */
+  .ptable { margin-top: 28px; }
+  .ptable th { background: var(--r-concrete); padding: 12px 16px; font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 500; }
+  .ptable td { padding: 20px 16px; border-bottom: 1px solid var(--r-line); }
+  .ptable td.rh { font-weight: 700; }
+  .ptable td.r { font-family: var(--font-mono); font-size: 1.125rem; white-space: nowrap; }
+  .ptable td.w { color: var(--r-slate); font-size: var(--t-small); }
+  .meta-line { margin-top: 16px; display: flex; gap: 8px 24px; flex-wrap: wrap; font-size: var(--t-num-sm); color: var(--r-slate); }
+  @media (max-width: 599px) { .ptable td.r { font-size: 1.0625rem; white-space: normal; } }
+
+  /* 05 — projects */
+  .projects { margin-top: 32px; display: grid; gap: 20px; }
+  .pcard { background: var(--r-white); border: 1px solid var(--r-line); border-radius: 2px; }
+  .pcard .ph { aspect-ratio: 3/2; border-bottom: 1px solid var(--r-line); }
+  .pcard .bd { padding: 20px; }
+  .pcard h3 { font-size: 1.1875rem; font-weight: 700; line-height: 1.3; }
+  .pcard .where { font-size: var(--t-small); color: var(--r-slate); margin-top: 4px; }
+  .six { margin-top: 16px; display: grid; grid-template-columns: 1fr 1fr 1fr; border-top: 1px solid var(--r-line); }
+  .six div { padding-top: 12px; }
+  .six dt { font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; color: var(--r-slate); font-weight: 500; }
+  .six dd { font-family: var(--font-mono); font-size: 1rem; margin-top: 2px; }
+  .six .over { color: var(--r-clay-dk); }
+  .flag { margin-top: 16px; background: var(--r-clay-tn); padding: 10px 12px; border-radius: 2px; font-size: var(--t-small); line-height: 1.5; }
+  .flag.ok { background: var(--r-ontrack-lt); }
+  @media (min-width: 900px) { .projects { grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 48px; } .pcard .bd { padding: 24px; } }
+
+  /* 06 — check us */
+  .dark { background: var(--r-char); color: var(--r-plaster); }
+  .dark .sec-rail, .dark .intro { color: var(--r-mist); } .dark .sec-rail { border-color: var(--r-char-lt); }
+  .checks { margin-top: 28px; display: grid; border-top: 1px solid var(--r-char-lt); }
+  .checks > div { padding: 20px 0; border-bottom: 1px solid var(--r-char-lt); }
+  .checks h3 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; color: var(--r-mist); font-weight: 500; }
+  .checks .big { font-family: var(--font-mono); font-size: 1.25rem; margin-top: 8px; }
+  .checks p { margin-top: 6px; font-size: var(--t-small); color: var(--r-mist); }
+  .checks .v { margin-top: 10px; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-ontrack-br); display: flex; align-items: center; gap: 8px; }
+  .checks .v::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--r-ontrack-br); }
+  .dark .btn { white-space: normal; text-align: left; padding: 12px 20px; }
+  @media (min-width: 900px) { .checks { grid-template-columns: repeat(4, 1fr); margin-top: 48px; } .checks > div { padding: 28px 24px 28px 0; border-bottom: 0; border-right: 1px solid var(--r-char-lt); } .checks > div + div { padding-left: 24px; } .checks > div:last-child { border-right: 0; } .checks .big { font-size: 1.375rem; margin-top: 14px; } }
+
+  /* 07 — chips */
+  .chips { margin-top: 24px; display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { min-height: 48px; display: inline-flex; align-items: center; padding: 0 16px; border: 1px solid var(--r-line-strong); border-radius: 2px; text-decoration: none; font-weight: 500; background: var(--r-white); }
+  .chips a:hover { border-color: var(--r-char); background: var(--r-concrete); }
+
+  /* 08 — book */
+  .book { margin-top: 28px; display: grid; gap: 40px; }
+  .next ol { display: grid; gap: 16px; margin-top: 16px; }
+  .next li { display: grid; grid-template-columns: 32px 1fr; font-size: var(--t-small); }
+  .next li .num { color: var(--r-clay-dk); }
+  @media (min-width: 900px) { .book { grid-template-columns: 7fr 4fr; gap: 48px; margin-top: 40px; } .next { border-left: 1px solid var(--r-line); padding-left: 32px; } }
+
+  /* footer */
+  .ftr { background: var(--r-char); color: var(--r-plaster); padding: 64px 0 0; }
+  .ftr .cols { display: grid; gap: 36px; }
+  .ftr .promise { color: var(--r-mist); font-size: var(--t-small); margin-top: 16px; max-width: 38ch; }
+  .ftr h4 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; color: var(--r-mist); font-weight: 500; margin-bottom: 8px; }
+  .ftr ul a { display: flex; align-items: center; min-height: 44px; text-decoration: none; font-size: var(--t-small); border-bottom: 1px solid var(--r-char-lt); }
+  .ftr .nap { font-size: var(--t-small); color: var(--r-mist); display: grid; gap: 6px; }
+  .ftr .nap a { color: var(--r-plaster); }
+  .ftr .mark i { background: var(--r-plaster); }
+  .ftr .bar { margin-top: 48px; border-top: 1px solid var(--r-char-lt); padding: 20px 0 28px; display: flex; gap: 12px 24px; flex-wrap: wrap; font-size: var(--t-num-sm); color: var(--r-mist); }
+  @media (min-width: 600px) { .ftr .cols { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .ftr { padding-top: 96px; } .ftr .cols { grid-template-columns: 4fr 2fr 2fr 3fr; gap: 48px; } .ftr ul a { min-height: 32px; border: 0; } }
+</style>
+</head>
+<body>
+<a class="skip-main" href="#main">Skip to main content</a>
+<a class="draft-tag" href="index.html">01 · Drawing Set ↩</a>
+
+<header class="hdr">
+  <a class="mark" href="#" aria-label="Stonecroft home"><i aria-hidden="true"></i><b>STONECROFT</b></a>
+  <nav class="nav" aria-label="Primary">
+    <a href="#">Renovations ▾</a><a href="#">Exterior ▾</a><a href="#">Pricing</a><a href="#">Projects</a><a href="#" class="live">Build log</a><a href="#">Verify</a>
+  </nav>
+  <span class="grow"></span>
+  <a class="tel" href="tel:+16045550142">604-555-0142</a>
+  <a class="btn btn--secondary hbtn" href="#book">Book a site visit</a>
+  <button class="menu-btn" data-drawer-btn aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Menu</button>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="d-top"><span class="mark"><i aria-hidden="true"></i><b>STONECROFT</b></span><button class="menu-btn" data-drawer-close>Close</button></div>
+  <nav aria-label="Mobile">
+    <p class="d-group">Renovations</p>
+    <a href="#">Kitchens <span class="num">$28k–$120k+</span></a><a href="#">Bathrooms <span class="num">$20k–$40k+</span></a><a href="#">Whole home <span class="num">$150–$400/sq ft</span></a><a href="#">Basements &amp; suites <span class="num">$50–$150/sq ft</span></a>
+    <p class="d-group">Exterior</p>
+    <a href="#">Siding &amp; cladding</a><a href="#">Windows &amp; doors</a><a href="#">Decks &amp; outdoor</a>
+    <p class="d-group">Stonecroft</p>
+    <a href="#">Build log <span class="status status--ontrack">3 live</span></a><a href="#">Pricing</a><a href="#">Projects</a><a href="#">Verify</a><a href="#">Process</a><a href="#">About</a>
+  </nav>
+  <div class="d-foot"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="tel:+16045550142">Call 604-555-0142</a></div>
+</div>
+
+<main id="main">
+  <section class="seq on-dark" data-seq-track id="seq" aria-label="Kitchen renovation, five construction stages">
+    <div class="pin">
+      <div class="stage-stack" data-seq-stack></div>
+      <div class="scrim" aria-hidden="true"></div>
+      <a class="skip btn--tertiary" href="#s01">Skip to content</a>
+      <div class="hero-copy">
+        <div>
+          <div class="readout" aria-hidden="true"><span class="wk" id="ro-wk">WK 00</span><span class="nm" id="ro-nm">Before</span></div>
+          <h1 class="h1">See what week three actually looks like.</h1>
+          <p class="sub">Full interior and exterior renovation, Vancouver and the Fraser Valley. Fixed price. Published weekly.</p>
+          <div class="btn-row"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="#">Get a budget range</a></div>
+        </div>
+        <aside class="sheet" aria-label="Ledger for this kitchen">
+          <div class="t">1968 Burnaby split-level — kitchen</div>
+          <dl><dt>WEEK</dt><dd id="lg-wk">00 of 11 planned</dd><dt>SPENT</dt><dd id="lg-sp">$0 of $71,000</dd><dt>STATUS</dt><dd id="lg-st"><span class="status status--ontrack">on schedule</span></dd></dl>
+          <div class="bar" id="lg-bar"><i></i></div>
+          <div id="lg-note">Deposit received. Temporary kitchen goes in on day one.</div>
+        </aside>
+      </div>
+      <nav class="rail" aria-label="Construction stages">
+        <span class="fill" aria-hidden="true"></span>
+        <ol data-rail-scroll>
+          <li><button class="pip" data-seq-pip="0"><span class="dot"></span><span class="lbl">Before</span><span class="w">WK 00</span></button></li>
+          <li><button class="pip" data-seq-pip="1"><span class="dot"></span><span class="lbl">Demolition</span><span class="w">WK 01</span></button></li>
+          <li><button class="pip" data-seq-pip="2"><span class="dot"></span><span class="lbl">Services</span><span class="w">WK 03</span></button></li>
+          <li><button class="pip" data-seq-pip="3"><span class="dot"></span><span class="lbl">Close-in</span><span class="w">WK 06</span></button></li>
+          <li><button class="pip" data-seq-pip="4"><span class="dot"></span><span class="lbl">Complete</span><span class="w">WK 13</span></button></li>
+        </ol>
+      </nav>
+      <div data-seq-static></div>
+      <div class="visually-hidden" aria-live="polite" data-seq-live></div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <section class="sec reveal" id="s01">
+      <div class="sec-rail"><div class="in"><span class="n">01</span> <span class="label">The promise</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">Four things, every job.</h2>
+        <div class="four">
+          <div class="chamfer-wrap"><div class="chamfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M4 20h16M4 4h16v12H4zM8 8h8M8 12h5"/></svg><h3>A fixed price</h3><p>A fixed scope and a fixed price, signed before we start.</p></div></div>
+          <div class="chamfer-wrap"><div class="chamfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M3 5h18v15H3zM3 10h18M8 5v15M13 5v15M18 5v15"/></svg><h3>A weekly log</h3><p>Every Friday: spend, schedule, and anything that went wrong.</p></div></div>
+          <div class="chamfer-wrap"><div class="chamfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v4h4M9 17a3 3 0 1 0 6 0 3 3 0 1 0-6 0M8 9h6"/></svg><h3>Every permit</h3><p>Every permit pulled. Every number on this site checkable.</p></div></div>
+          <div class="chamfer-wrap"><div class="chamfer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="square" aria-hidden="true"><path d="M4 16a8 8 0 0 1 16 0M2 16h20v3H2zM12 8V5"/></svg><h3>One person</h3><p>One person who answers the phone, named before you sign.</p></div></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="band">
+    <div class="wrap">
+      <section class="sec reveal">
+        <div class="sec-rail"><div class="in"><span class="n">02</span> <span class="label">On site</span></div></div>
+        <div class="sec-body">
+          <h2 class="h2">This week on site.</h2>
+          <p class="intro">Posted Friday <span class="num">2026-10-16</span>. One job is running late. It stays here until it isn’t.</p>
+          <ol class="logs">
+            <li class="entry is-delay"><article class="chamfer-wrap" aria-labelledby="e1"><div class="chamfer">
+              <div class="in"><div class="top"><b id="e1">WEEK 06</b><span>2026-10-12 → 10-16</span></div><h3>Services rough-in</h3><p class="proj">1972 Coquitlam rancher · kitchen</p><span class="status status--behind">4 days behind</span></div>
+              <div class="ph" data-kitchen="2" data-alt="Coquitlam kitchen at services rough-in, open stud walls and knob-and-tube in the ceiling bay."></div>
+              <div class="in" style="padding-top:14px"><p class="note">Panel upgrade opened a knob-and-tube run we had not priced. Change order 02 signed Tuesday.</p>
+              <dl><div><dt>Spent</dt><dd><data value="48200" class="num">$48,200</data> of <span class="num">$71,000</span></dd></div><div><dt>Changes</dt><dd class="num">2</dd></div><div><dt>Next</dt><dd>Insulation and vapour barrier, week <span class="num">07</span></dd></div></dl>
+              <a class="btn btn--tertiary" href="#">Read week 06 in full →</a></div>
+            </div></article></li>
+            <li class="entry"><article class="chamfer-wrap" aria-labelledby="e2"><div class="chamfer">
+              <div class="in"><div class="top"><b id="e2">WEEK 03</b><span>2026-10-12 → 10-16</span></div><h3>Demolition</h3><p class="proj">1974 North Vancouver · main bathroom</p><span class="status status--ontrack">on schedule</span></div>
+              <div class="ph" data-kitchen="1"></div>
+              <div class="in" style="padding-top:14px"><p class="note">Tub out, subfloor sound. Galvanised supply replaced back to the main, as quoted.</p>
+              <dl><div><dt>Spent</dt><dd><data value="9800" class="num">$9,800</data> of <span class="num">$31,500</span></dd></div><div><dt>Changes</dt><dd class="num">0</dd></div><div><dt>Next</dt><dd>Waterproofing membrane, week <span class="num">04</span></dd></div></dl>
+              <a class="btn btn--tertiary" href="#">Read week 03 in full →</a></div>
+            </div></article></li>
+            <li class="entry"><article class="chamfer-wrap" aria-labelledby="e3"><div class="chamfer">
+              <div class="in"><div class="top"><b id="e3">WEEK 11</b><span>2026-10-12 → 10-16</span></div><h3>Close-in</h3><p class="proj">1989 Langley · legal basement suite</p><span class="status status--complete">stage complete</span></div>
+              <div class="ph" data-kitchen="3"></div>
+              <div class="in" style="padding-top:14px"><p class="note">Fire separation inspection passed on the first visit. Egress window trimmed.</p>
+              <dl><div><dt>Spent</dt><dd><data value="96300" class="num">$96,300</data> of <span class="num">$98,000</span></dd></div><div><dt>Changes</dt><dd class="num">1</dd></div><div><dt>Next</dt><dd>Finishes, week <span class="num">12</span></dd></div></dl>
+              <a class="btn btn--tertiary" href="#">Read week 11 in full →</a></div>
+            </div></article></li>
+          </ol>
+          <p style="margin-top:28px"><a class="btn btn--tertiary" href="#">See the live build log →</a></p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="sec-rail"><div class="in"><span class="n">03</span> <span class="label">Services</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">What we build.</h2>
+        <div class="build">
+          <a href="#"><h3>Kitchens</h3><span class="num">$28,000 – $120,000+</span><p>Six to nine weeks without a kitchen.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Bathrooms</h3><span class="num">$20,000 – $40,000+</span><p>Waterproofing photographed before tile.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Whole home</h3><span class="num">$150 – $400+ / sq ft</span><p>Gut renovations of 1950s–1980s houses.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Basements &amp; suites</h3><span class="num">$50 – $150 / sq ft</span><p>Legal suites, compared by municipality.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Siding &amp; cladding</h3><span class="num">5 materials compared</span><p>Over a proper rainscreen.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Windows &amp; doors</h3><span class="num">$1,000 – $1,500 each</span><p>Full-frame or insert, the difference priced.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>Additions &amp; structural</h3><span class="num">15% contingency</span><p>Second storeys and load-bearing walls.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+          <a href="#"><h3>General contracting</h3><span class="num">strata · commercial</span><p>A paper trail a council can defend.</p><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 12h15M14 7l5 5-5 5"/></svg></a>
+        </div>
+      </div>
+    </section>
+
+    <div class="dim" aria-hidden="true"><span>04</span></div>
+    <section class="sec reveal">
+      <div class="sec-rail"><div class="in"><span class="n">04</span> <span class="label">Pricing</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">What it costs.</h2>
+        <p class="intro">These are the ranges we actually contract at in this market. Your range depends on scope, finish and what the building is hiding.</p>
+        <table class="t-stack ptable">
+          <thead><tr><th scope="col">Scope</th><th scope="col">Range</th><th scope="col">What pushes it to the top</th></tr></thead>
+          <tbody>
+            <tr><td class="rh">Kitchen</td><td class="r" data-label="Range">$28,000 – $120,000+</td><td class="w" data-label="Top end">Custom millwork, stone, moving the sink or range.</td></tr>
+            <tr><td class="rh">Bathroom</td><td class="r" data-label="Range">$20,000 – $40,000+</td><td class="w" data-label="Top end">Steam, heated floors, relocating the drain.</td></tr>
+            <tr><td class="rh">Whole home</td><td class="r" data-label="Range">$150 – $400+ / sq ft</td><td class="w" data-label="Top end">A pre-1980 house that triggers full code compliance.</td></tr>
+            <tr><td class="rh">Basement</td><td class="r" data-label="Range">$50 – $150 / sq ft</td><td class="w" data-label="Top end">Making it a legal suite adds 15–30%.</td></tr>
+          </tbody>
+        </table>
+        <div class="meta-line"><span>Ranges last reviewed: <span class="num" style="color:var(--r-char)">2026-10-14</span></span><span>Figures exclude <span class="num">5%</span> GST</span></div>
+        <p style="margin-top:32px"><a class="btn btn--secondary" href="#">Get a budget range</a></p>
+      </div>
+    </section>
+
+    <div class="dim" aria-hidden="true"><span>05</span></div>
+    <section class="sec reveal">
+      <div class="sec-rail"><div class="in"><span class="n">05</span> <span class="label">Finished</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">Two finished jobs. One went over.</h2>
+        <div class="projects">
+          <article class="pcard"><div class="ph" data-kitchen="4"></div><div class="bd">
+            <h3>1968 Burnaby split-level — kitchen and main bath</h3><p class="where">Burnaby · permit <span class="num">BP-2026-04418</span></p>
+            <dl class="six"><div><dt>Signed</dt><dd>$71,000</dd></div><div><dt>Final</dt><dd class="over">$74,400</dd></div><div><dt>Changes</dt><dd>2</dd></div><div><dt>Planned</dt><dd>11 wks</dd></div><div><dt>Actual</dt><dd class="over">13 wks</dd></div><div><dt>Over</dt><dd class="over">$3,400</dd></div></dl>
+            <p class="flag"><span class="status status--behind">Over by <span class="num">$3,400</span></span> — knob-and-tube in the ceiling, and a quartz upgrade the client asked for.</p>
+          </div></article>
+          <article class="pcard"><div class="ph"><div class="slot"><span>PHOTO SLOT · 3:2 · completed wide, Langley ensuite</span></div></div><div class="bd">
+            <h3>1991 Langley townhouse — two bathrooms</h3><p class="where">Langley · permit <span class="num">BP-26-01173</span></p>
+            <dl class="six"><div><dt>Signed</dt><dd>$46,000</dd></div><div><dt>Final</dt><dd>$45,200</dd></div><div><dt>Changes</dt><dd>1</dd></div><div><dt>Planned</dt><dd>7 wks</dd></div><div><dt>Actual</dt><dd>7 wks</dd></div><div><dt>Under</dt><dd>$800</dd></div></dl>
+            <p class="flag ok"><span class="status status--ontrack">On budget</span> — tile came in under allowance; we returned the difference.</p>
+          </div></article>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="dark on-dark">
+    <div class="wrap">
+      <section class="sec reveal">
+        <div class="sec-rail"><div class="in"><span class="n">06</span> <span class="label">Verify</span></div></div>
+        <div class="sec-body">
+          <h2 class="h2">Check us. Every number is printed.</h2>
+          <p class="intro">BC has no renovation licence to hold. So we publish the documents you can check yourself.</p>
+          <div class="checks">
+            <div><h3>Business registration</h3><p class="big">BC1428817</p><p>Stonecroft Renovation Ltd., British Columbia.</p><p class="v">verified 2026-10-01</p></div>
+            <div><h3>WorkSafeBC</h3><p class="big">Clearance letter</p><p>Issued <span class="num">2026-10-01</span>. Re-pulled monthly.</p><p class="v">verified 2026-10-01</p></div>
+            <div><h3>Liability insurance</h3><p class="big">$5,000,000</p><p>Policy <span class="num">CGL-0048817</span>, expires <span class="num">2027-06-30</span>.</p><p class="v">verified 2026-09-15</p></div>
+            <div><h3>Warranty</h3><p class="big">2 yrs · 5 yrs</p><p>Workmanship, and envelope of new work. Written terms.</p><p class="v">terms dated 2026-08-01</p></div>
+          </div>
+          <p style="margin-top:32px"><a class="btn btn--secondary" href="#">Download the licence &amp; insurance pack (PDF, 1.2 MB, Oct 2026)</a></p>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="sec-rail"><div class="in"><span class="n">07</span> <span class="label">Areas</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">Where we work.</h2>
+        <div class="chips"><a href="#">Vancouver</a><a href="#">North Vancouver</a><a href="#">West Vancouver</a><a href="#">Burnaby</a><a href="#">Richmond</a><a href="#">New Westminster</a><a href="#">Coquitlam</a><a href="#">Surrey</a><a href="#">Langley</a><a href="#">Abbotsford</a><a href="#">Chilliwack</a></div>
+      </div>
+    </section>
+
+    <div class="dim" aria-hidden="true"><span>08</span></div>
+    <section class="sec reveal" id="book">
+      <div class="sec-rail"><div class="in"><span class="n">08</span> <span class="label">Book</span></div></div>
+      <div class="sec-body">
+        <h2 class="h2">Book a site visit.</h2>
+        <div class="book">
+          <form class="form-grid" onsubmit="return false" novalidate>
+            <div class="field"><label for="f1">Name</label><input id="f1" type="text" autocomplete="name"></div>
+            <div class="field"><label for="f2">Phone</label><input id="f2" type="tel" inputmode="tel" autocomplete="tel"></div>
+            <div class="field"><label for="f3">Email</label><input id="f3" type="email" inputmode="email" autocomplete="email"></div>
+            <div class="field"><label for="f4">Municipality</label><select id="f4" autocomplete="address-level2"><option value="">Choose…</option><option>Vancouver</option><option>North Vancouver</option><option>Burnaby</option><option>Surrey</option><option>Langley</option></select></div>
+            <div class="field full"><label for="f5">What are you renovating?</label><select id="f5"><option>Kitchen</option><option>Bathroom</option><option>Whole home</option><option>Basement or suite</option><option>Exterior</option><option>Addition</option></select></div>
+            <label class="check full"><input type="checkbox" required> I agree to Stonecroft contacting me about this enquiry.</label>
+            <label class="check full"><input type="checkbox"> Send me the monthly build log summary.</label>
+            <div class="full"><button class="btn btn--primary submit">Request a site visit</button></div>
+          </form>
+          <aside class="next">
+            <p class="label" style="color:var(--r-slate)">What happens next</p>
+            <ol><li><span class="num">01</span><span>We call within one business day.</span></li><li><span class="num">02</span><span>We visit for <span class="num">60–90</span> minutes, usually within two to three weeks.</span></li><li><span class="num">03</span><span>You get a fixed-price proposal in <span class="num">5–10</span> business days.</span></li></ol>
+            <p style="margin-top:20px"><a class="btn btn--tertiary num" href="tel:+16045550142" style="font-size:1.25rem">604-555-0142</a></p>
+            <p style="font-size:var(--t-small);color:var(--r-slate);margin-top:8px">No obligation, no deposit, no pressure to decide on the day.</p>
+          </aside>
+        </div>
+      </div>
+    </section>
+  </div>
+</main>
+
+<footer class="ftr on-dark">
+  <div class="wrap">
+    <div class="cols">
+      <div><span class="mark"><i aria-hidden="true"></i><b>STONECROFT</b></span><p class="promise"><b style="color:var(--r-plaster)">Four things, every job.</b> A fixed scope and a fixed price before we start. A published weekly log — spend, schedule, and anything that went wrong. Every permit pulled, every number on this site checkable. One person who answers the phone, named before you sign.</p></div>
+      <div><h4>Services</h4><ul><li><a href="#">Kitchens</a></li><li><a href="#">Bathrooms</a></li><li><a href="#">Whole home</a></li><li><a href="#">Basements &amp; suites</a></li><li><a href="#">Siding &amp; cladding</a></li><li><a href="#">Windows &amp; doors</a></li><li><a href="#">Additions</a></li><li><a href="#">General contracting</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Process</a></li><li><a href="#">Pricing</a></li><li><a href="#">Build log</a></li><li><a href="#">Verify</a></li><li><a href="#">Journal</a></li><li><a href="#">Contact</a></li></ul></div>
+      <div><h4>Office</h4><div class="nap"><span>Unit 4, 3871 North Fraser Way<br>Burnaby, BC V5J 5G6</span><a class="num" href="tel:+16045550142">604-555-0142</a><a href="mailto:hello@stonecroft.ca">hello@stonecroft.ca</a><span>Mon–Fri <span class="num">07:30–17:00</span></span></div></div>
+    </div>
+    <div class="bar"><span>© <span class="num">2026</span> Stonecroft Renovation Ltd.</span><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Accessibility</a><span class="num">BC1428817 · WSBC 4471902</span></div>
+  </div>
+</footer>
+
+<div class="mbar"><a class="btn btn--primary" href="tel:+16045550142">Call</a><a class="btn btn--secondary" href="#book">Book a site visit</a></div>
+
+<script src="assets/kitchen.js"></script>
+<script src="assets/site.js"></script>
+<script>
+  const LEDGER = [
+    { wk: "00 of 11 planned", sp: "$0 of $71,000", pct: 0, st: ["ontrack", "on schedule"], note: "Deposit received. Temporary kitchen goes in on day one." },
+    { wk: "01 of 11 planned", sp: "$11,400 of $71,000", pct: 16, st: ["ontrack", "on schedule"], note: "Cabinets out. Subfloor sound. Sheeting up at the hall." },
+    { wk: "03 of 11 planned", sp: "$29,800 of $71,000", pct: 42, st: ["behind", "4 days behind"], note: "Knob-and-tube in the ceiling. Change order 01: $2,100." },
+    { wk: "06 of 11 planned", sp: "$52,100 of $71,000", pct: 73, st: ["behind", "2 days behind"], note: "Drywall closed. Two of the four days recovered." },
+    { wk: "13 — 2 weeks over", sp: "$74,400 of $71,000", pct: 100, st: ["complete", "stage complete"], note: "Over by $3,400. Both change orders explained in the log.", over: true },
+  ];
+  const $ = (id) => document.getElementById(id);
+  initSequence($("seq"), { uid: "h", pinHeight: () => $("seq").querySelector(".pin").offsetHeight, onStage(n) {
+    const s = KITCHEN_STAGES[n], l = LEDGER[n];
+    $("ro-wk").textContent = "WK " + s.wk;
+    $("ro-nm").innerHTML = s.name + (n === 2 ? " <span>· 4 days behind</span>" : n === 4 ? " <span>· over by $3,400</span>" : "");
+    $("lg-wk").textContent = l.wk; $("lg-sp").textContent = l.sp; $("lg-note").textContent = l.note;
+    $("lg-st").innerHTML = `<span class="status status--${l.st[0]}">${l.st[1]}</span>`;
+    $("lg-bar").style.setProperty("--spend", l.pct + "%"); $("lg-bar").classList.toggle("over", !!l.over);
+  }});
+  initCommon();
+</script>
+</body>
+</html>

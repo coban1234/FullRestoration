@@ -1,0 +1,19 @@
+---
+import { StatusMark } from "../StatusMark";
+import { money, pad2, type Project } from "../../data/projects";
+interface Props { project: Project; limit?: number }
+const { project: p, limit } = Astro.props;
+const entries = limit ? p.log.slice(-limit) : p.log;
+---
+<ol class="border-t border-char">
+  {entries.map((e) => (
+    <li class="border-b border-line">
+      <a href={`/projects/${p.slug}/log/week-${e.week}/`} class="group grid gap-x-6 gap-y-1.5 py-4 md:grid-cols-[90px_1fr_190px_120px] md:items-center">
+        <span class="font-mono text-[13px] text-slate">Week {pad2(e.week)}</span>
+        <span class="font-display text-[18px] font-medium leading-snug text-char group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4 md:text-[19px]">{e.title}</span>
+        <span>{e.gap ? <span class="font-mono text-[12px] text-slate">Gap noted</span> : <StatusMark status={e.status} label={e.statusLabel} />}</span>
+        <span class="font-mono text-[14px] text-char md:text-right">{money(e.spent)}</span>
+      </a>
+    </li>
+  ))}
+</ol>

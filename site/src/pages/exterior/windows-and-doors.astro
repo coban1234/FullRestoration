@@ -1,0 +1,73 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+import { pricingReviewed } from "../../data/site";
+
+const site = siteUrl(Astro.site);
+const faqs = [
+  { q: "How much does window replacement cost in Vancouver?", a: "<p>$1,000–$1,500 per window installed for a typical vinyl casement or slider. Large, custom-shaped or fibreglass units cost more.</p>" },
+  { q: "Full-frame or insert?", a: "<p>Insert is cheaper and faster but loses glass area and keeps the old frame. Full-frame costs more and lets us fix the flashing. If the old frame is sound and dry, insert can be the right call; we tell you which at the site visit.</p>" },
+  { q: "Do you repair glass or sealed units?", a: "<p>No. We replace windows as part of a renovation scope. For a fogged sealed unit or a broken pane, a glass repair specialist is the right call and much cheaper.</p>" },
+  { q: "How long does it take?", a: "<p>Ordering takes 4–10 weeks. Installation is usually 3–6 windows a day, with each opening closed the same day.</p>" },
+];
+const title = "Window Replacement Vancouver — $1,000–1,500 Per Window | Stonecroft";
+const description = "Window and door replacement across Vancouver and the Fraser Valley at $1,000–$1,500 per window installed. Full-frame and insert replacement explained.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Exterior", href: "/exterior/" }, { label: "Windows & doors" }]} schema={[serviceSchema(site, "Window and door replacement", description, "/exterior/windows-and-doors/", { low: 1000, high: 1500 }), faqSchema(faqs)]}>
+  <PageHero eyebrow="Exterior / Windows & doors" title="Window and door replacement" lede="<span class='font-mono text-char'>$1,000–$1,500</span> per window, installed. Flashed properly, so the new window is not the next leak.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Full-frame opening with sill pan and head flashing, before the unit goes in" />
+  </PageHero>
+
+  <Section id="cost" num="01" tab="Cost" title="What it costs" note="Ranges last reviewed and stated without GST.">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Window and door costs</caption>
+        <thead><tr><th scope="col">Item</th><th scope="col">Installed</th><th scope="col">Note</th></tr></thead>
+        <tbody>
+          <tr><td data-label="Item" class="font-display text-[18px] font-medium">Window — typical vinyl</td><td data-label="Installed" class="font-mono">$1,000 – $1,500 each</td><td data-label="Note" class="text-slate">Casement or slider, double-glazed, low-E</td></tr>
+          <tr><td data-label="Item" class="font-display text-[18px] font-medium">Window — large or fibreglass</td><td data-label="Installed" class="font-mono">$1,800 – $3,500 each</td><td data-label="Note" class="text-slate">Picture windows, triple glazing, fibreglass frames</td></tr>
+          <tr><td data-label="Item" class="font-display text-[18px] font-medium">Exterior door</td><td data-label="Installed" class="font-mono">$2,500 – $6,000</td><td data-label="Note" class="text-slate">Insulated fibreglass or steel, new frame and sill</td></tr>
+          <tr><td data-label="Item" class="font-display text-[18px] font-medium">Patio door</td><td data-label="Installed" class="font-mono">$4,000 – $9,000</td><td data-label="Note" class="text-slate">Sliding or hinged, 6'–8' wide</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-[15px]"><span class="font-medium">What pushes it to the top: </span>full-frame replacement on stucco, second-storey access, and custom sizes in older houses.</p>
+    <p class="mt-2 font-mono text-[12px] text-slate">Ranges last reviewed: {pricingReviewed} · All figures exclude 5% GST</p>
+  </Section>
+
+  <Section id="full-frame" num="02" tab="Method" title="Full-frame versus insert" tone="concrete">
+    <div class="grid gap-4 md:grid-cols-2">
+      <div class="chamfer border border-line bg-white p-6">
+        <h3 class="h3">Insert replacement</h3>
+        <p class="mt-1 font-mono text-[14px] text-slate">≈ $1,000 – $1,200 per window</p>
+        <ul class="mt-4 space-y-2 text-[15px] leading-relaxed">
+          <li>New unit fits inside the old frame; interior and exterior trim stay.</li>
+          <li>Loses 5–10% of glass area.</li>
+          <li>Cannot fix flashing or sill problems — they are still behind the old frame.</li>
+          <li>Right when the old frame is dry, sound and square.</li>
+        </ul>
+      </div>
+      <div class="chamfer border border-char bg-white p-6">
+        <h3 class="h3">Full-frame replacement</h3>
+        <p class="mt-1 font-mono text-[14px] text-slate">≈ $1,300 – $1,500+ per window</p>
+        <ul class="mt-4 space-y-2 text-[15px] leading-relaxed">
+          <li>Old window removed to the rough opening.</li>
+          <li>Sill pan, head flashing and air seal done to current practice.</li>
+          <li>Full glass area, better thermal performance at the frame.</li>
+          <li>Right when there is any sign of water, or when we are re-cladding anyway.</li>
+        </ul>
+      </div>
+    </div>
+    <p class="mt-6 max-w-[66ch] text-[15px] leading-relaxed text-slate">We replace windows as part of a renovation scope — new windows with new siding, or a window enlarged for a new kitchen. We do not repair glass or sealed units.</p>
+  </Section>
+
+  <Section id="faq" num="03" tab="FAQ" title="Window questions">
+    <FAQ items={faqs} />
+  </Section>
+  <CTABand />
+</Base>

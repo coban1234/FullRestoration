@@ -1,0 +1,177 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import RangeTable from "../../components/ui/RangeTable.astro";
+import Disruption from "../../components/ui/Disruption.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import KitchenFigure from "../../components/ui/KitchenFigure.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import LogList from "../../components/ui/LogList.astro";
+import { Hero } from "../../components/hero/Hero";
+import { BeforeAfter } from "../../components/BeforeAfter";
+import { FinishSelector } from "../../components/tools/FinishSelector";
+import { kitchenRanges } from "../../data/pricing";
+import { getProject, money } from "../../data/projects";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const kitchens = ["1968-burnaby-split-level-kitchen", "1957-vancouver-bungalow-kitchen", "1986-richmond-townhouse-kitchen"].map(getProject);
+const burnaby = kitchens[0];
+
+const stages = [
+  ["Pre-start & temporary kitchen", "Day 1", "Temporary kitchen set up. Rest of the house as normal."],
+  ["Demolition", "3–5 days", "Kitchen closed and sealed. Dust barriers on doorways. Noisy 08:00–16:00."],
+  ["Services rough-in", "1–2 weeks", "Power off for a few hours on one or two days, scheduled in advance."],
+  ["Inspection", "2–6 days", "Nothing changes for you; the municipality sets the date."],
+  ["Close-in", "1–2 weeks", "Drywall dust. Heating may be off in the kitchen zone."],
+  ["Cabinets & counters", "2–4 weeks", "Counters take 5–10 days from template to install."],
+  ["Finishes & snag", "1–2 weeks", "Kitchen usable from the middle of this stage; deficiency list closes it."],
+];
+
+const hides = [
+  ["Knob-and-tube wiring", "Common in houses built before 1950 and spliced into many built up to the late 1960s. Insurers increasingly refuse to cover it. Removal in a kitchen ceiling bay typically runs $1,800–$3,500."],
+  ["Galvanised steel supply", "Standard until the early 1970s. It corrodes from the inside and is usually found at the first elbow behind the sink. We replace it back to the main."],
+  ["Asbestos in levelling compound and drywall mud", "Found under linoleum and in textured ceilings in houses built before about 1990. It is tested before demolition, and abatement is done by a licensed contractor under WorkSafeBC rules."],
+  ["An undersized electrical panel", "60–100 amp services were normal into the 1970s. An induction range, a heat pump and an EV charger together need 200 amps."],
+  ["No range-hood venting", "Many older kitchens recirculate or vent into a cavity. The BC Building Code now requires exhaust to outside; that means a new penetration through the wall or roof."],
+];
+
+const faqs = [
+  { q: "How much does a kitchen renovation cost in Vancouver?", a: "<p>Between $28,000 and $120,000+, in three bands: builder finish $28,000–$42,000, mid-range $45,000–$70,000 and high-end $72,000–$120,000+. Layout changes, building age and cabinet quality move the number most. Our <a href=\"/pricing/estimator/\">budget estimator</a> gives you a range for your own house in two minutes.</p>" },
+  { q: "How long does it take?", a: "<p>Seven to twelve weeks on site for a medium kitchen, and 11–19 weeks from signing to finish once design and permits are included. Your kitchen is unusable for six to nine of those weeks. <a href=\"/process/schedule/medium-kitchen/\">See the stage-by-stage schedule</a>.</p>" },
+  { q: "Do I need a permit for a kitchen renovation?", a: "<p>Almost always, if any plumbing, electrical, gas or wall changes. Cabinet replacement alone with no service changes often does not — but it varies by municipality, so we confirm it with yours. We do not work without permits. <a href=\"/permits/\">How permits work here</a>.</p>" },
+  { q: "Can I stay in the house?", a: "<p>Yes. Almost every kitchen client stays home. We build a temporary kitchen on day one, seal the work area, and keep the rest of the house usable. Expect noise between 08:00 and 16:00 and a few scheduled hours without power.</p>" },
+  { q: "Can I move the sink or the stove?", a: "<p>Usually. Moving a sink more than a metre means new drain runs through the joists, typically $2,500–$9,000. Moving a gas range means a new gas line and permit. Keeping the footprint is the single biggest saving available.</p>" },
+  { q: "Who buys the appliances?", a: "<p>You do, and you get the retailer's warranty and any sale price directly. We give you the cut-out dimensions and a delivery date, receive them on site, and install them.</p>" },
+  { q: "What is a change order and when do they happen?", a: "<p>A written, signed change to the contract with its cost, its schedule impact in days, the reason, and who asked for it. They happen when you change your mind, or when we find something behind a wall. No work on a change proceeds until it is signed. Every one is published in the log. <a href=\"/process/#change-orders\">Our change-order policy</a>.</p>" },
+  { q: "What happens if you find knob-and-tube?", a: "<p>We stop, photograph it, and call you the same day. Removing it is a change order — in our <a href=\"/projects/1968-burnaby-split-level-kitchen/log/week-3/\">Burnaby kitchen</a> it was $2,100 and four days. On pre-1980 houses we carry a 12% contingency so this does not become a budget crisis.</p>" },
+  { q: "Do you do design, or do I need a designer?", a: "<p>We do layout and permit drawings in-house, budgeted at 5–8% of construction. If you want a full interior design service we work regularly with three independent designers and will introduce you; or bring your own.</p>" },
+  { q: "What is covered by your warranty?", a: "<p>Two years on workmanship and five years on the building envelope, in writing in the contract. Manufacturer warranties on cabinets, counters and appliances pass to you. <a href=\"/verify/\">Full warranty terms</a>.</p>" },
+];
+
+const title = "Kitchen Renovation Vancouver — Cost, Timeline & Permits | Stonecroft";
+const description = "Kitchen renovations in Vancouver and the Fraser Valley, $28,000 to $120,000+. Published costs, a 6–9 week disruption window, and a weekly log of every build.";
+---
+<Base
+  title={title}
+  description={description}
+  crumbs={[{ label: "Home", href: "/" }, { label: "Renovations", href: "/renovations/" }, { label: "Kitchens" }]}
+  schema={[serviceSchema(site, "Kitchen renovation", description, "/renovations/kitchens/", { low: 28000, high: 120000 }), faqSchema(faqs)]}
+>
+  <PageHero
+    eyebrow="Renovations / Kitchens"
+    title="Kitchen renovation in Vancouver and the Fraser Valley"
+    lede="<span class='font-mono text-char'>$28,000</span> to <span class='font-mono text-char'>$120,000+</span>. Six to nine weeks without a kitchen."
+  >
+    <KitchenFigure slot="art" stage={3} uid="khero" label="wk 06 · close-in" caption="Fig. 1 — Burnaby, 1968 · week 06 · drywall taped, floor protected. Not finished — this is what most of the job looks like." />
+  </PageHero>
+
+  <Section id="cost" num="01" tab="Cost" title="What a kitchen costs here" note="These are the ranges we actually contract at in this market.">
+    <RangeTable rows={kitchenRanges} caption="Kitchen renovation cost ranges" head={["Finish level", "Range", "What it buys"]} pushes="moving the sink or range, removing a wall, custom cabinetry, and a pre-1980 house that needs its wiring and supply replaced." />
+    <h3 class="h3 mt-12">What moves the number</h3>
+    <ul class="mt-4 grid gap-x-10 gap-y-3 text-[16px] md:grid-cols-2">
+      {[
+        ["Layout change", "+10–25%"],
+        ["Moving the sink more than a metre", "+$2,500–9,000"],
+        ["Removing a load-bearing wall", "+$8,000–25,000"],
+        ["Panel upgrade to 200 amps", "$3,000–9,000"],
+        ["Built before 1980", "12% contingency, not 8%"],
+        ["Condo or strata building", "+12–18%"],
+      ].map(([a, b]) => (
+        <li class="flex items-baseline justify-between gap-4 border-b border-line pb-3"><span>{a}</span><span class="shrink-0 font-mono text-[14px]">{b}</span></li>
+      ))}
+    </ul>
+    <p class="mt-6"><a href="/pricing/estimator/" class="link">Get a range for your kitchen</a></p>
+  </Section>
+
+  <Section id="disruption" num="02" tab="Disruption" title="What you lose, and for how long" tone="clay">
+    <div class="grid gap-8 lg:grid-cols-12 lg:items-start">
+      <div class="lg:col-span-7">
+        <Disruption label="Kitchen unusable: 6–9 weeks">
+          <p>That is the honest number for a medium kitchen. It starts the day demolition starts and ends in the middle of the finishes stage, when the sink and range are connected again.</p>
+        </Disruption>
+        <div class="prose-sc mt-8">
+          <p><strong>On day one we build you a temporary kitchen.</strong> A utility sink plumbed into the laundry line, your own fridge moved out of the way, a microwave, a two-burner induction plate and a counter on two base cabinets. Usually in the laundry room or garage. It is in every kitchen price; it is not an extra.</p>
+          <p>Dishwashing is in a utility sink for the duration. Plan to eat out more than you think — most clients tell us the second month is harder than the first.</p>
+        </div>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="The laundry-room temporary kitchen, Burnaby, week 01" caption="Temporary kitchen · utility sink, fridge, microwave, counter" />
+    </div>
+  </Section>
+
+  <Hero client:visible variant="embedded" />
+
+  <Section id="stages" num="04" tab="Stages" title="The seven stages" note="Durations for a medium kitchen. Your schedule is in the contract.">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Kitchen renovation stages with durations and what you can use</caption>
+        <thead><tr><th scope="col">Stage</th><th scope="col">Duration</th><th scope="col">What you can and cannot use</th></tr></thead>
+        <tbody>
+          {stages.map(([s, d, u]) => (
+            <tr><td data-label="Stage" class="font-display text-[18px] font-medium">{s}</td><td data-label="Duration" class="whitespace-nowrap font-mono">{d}</td><td data-label="In the house" class="text-slate">{u}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-5"><a href="/process/schedule/medium-kitchen/" class="link">The full medium-kitchen schedule</a> · <a href="/process/" class="link">How every job runs</a></p>
+  </Section>
+
+  <Section id="finishes" num="05" tab="Finishes" title="What “mid-range” actually means" tone="concrete" note="Allowances per item, the way the trade contracts. Mix levels row by row.">
+    <FinishSelector client:visible />
+    <p class="mt-5"><a href="/pricing/finishes/" class="link">Open the finish selector full-width</a></p>
+  </Section>
+
+  <Section id="hides" num="06" tab="Older houses" title="What older Vancouver kitchens hide" note="Named before you find them, which is why our contingency is credible.">
+    <ol class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {hides.map(([h, t], i) => (
+        <li class="bg-white p-6">
+          <span class="font-mono text-[12px] text-slate">{String(i + 1).padStart(2, "0")}</span>
+          <h3 class="mt-3 font-display text-[21px] font-medium leading-tight">{h}</h3>
+          <p class="mt-2 text-[15px] leading-relaxed text-slate">{t}</p>
+        </li>
+      ))}
+      <li class="bg-char p-6 text-plaster">
+        <p class="font-display text-[21px] font-medium leading-tight">That is why pre-1980 kitchens carry 12% contingency.</p>
+        <p class="mt-2 text-[15px] leading-relaxed text-mist">Shown as its own line, included in the total. <a href="/pricing/#contingency" class="text-plaster underline underline-offset-4">How contingency works</a></p>
+      </li>
+    </ol>
+  </Section>
+
+  <Section id="built" num="07" tab="Built" title="Three kitchens we built" tone="concrete" note="Signed price against final, planned weeks against actual.">
+    <div class="grid gap-12">
+      {kitchens.map((p, i) => (
+        <article class="grid gap-6 border-b border-line pb-12 last:border-b-0 last:pb-0 lg:grid-cols-12 lg:gap-10">
+          <div class="lg:col-span-7">
+            <BeforeAfter client:visible uid={`kba${i}`} before={{ stage: 0, label: `${p.short} before` }} after={{ stage: p.hero ?? 4, label: `${p.short} after` }} caption={`${p.municipality} · ${p.vintage} · same camera position, week 00 and handover`} />
+          </div>
+          <div class="lg:col-span-5">
+            <p class="text-[14px] text-slate">{p.municipality} · {p.building}</p>
+            <h3 class="mt-2 font-display text-[26px] font-medium leading-tight"><a href={`/projects/${p.slug}/`} class="hover:underline hover:underline-offset-4">{p.title}</a></h3>
+            <dl class="mt-5 grid grid-cols-2 border-l border-t border-line font-mono">
+              <div class="border-b border-r border-line bg-white p-3"><dt class="font-sans text-[12px] text-slate">Signed</dt><dd class="mt-1 text-[18px]">{money(p.signed)}</dd></div>
+              <div class="border-b border-r border-line bg-white p-3"><dt class="font-sans text-[12px] text-slate">Final</dt><dd class:list={["mt-1 text-[18px]", p.final! > p.signed && "text-clay-dk"]}>{money(p.final!)}</dd></div>
+              <div class="border-b border-r border-line bg-white p-3"><dt class="font-sans text-[12px] text-slate">Weeks planned</dt><dd class="mt-1 text-[18px]">{p.weeksPlanned}</dd></div>
+              <div class="border-b border-r border-line bg-white p-3"><dt class="font-sans text-[12px] text-slate">Weeks actual</dt><dd class:list={["mt-1 text-[18px]", p.weeksActual! > p.weeksPlanned && "text-clay-dk"]}>{p.weeksActual}</dd></div>
+            </dl>
+            <p class="mt-4 text-[15px] leading-relaxed text-slate">{p.differently.split(". ")[0]}.</p>
+            <a href={`/projects/${p.slug}/`} class="mt-3 inline-flex min-h-[44px] items-center text-[15px] font-medium text-clay-dk underline underline-offset-4">Case study and full log</a>
+          </div>
+        </article>
+      ))}
+    </div>
+  </Section>
+
+  <Section id="week-by-week" num="08" tab="Log" title="A kitchen, week by week" note={`Every entry from ${burnaby.short}, including the four weeks it ran late.`}>
+    <LogList project={burnaby} />
+    <p class="mt-6"><a href="/build-log/" class="btn-secondary w-full sm:w-auto">Every live job on the build log</a></p>
+  </Section>
+
+  <Section id="faq" num="09" tab="FAQ" title="Kitchen questions, answered" tone="concrete">
+    <FAQ items={faqs} />
+    <p class="mt-6 text-[15px] text-slate">Planning a bathroom in the same window? <a href="/renovations/bathrooms/" class="link">Bathroom renovation</a> · <a href="/permits/" class="link">Permits</a> · <a href="/pricing/" class="link">All pricing</a></p>
+  </Section>
+
+  <CTABand title="See your kitchen before we quote it." />
+</Base>

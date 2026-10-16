@@ -1,0 +1,119 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import RangeTable from "../../components/ui/RangeTable.astro";
+import Disruption from "../../components/ui/Disruption.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import { ScheduleView } from "../../components/tools/ScheduleView";
+import { wholeHomeRanges } from "../../data/pricing";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const faqs = [
+  { q: "How much does a whole-home renovation cost per square foot?", a: "<p>$150–$300 per square foot at mid-range, $250–$400+ at high-end. For a typical Metro Vancouver house that is $150,000 to $500,000+ in total.</p>" },
+  { q: "Can we live in the house during a gut renovation?", a: "<p>No. With services disconnected, walls open and abatement under way, the house is a construction site. Plan for 10–16 weeks elsewhere.</p>" },
+  { q: "Will the whole house have to meet current code?", a: "<p>Sometimes — it depends on how much of the building the work touches. See the section on code triggers below; we assess it before you sign.</p>" },
+  { q: "Should we renovate or sell and buy?", a: "<p>Sometimes selling is the right answer. The decision table on this page is the one we use with clients, and it does sometimes say \"don't\".</p>" },
+  { q: "How long does it take from first meeting to moving back in?", a: "<p>Twenty to forty weeks. Design and permits are 8–20 of those, and the municipality controls most of that time.</p>" },
+  { q: "Do you handle abatement?", a: "<p>Yes, through a licensed abatement contractor under WorkSafeBC regulations, with air clearance testing before our crew re-enters.</p>" },
+];
+const title = "Whole Home Renovation Vancouver — Cost Per Square Foot | Stonecroft";
+const description = "Whole-home renovations in Vancouver and the Fraser Valley at $150–$400 per square foot. Worked examples, a 10–16 week uninhabitable window, and a weekly log.";
+---
+<Base
+  title={title}
+  description={description}
+  crumbs={[{ label: "Home", href: "/" }, { label: "Renovations", href: "/renovations/" }, { label: "Whole home" }]}
+  schema={[serviceSchema(site, "Whole-home renovation", description, "/renovations/whole-home/", { low: 150000, high: 500000 }), faqSchema(faqs)]}
+>
+  <PageHero eyebrow="Renovations / Whole home" title="Whole-home renovation in Vancouver and the Fraser Valley" lede="<span class='font-mono text-char'>$150–$400</span> per square foot. Ten to sixteen weeks living somewhere else.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="1960s split-level taken back to studs, services disconnected, week 02" caption="Fig. 1 — a whole home at demolition" />
+  </PageHero>
+
+  <Section id="cost" num="01" tab="Cost" title="Why whole-home is priced per square foot" note="A per-square-foot number is meaningless until someone multiplies it. So here it is multiplied.">
+    <RangeTable rows={wholeHomeRanges} caption="Whole-home renovation cost ranges" head={["Level", "Range", "Note"]} pushes="moving walls and plumbing, a full rewire, structural work, and code upgrades triggered by the size of the renovation." />
+    <div class="chamfer mt-10 border border-char bg-white p-6 md:p-8">
+      <p class="eyebrow">Worked example</p>
+      <p class="mt-3 font-display text-[24px] font-medium leading-snug md:text-[30px]">A 2,100 sq ft 1968 Burnaby house, mid-range throughout:</p>
+      <p class="mt-3 font-mono text-[30px] text-char md:text-[44px]">$315,000 – $630,000</p>
+      <p class="mt-3 max-w-[64ch] text-[16px] leading-relaxed text-slate"><span class="font-mono text-char">2,100 × $150</span> to <span class="font-mono text-char">2,100 × $300</span>. The spread is the honest part: the low end keeps the layout and the kitchen location; the high end moves walls, replaces every service, and meets current energy code in the envelope.</p>
+    </div>
+  </Section>
+
+  <Section id="disruption" num="02" tab="Disruption" title="What you lose, and for how long" tone="clay">
+    <Disruption label="House uninhabitable: 10–16 weeks">
+      <p>Services off, walls open, abatement under negative air. Nobody lives in a house during a gut renovation, and anyone who says you can is planning to cut corners on dust and safety.</p>
+    </Disruption>
+  </Section>
+
+  <Section id="where-to-live" num="03" tab="Living" title="Where you live while we work" note="No competitor discusses it. Every client needs to budget for it.">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <p>Budget for it as a line item next to construction, because it is one. Our clients have done all of these:</p>
+        <ul>
+          <li><strong>Furnished monthly rental</strong> — $3,200–$5,500 a month in Metro Vancouver for a two- or three-bedroom. Book early; furnished stock is thin from June to September.</li>
+          <li><strong>Family</strong> — free in dollars. Most clients say it is the hardest option after week six.</li>
+          <li><strong>Moving into a secondary suite on the same property</strong> — possible only if the suite is on separate services and the work area is fully sealed. We assess it case by case.</li>
+          <li><strong>Storage</strong> — a 10'×15' unit runs $250–$400 a month. Two moves on a full house, $3,000–$6,000.</li>
+        </ul>
+        <p>On a 14-week job that is <span class="font-mono">$15,000–$30,000</span> outside our contract. We give you the move-out and move-in dates at signing, and we publish weekly so you know whether to extend the lease before you have to.</p>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="Moving day, packed boxes in the hall, week 00" />
+    </div>
+  </Section>
+
+  <Section id="code" num="04" tab="Code" title="When the code applies to the whole house" tone="concrete" note="The single most expensive surprise in whole-home work in BC, and the reason some projects double.">
+    <div class="prose-sc">
+      <p>Renovate a kitchen and the code applies to the kitchen. Renovate enough of the house and your municipality can require the <strong>whole building</strong> to be brought up to the current BC Building Code — or, in the City of Vancouver, the Vancouver Building By-law. The triggers vary, but these are the ones we see:</p>
+      <ul>
+        <li><strong>Scale of alteration</strong> — work affecting a large share of the floor area or of the building's value can be treated as substantially a new building.</li>
+        <li><strong>Change of use or occupancy</strong> — adding a secondary suite triggers fire separation, egress and ventilation requirements across both units.</li>
+        <li><strong>Structural alteration</strong> — new loads on old foundations can require seismic upgrades and engineer's letters of assurance for elements you were not touching.</li>
+        <li><strong>Envelope replacement</strong> — new windows and cladding can trigger current energy step code requirements for the assembly.</li>
+      </ul>
+      <p>We assess triggers before the proposal, with your municipality, and put the answer in writing. If your project is close to a threshold we will tell you, because sometimes the cheapest renovation is one that stays just below it.</p>
+    </div>
+  </Section>
+
+  <Section id="decide" num="05" tab="Decide" title="Gut it, or stay put?" note="This table will sometimes tell you not to do the project. That is the point of it.">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Gut renovation versus staying put</caption>
+        <thead><tr><th scope="col">If this is true</th><th scope="col">Lean towards</th><th scope="col">Why</th></tr></thead>
+        <tbody>
+          {[
+            ["Foundation is failing or the house is below the flood elevation", "Do not renovate", "Money spent above a bad foundation is money spent twice."],
+            ["Renovation cost exceeds ~70% of rebuild cost", "Rebuild or sell", "Past that line a new house is usually better value and a cleaner permit."],
+            ["You plan to sell within 3 years", "Targeted work only", "Whole-home renovations rarely return their cost on a short hold."],
+            ["Layout works, services are failing", "Gut renovation", "New wiring, plumbing and insulation in a plan you already like."],
+            ["You love the neighbourhood, lot is zoned for more", "Gut + addition", "Often cheaper than buying in the same area."],
+            ["Only one or two rooms bother you", "Stay put, do those rooms", "A kitchen and a bathroom fix most of what a gut renovation fixes for a fraction."],
+          ].map(([a, b, c]) => (
+            <tr><td data-label="If" class="font-display text-[17px] font-medium">{a}</td><td data-label="Lean towards" class="font-mono text-[14px]">{b}</td><td data-label="Why" class="text-slate">{c}</td></tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section id="schedule" num="06" tab="Schedule" title="A whole home, stage by stage" tone="concrete">
+    <ScheduleView initial="whole-home" headingLevel="h3" />
+  </Section>
+
+  <Section id="sequence" num="07" tab="Sequence" title="One whole home, five stages" note="Photographed from the same marked positions every week.">
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+      {["Before — 1968 living room", "Demolition — studs and subfloor", "Rough-in — new wiring and PEX", "Close-in — board and tape", "Complete — same camera position"].map((l) => (
+        <PhotoSlot ratio="aspect-[3/4]" label={l} />
+      ))}
+    </div>
+  </Section>
+
+  <Section id="faq" num="08" tab="FAQ" title="Whole-home questions, answered" tone="concrete">
+    <FAQ items={faqs} />
+  </Section>
+
+  <CTABand />
+</Base>

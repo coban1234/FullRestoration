@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en-CA" class="no-js">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Draft 02 · Site Board — Stonecroft</title>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  body { background: var(--r-char); color: var(--r-plaster); }
+  .hdr { position: sticky; top: 0; z-index: 50; height: var(--hdr); display: flex; align-items: center; gap: 24px; padding: 0 var(--pad); background: rgba(28,26,24,.92); border-bottom: 1px solid var(--r-char-lt); }
+  @supports (backdrop-filter: blur(1px)) { .hdr { backdrop-filter: blur(8px); } }
+  .mark { font-family: var(--font-display); font-weight: 600; font-size: 1.25rem; letter-spacing: -.01em; text-decoration: none; }
+  .mark span { color: var(--r-clay-br); }
+  .grow { flex: 1; }
+  .nav, .hdr .tel, .hdr .hbtn { display: none; }
+  .hdr .menu-btn { color: var(--r-plaster); }
+  @media (min-width: 900px) {
+    .nav { display: flex; gap: 22px; font-size: .9375rem; font-weight: 500; color: var(--r-mist); }
+    .nav a { text-decoration: none; } .nav a:hover { color: var(--r-plaster); }
+    .nav .live { color: var(--r-plaster); display: inline-flex; gap: 8px; align-items: center; }
+    .nav .live::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--r-ontrack-br); }
+    .hdr .tel { display: inline; font-family: var(--font-mono); font-size: .875rem; color: var(--r-mist); text-decoration: none; }
+    .hdr .hbtn { display: inline-flex; min-height: 44px; }
+  }
+
+  /* ===== hero: the live board ===== */
+  .seq { position: relative; min-height: 110vh; min-height: 110svh; }
+  @media (min-width: 900px) { .seq { min-height: 150vh; min-height: 150svh; } }
+  .pin { position: sticky; top: var(--hdr); height: calc(100vh - var(--hdr)); height: calc(100svh - var(--hdr)); display: flex; flex-direction: column; gap: 14px; padding: 14px var(--pad) 0; }
+  .toprow, .gsp { display: none; }
+  .main { display: contents; }
+  .frame { position: relative; flex: 1 1 auto; min-height: 120px; border-radius: 2px; overflow: hidden; border: 1px solid var(--r-char-lt); }
+  .frame .stage-stack { position: absolute; inset: 0; }
+  .frame .ov { position: absolute; inset: 0; background: linear-gradient(0deg, rgba(28,26,24,.85), rgba(28,26,24,0) 55%); }
+  .frame .cam { display: none; }
+  .bigwk { position: absolute; top: 0; right: 0; padding: 8px 12px 8px 16px; background: rgba(28,26,24,.85); font-family: var(--font-mono); font-weight: 500; font-size: 2.25rem; line-height: 1; letter-spacing: -.04em;
+    clip-path: polygon(10px 0, 100% 0, 100% 100%, 0 100%, 0 10px); }
+  .bigwk small { display: block; font-size: .625rem; letter-spacing: .14em; color: var(--r-mist); text-align: right; margin-top: 4px; }
+  .cap { position: absolute; left: 12px; right: 12px; bottom: 26px; display: flex; justify-content: space-between; align-items: end; gap: 12px; }
+  .cap .nm { font-family: var(--font-display); font-weight: 500; font-size: 1.25rem; letter-spacing: -.02em; line-height: 1; }
+  .cap .nt { display: none; }
+  .cap .sp { text-align: right; font-family: var(--font-mono); font-size: .75rem; color: var(--r-mist); white-space: nowrap; }
+  .cap .sp b { display: block; font-size: 1rem; font-weight: 500; color: var(--r-plaster); }
+  .cap .sp b.over { color: var(--r-clay-br); }
+  .cap .spl { display: none; }
+  @media (min-width: 900px) { .cap .spl { display: inline; } }
+  .wkstrip { position: absolute; left: 12px; right: 12px; bottom: 10px; height: 6px; display: grid; grid-template-columns: repeat(14, 1fr); gap: 2px; }
+  .wkstrip i { background: rgba(201,194,184,.25); }
+  .wkstrip i.on { background: var(--r-mist); } .wkstrip i.late { background: var(--r-clay-br); } .wkstrip i.done { background: var(--r-oak); }
+  .copy .eyebrow { display: none; }
+  .h1 { font-family: var(--font-display); font-weight: 600; font-size: var(--t-mega); line-height: .94; letter-spacing: -.03em; }
+  .h1 em { font-style: normal; color: var(--r-clay-br); }
+  .sub { margin-top: 10px; color: var(--r-mist); font-size: var(--t-lead); line-height: 1.5; max-width: 30rem; }
+  .copy .btn-row { margin-top: 16px; }
+  .gantt { display: none; }
+  .pips { display: flex; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--pad)); padding: 0 var(--pad); border-top: 1px solid var(--r-char-lt); flex: none; }
+  .pips::-webkit-scrollbar { display: none; }
+  .pip { all: unset; box-sizing: border-box; cursor: pointer; flex: none; display: inline-flex; align-items: center; gap: 8px; min-height: 52px; padding-right: 18px;
+    font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-mist); white-space: nowrap; }
+  .pip::before { content: ""; width: 8px; height: 8px; border: 1.5px solid currentColor; }
+  .pip.is-done { color: var(--r-plaster); } .pip.is-done::before { background: var(--r-mist); border-color: var(--r-mist); }
+  .pip.is-active { color: var(--r-clay-br); } .pip.is-active::before { background: var(--r-clay-br); border-color: var(--r-clay-br); }
+  .pip[data-seq-pip="4"].is-active { color: var(--r-oak); } .pip[data-seq-pip="4"].is-active::before { background: var(--r-oak); border-color: var(--r-oak); }
+  .pip:focus-visible { outline: 3px solid var(--r-plaster); outline-offset: -3px; }
+  .skip { position: absolute; top: 10px; left: 10px; z-index: 2; font-size: .8125rem; background: rgba(28,26,24,.8); padding: 4px 8px; border-radius: 2px; color: var(--r-plaster) !important; }
+  .is-static { min-height: 0 !important; } .is-static .pin { position: static; height: auto; padding-bottom: 48px; }
+  .is-static .frame, .is-static .pips, .is-static .gantt { display: none; }
+
+  @media (min-width: 900px) {
+    .pin { display: grid; grid-template-rows: auto 1fr auto auto; gap: 18px; padding: 22px var(--pad) 18px; }
+    .toprow { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); }
+    .toprow .rec { display: inline-flex; align-items: center; gap: 10px; } .toprow .rec::before { content: ""; width: 8px; height: 8px; border-radius: 50%; background: var(--r-clay-br); }
+    .main { display: grid; grid-template-columns: 5fr 7fr; gap: 48px; min-height: 0; }
+    .copy { display: flex; flex-direction: column; justify-content: flex-end; order: -1; }
+    .gsp { display: block; }
+    .copy .eyebrow { display: block; color: var(--r-mist); margin-bottom: 20px; }
+    .h1 { font-size: clamp(2.75rem, 5.2vw, 5.4rem); }
+    .sub { margin-top: 22px; } .copy .btn-row { margin-top: 30px; }
+    .frame { min-height: 0; }
+    .frame .cam { display: block; position: absolute; top: 14px; left: 14px; font-family: var(--font-mono); font-size: .75rem; background: rgba(28,26,24,.8); padding: 6px 10px; border-radius: 2px; color: var(--r-mist); }
+    .bigwk { font-size: clamp(3rem, 6vw, 6.5rem); padding: 14px 20px 12px 24px; clip-path: polygon(14px 0, 100% 0, 100% 100%, 0 100%, 0 14px); }
+    .cap { left: 20px; right: 20px; bottom: 18px; } .cap .nm { font-size: 2rem; } .cap .nt { display: block; font-size: var(--t-small); color: var(--r-mist); margin-top: 8px; max-width: 26rem; }
+    .cap .sp { font-size: var(--t-num-sm); } .cap .sp b { font-size: 1.5rem; }
+    .wkstrip { display: none; }
+    .skip { left: auto; right: var(--pad); top: 22px; background: none; padding: 0; }
+    .gantt { display: block; position: relative; border-top: 1px solid var(--r-char-lt); padding-top: 10px; }
+    .g-head, .g-row { display: grid; grid-template-columns: 150px repeat(14, 1fr); align-items: center; }
+    .g-head { font-family: var(--font-mono); font-size: .6875rem; color: var(--r-mist); opacity: .75; margin-bottom: 4px; }
+    .g-row { height: 16px; margin-bottom: 4px; }
+    .g-row .lbl { font-size: .75rem; color: var(--r-mist); white-space: nowrap; }
+    .g-row .bar { height: 9px; grid-row: 1; }
+    .bar.plan { border: 1px dashed rgba(201,194,184,.4); } .bar.act { background: #5a534c; } .bar.late { background: var(--r-clay); } .bar.done { background: var(--r-oak); }
+    .g-track { position: absolute; left: 150px; right: 0; top: 0; bottom: 0; pointer-events: none; }
+    .cursor { position: absolute; top: 0; bottom: -4px; left: calc(var(--wk, 0) / 14 * 100%); width: 2px; background: var(--r-plaster); }
+    .cursor::before { content: "TODAY"; position: absolute; top: -1px; left: 6px; font-family: var(--font-mono); font-size: .625rem; letter-spacing: .1em; color: var(--r-char); background: var(--r-plaster); padding: 1px 4px; }
+    .pips { display: grid; grid-template-columns: 150px repeat(14, 1fr); margin: 0; padding: 0; border: 0; overflow: visible; }
+    .pip { min-height: 28px; }
+  }
+
+  /* ===== sections ===== */
+  .sec { padding: var(--sec) 0; }
+  .shead { margin-bottom: 28px; }
+  .shead .n { font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); display: flex; gap: 8px; margin-bottom: 10px; }
+  .shead .n b { font-family: var(--font-body); font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-plaster); }
+  .shead h2 { font-family: var(--font-display); font-weight: 500; font-size: var(--t-h2); line-height: 1.08; letter-spacing: -.02em; }
+  .shead p { margin-top: 12px; color: var(--r-mist); max-width: 34rem; font-size: var(--t-lead); line-height: 1.55; }
+  .light { background: var(--r-plaster); color: var(--r-char); }
+  .light .shead .n { color: var(--r-slate); } .light .shead .n b { color: var(--r-char); } .light .shead p { color: var(--r-slate); }
+  @media (min-width: 900px) {
+    .shead { display: grid; grid-template-columns: 2fr 10fr; gap: 24px; margin-bottom: 48px; }
+    .shead .n { display: block; border-top: 1px solid var(--r-char-lt); padding-top: 12px; } .shead .n b { display: block; margin-top: 6px; }
+    .shead > div { border-top: 1px solid var(--r-char-lt); padding-top: 12px; }
+    .light .shead .n, .light .shead > div { border-color: var(--r-char); }
+    .shead p { margin-top: 16px; }
+  }
+
+  .promise { border-top: 1px solid var(--r-char); }
+  .promise li { display: grid; grid-template-columns: 64px 1fr; gap: 4px 12px; padding: 20px 0; border-bottom: 1px solid var(--r-line); }
+  .promise .k { grid-row: 1 / 3; font-family: var(--font-mono); font-size: 2rem; font-weight: 500; color: var(--r-clay); line-height: 1; }
+  .promise h3 { font-size: 1.125rem; font-weight: 700; line-height: 1.3; }
+  .promise p { color: var(--r-slate); font-size: var(--t-small); }
+  @media (min-width: 900px) {
+    .promise { display: grid; grid-template-columns: repeat(4, 1fr); }
+    .promise li { display: block; padding: 32px 28px 40px 0; border-bottom: 0; border-right: 1px solid var(--r-line); }
+    .promise li + li { padding-left: 28px; } .promise li:last-child { border-right: 0; }
+    .promise .k { font-size: var(--t-stat); } .promise h3 { margin-top: 40px; font-size: 1.25rem; } .promise p { margin-top: 8px; }
+  }
+
+  /* departures board — §3.6 stack pattern */
+  .board th { font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-mist); padding: 0 16px 12px 0; border-bottom: 1px solid var(--r-char-lt); }
+  .board td { padding: 18px 16px 18px 0; border-bottom: 1px solid var(--r-char-lt); vertical-align: middle; font-size: var(--t-small); }
+  .board td.rh b { display: block; font-weight: 700; font-size: 1.0625rem; }
+  .board td.rh span { color: var(--r-mist); font-weight: 400; font-size: var(--t-small); }
+  .board .wk { font-family: var(--font-mono); font-size: 1.75rem; font-weight: 500; letter-spacing: -.02em; }
+  .meter { width: 100%; max-width: 180px; height: 6px; background: var(--r-char-lt); position: relative; margin-top: 8px; }
+  .meter i { position: absolute; inset: 0 auto 0 0; background: var(--r-mist); }
+  .meter b { position: absolute; top: -3px; bottom: -3px; width: 2px; background: var(--r-clay-br); }
+  .board tr.delay { background: rgba(181,81,46,.14); }
+  .board tr.delay td:first-child { border-left: 3px solid var(--r-clay); }
+  .board td:first-child { padding-left: 16px; }
+  @media (max-width: 599px) {
+    .board tr { padding: 16px; margin-bottom: 8px; border: 1px solid var(--r-char-lt) !important; border-radius: 2px; }
+    .board tr.delay { border-left: 3px solid var(--r-clay) !important; }
+    .board td:first-child { padding-left: 0; border-left: 0 !important; }
+    .board .wk { font-size: 1.125rem; }
+  }
+  .feature { margin-top: 32px; border: 1px solid var(--r-char-lt); border-radius: 2px; overflow: hidden; }
+  .feature .ph { aspect-ratio: 16/10; }
+  .feature .bd { padding: 20px; background: var(--r-char-lt); display: flex; flex-direction: column; gap: 12px; }
+  .feature .lab { font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); }
+  .feature h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.625rem; letter-spacing: -.02em; line-height: 1.1; }
+  .feature p { color: var(--r-mist); font-size: var(--t-small); }
+  .co { border-top: 1px solid #3d3832; display: grid; }
+  .co div { display: grid; grid-template-columns: 56px 1fr auto; gap: 2px 12px; padding: 12px 0; border-bottom: 1px solid #3d3832; font-size: var(--t-small); }
+  .co .num { color: var(--r-mist); font-size: var(--t-num-sm); }
+  .co em { font-style: normal; grid-column: 2 / 4; color: var(--r-mist); font-size: .8125rem; }
+  @media (min-width: 900px) { .feature { display: grid; grid-template-columns: 7fr 5fr; margin-top: 48px; } .feature .ph { aspect-ratio: auto; min-height: 420px; } .feature .bd { padding: 36px; gap: 16px; } .feature h3 { font-size: 2rem; } }
+
+  .tiles { border-top: 1px solid var(--r-char); }
+  .tiles a { display: grid; grid-template-columns: 1fr auto; gap: 2px 16px; padding: 18px 0; border-bottom: 1px solid var(--r-line); text-decoration: none; }
+  .tiles h3 { font-family: var(--font-display); font-weight: 500; font-size: 1.375rem; letter-spacing: -.02em; line-height: 1.15; }
+  .tiles .num { font-size: var(--t-num-sm); color: var(--r-slate); align-self: center; text-align: right; }
+  .tiles p { grid-column: 1 / -1; font-size: var(--t-small); color: var(--r-slate); }
+  .tiles a:hover { background: var(--r-concrete); }
+  @media (min-width: 900px) {
+    .tiles { display: grid; grid-template-columns: repeat(4, 1fr); border-left: 1px solid var(--r-line); }
+    .tiles a { display: flex; flex-direction: column; padding: 28px 24px 32px; min-height: 210px; border-right: 1px solid var(--r-line); }
+    .tiles .num { text-align: left; order: -1; } .tiles h3 { margin-top: auto; font-size: 1.625rem; } .tiles p { margin-top: 8px; }
+  }
+
+  .ranges { display: grid; gap: 24px; }
+  .rg { display: grid; gap: 8px; }
+  .rg .s { font-weight: 700; font-size: 1.0625rem; } .rg .s small { display: block; font-weight: 400; font-size: var(--t-small); color: var(--r-mist); }
+  .rg .scale { position: relative; height: 28px; border-left: 1px solid #4a443d; border-right: 1px solid #4a443d; }
+  .rg .scale::before { content: ""; position: absolute; left: 0; right: 0; top: 50%; height: 1px; background: #4a443d; }
+  .rg .span { position: absolute; top: 7px; bottom: 7px; background: linear-gradient(90deg, var(--r-clay), var(--r-clay-br)); }
+  .rg .span.open::after { content: ""; position: absolute; right: -12px; top: 0; bottom: 0; width: 12px; background: repeating-linear-gradient(90deg, var(--r-clay-br) 0 2px, transparent 2px 4px); }
+  .rg .v { font-family: var(--font-mono); font-size: 1.125rem; }
+  .rg .ax { display: flex; justify-content: space-between; font-family: var(--font-mono); font-size: .6875rem; color: var(--r-mist); }
+  .pmeta { margin-top: 28px; display: flex; gap: 12px 24px; flex-wrap: wrap; align-items: center; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); }
+  @media (min-width: 900px) { .ranges { gap: 28px; } .rg { grid-template-columns: 200px 1fr 240px; gap: 4px 24px; align-items: center; } .rg .ax { grid-column: 2; grid-row: 2; } .rg .v { text-align: right; font-size: 1.25rem; } }
+
+  .jobs { display: grid; gap: 20px; }
+  .job { border: 1px solid var(--r-line); background: var(--r-white); border-radius: 2px; }
+  .job .ph { aspect-ratio: 16/9; }
+  .job .bd { padding: 20px; }
+  .job h3 { font-size: 1.1875rem; font-weight: 700; line-height: 1.3; } .job .where { color: var(--r-slate); font-size: var(--t-small); margin-top: 4px; }
+  .cmp { margin-top: 20px; display: grid; gap: 12px; }
+  .cmp .r { display: grid; grid-template-columns: 64px 1fr 96px; gap: 10px; align-items: center; font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-slate); }
+  .cmp .b { height: 12px; background: var(--r-concrete); position: relative; }
+  .cmp .b i { position: absolute; inset: 0 auto 0 0; background: var(--r-char); } .cmp .b i.over { background: var(--r-clay); } .cmp .b i.ok { background: var(--r-ontrack); }
+  .cmp .v { font-family: var(--font-mono); font-size: .875rem; letter-spacing: 0; text-transform: none; color: var(--r-char); text-align: right; }
+  .cmp .v.over { color: var(--r-clay-dk); }
+  .cmp hr { border: 0; height: 1px; background: var(--r-line); margin: 4px 0; }
+  .verdict { margin-top: 18px; padding: 12px 14px; background: var(--r-clay-tn); font-size: var(--t-small); border-radius: 2px; line-height: 1.5; }
+  .verdict.ok { background: var(--r-ontrack-lt); }
+  @media (min-width: 900px) { .jobs { grid-template-columns: 1fr 1fr; gap: 24px; } .job .bd { padding: 28px; } }
+
+  .docs { display: grid; gap: 12px; }
+  .doc { background: var(--r-char-lt); padding: 20px; display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; align-items: start; }
+  .doc .t { font-size: .6875rem; letter-spacing: .14em; text-transform: uppercase; font-weight: 500; color: var(--r-mist); grid-column: 1 / -1; }
+  .doc .big { font-family: var(--font-mono); font-size: 1.25rem; margin-top: 6px; }
+  .doc p { color: var(--r-mist); font-size: var(--t-small); grid-column: 1; }
+  .stamp { grid-column: 2; grid-row: 2 / 4; align-self: center; border: 1.5px solid var(--r-ontrack-br); color: var(--r-ontrack-br); font-family: var(--font-mono); font-size: .6875rem; padding: 6px 8px; transform: rotate(-4deg); border-radius: 2px; text-align: center; line-height: 1.3; }
+  .docs-dl .btn { white-space: normal; text-align: left; padding: 12px 20px; }
+  @media (min-width: 900px) { .docs { grid-template-columns: repeat(4, 1fr); gap: 16px; } .doc { display: flex; flex-direction: column; min-height: 260px; padding: 24px; } .doc .big { font-size: 1.5rem; margin-top: 16px; } .doc p { margin-top: 8px; } .stamp { margin-top: auto; align-self: flex-start; } }
+
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chips a { min-height: 48px; display: inline-flex; align-items: center; padding: 0 16px; border: 1px solid var(--r-line-strong); border-radius: 2px; text-decoration: none; font-weight: 500; }
+  .chips a:hover { border-color: var(--r-char); background: var(--r-concrete); }
+  .bookgrid { display: grid; gap: 32px; }
+  .bookgrid .big { font-family: var(--font-display); font-weight: 600; font-size: var(--t-h1); line-height: 1.02; letter-spacing: -.025em; }
+  .steps { margin-top: 24px; border-top: 1px solid var(--r-line); }
+  .steps li { display: grid; grid-template-columns: 44px 1fr; padding: 14px 0; border-bottom: 1px solid var(--r-line); font-size: var(--t-small); }
+  .steps .num { color: var(--r-clay-dk); }
+  .formcard { background: var(--r-white); border: 1px solid var(--r-line); padding: 20px; border-radius: 2px; }
+  @media (min-width: 900px) { .bookgrid { grid-template-columns: 5fr 7fr; gap: 64px; } .formcard { padding: 32px; } }
+
+  .ftr { padding: 64px 0 24px; border-top: 1px solid var(--r-char-lt); }
+  .ftr .cols { display: grid; gap: 32px; font-size: var(--t-small); }
+  .ftr h4 { font-size: var(--t-label); letter-spacing: .14em; text-transform: uppercase; color: var(--r-mist); font-weight: 500; margin-bottom: 8px; }
+  .ftr ul a { display: flex; align-items: center; min-height: 44px; text-decoration: none; border-bottom: 1px solid var(--r-char-lt); }
+  .ftr .pf { color: var(--r-mist); margin-top: 14px; max-width: 38ch; }
+  .ftr .bar { margin-top: 48px; padding-top: 20px; border-top: 1px solid var(--r-char-lt); display: flex; gap: 12px 24px; flex-wrap: wrap; font-family: var(--font-mono); font-size: var(--t-num-sm); color: var(--r-mist); }
+  @media (min-width: 600px) { .ftr .cols { grid-template-columns: 1fr 1fr; } }
+  @media (min-width: 900px) { .ftr { padding-top: 80px; } .ftr .cols { grid-template-columns: 4fr 2fr 2fr 3fr; gap: 48px; } .ftr ul a { min-height: 32px; border: 0; } }
+  .draft-tag { background: var(--r-clay); color: var(--r-white); }
+</style>
+</head>
+<body class="on-dark">
+<a class="skip-main" href="#main">Skip to main content</a>
+<a class="draft-tag" href="index.html">02 · Site Board ↩</a>
+
+<header class="hdr">
+  <a class="mark" href="#">Stonecroft<span>.</span></a>
+  <nav class="nav" aria-label="Primary"><a href="#">Renovations ▾</a><a href="#">Exterior ▾</a><a href="#">Pricing</a><a href="#">Projects</a><a href="#" class="live">Build log</a><a href="#">Verify</a></nav>
+  <span class="grow"></span>
+  <a class="tel" href="tel:+16045550142">604-555-0142</a>
+  <a class="btn btn--secondary hbtn" href="#book">Book a site visit</a>
+  <button class="menu-btn" data-drawer-btn aria-expanded="false" aria-controls="drawer"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M3 7h18M3 12h18M3 17h18"/></svg>Menu</button>
+</header>
+
+<div class="drawer" id="drawer" hidden>
+  <div class="d-top"><span class="mark">Stonecroft<span style="color:var(--r-clay)">.</span></span><button class="menu-btn" data-drawer-close>Close</button></div>
+  <nav aria-label="Mobile">
+    <p class="d-group">On site now</p><a href="#">Build log <span class="status status--behind">1 late</span></a>
+    <p class="d-group">Renovations</p><a href="#">Kitchens <span class="num">$28k–$120k+</span></a><a href="#">Bathrooms <span class="num">$20k–$40k+</span></a><a href="#">Whole home <span class="num">$150–$400/sq ft</span></a><a href="#">Basements &amp; suites <span class="num">$50–$150/sq ft</span></a>
+    <p class="d-group">Exterior</p><a href="#">Siding &amp; cladding</a><a href="#">Windows &amp; doors</a><a href="#">Decks &amp; outdoor</a>
+    <p class="d-group">Stonecroft</p><a href="#">Pricing</a><a href="#">Projects</a><a href="#">Verify</a><a href="#">About</a>
+  </nav>
+  <div class="d-foot"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="tel:+16045550142" style="color:var(--r-char);border-color:var(--r-char)">Call 604-555-0142</a></div>
+</div>
+
+<main id="main">
+  <section class="seq" data-seq-track id="seq" aria-label="Kitchen renovation, five construction stages">
+    <div class="pin">
+      <div class="toprow"><span class="rec">JOB 2026-014 · 1968 Burnaby split-level · kitchen · published weekly from 2026-07-06</span></div>
+      <a class="skip btn--tertiary" href="#s01">Skip to content</a>
+      <div class="main">
+        <div class="frame">
+          <div class="stage-stack" data-seq-stack></div>
+          <div class="ov"></div>
+          <span class="cam">CAM 01 · tripod mark A · 24mm · 1.5 m</span>
+          <div class="bigwk" aria-hidden="true"><span id="bw">00</span><small>WEEK</small></div>
+          <div class="cap"><div><div class="nm" id="nm">Before</div><p class="nt" id="nt"></p></div><div class="sp"><span class="spl">SPENT / <span class="num">$71,000</span></span><b id="sp">$0</b><span id="st" class="status status--ontrack">on schedule</span></div></div>
+          <div class="wkstrip" aria-hidden="true" id="wkstrip"></div>
+        </div>
+        <div class="copy">
+          <p class="eyebrow label">Renovation &amp; general contracting · Vancouver + Fraser Valley</p>
+          <h1 class="h1">See what week <em>three</em> actually looks like.</h1>
+          <p class="sub">Full interior and exterior renovation, Vancouver and the Fraser Valley. Fixed price. Published weekly.</p>
+          <div class="btn-row"><a class="btn btn--primary" href="#book">Book a site visit</a><a class="btn btn--secondary" href="#">Get a budget range</a></div>
+        </div>
+      </div>
+      <div class="gantt" aria-hidden="true">
+        <div class="g-head"><span></span><span>00</span><span>01</span><span>02</span><span>03</span><span>04</span><span>05</span><span>06</span><span>07</span><span>08</span><span>09</span><span>10</span><span>11</span><span>12</span><span>13</span></div>
+        <div class="g-row"><span class="lbl">Demolition</span><span class="bar done" style="grid-column: 3 / 4"></span></div>
+        <div class="g-row"><span class="lbl">Services rough-in</span><span class="bar plan" style="grid-column: 4 / 6"></span><span class="bar late" style="grid-column: 4 / 7"></span></div>
+        <div class="g-row"><span class="lbl">Close-in</span><span class="bar act" style="grid-column: 7 / 9"></span></div>
+        <div class="g-row"><span class="lbl">Cabinets &amp; counters</span><span class="bar act" style="grid-column: 9 / 12"></span></div>
+        <div class="g-row"><span class="lbl">Finishes &amp; snag</span><span class="bar plan" style="grid-column: 11 / 13"></span><span class="bar late" style="grid-column: 12 / 16; opacity:.85"></span></div>
+        <div class="g-track"><span class="cursor"></span></div>
+      </div>
+      <nav aria-label="Construction stages" class="pips" data-rail-scroll>
+        <span class="gsp" aria-hidden="true"></span>
+        <button class="pip" data-seq-pip="0" style="grid-column:2">Before · <span class="num">00</span></button>
+        <button class="pip" data-seq-pip="1" style="grid-column:3">Demolition · <span class="num">01</span></button>
+        <button class="pip" data-seq-pip="2" style="grid-column:5">Services · <span class="num">03</span></button>
+        <button class="pip" data-seq-pip="3" style="grid-column:8">Close-in · <span class="num">06</span></button>
+        <button class="pip" data-seq-pip="4" style="grid-column:14">Complete · <span class="num">13</span></button>
+      </nav>
+      <div data-seq-static></div>
+      <div class="visually-hidden" aria-live="polite" data-seq-live></div>
+    </div>
+  </section>
+
+  <div class="light on-light">
+    <div class="wrap">
+      <section class="sec reveal" id="s01">
+        <div class="shead"><div class="n">01<b>The promise</b></div><div><h2>Four things, every job.</h2></div></div>
+        <ol class="promise">
+          <li><span class="k">01</span><h3>A fixed price</h3><p>A fixed scope and a fixed price, signed before we start.</p></li>
+          <li><span class="k">02</span><h3>A weekly log</h3><p>Every Friday: spend, schedule, and anything that went wrong.</p></li>
+          <li><span class="k">03</span><h3>Every permit</h3><p>Every permit pulled. Every number on this site checkable.</p></li>
+          <li><span class="k">04</span><h3>One person</h3><p>One person who answers the phone, named before you sign.</p></li>
+        </ol>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="shead"><div class="n">02<b>On site now</b></div><div><h2>This week on site.</h2><p>Every active job, posted Friday <span class="num">2026-10-16</span>. The late one is listed first.</p></div></div>
+      <table class="t-stack board">
+        <thead><tr><th scope="col">Project</th><th scope="col">Week</th><th scope="col">Stage</th><th scope="col">Status</th><th scope="col">Spent of signed</th><th scope="col">Next</th></tr></thead>
+        <tbody>
+          <tr class="delay"><td class="rh"><b>1972 Coquitlam rancher</b><span>Kitchen · 2 change orders</span></td><td class="wk" data-label="Week">06</td><td data-label="Stage">Services rough-in</td><td data-label="Status"><span class="status status--behind">4 days behind</span></td><td data-label="Spent"><span><span class="num">$48,200</span> / <span class="num">$71,000</span><span class="meter"><i style="width:68%"></i><b style="left:55%"></b></span></span></td><td data-label="Next"><span>Insulation, wk <span class="num">07</span> · <a class="btn btn--tertiary" href="#">Read week 06 →</a></span></td></tr>
+          <tr><td class="rh"><b>1974 North Vancouver</b><span>Main bathroom · 0 change orders</span></td><td class="wk" data-label="Week">03</td><td data-label="Stage">Demolition</td><td data-label="Status"><span class="status status--ontrack">on schedule</span></td><td data-label="Spent"><span><span class="num">$9,800</span> / <span class="num">$31,500</span><span class="meter"><i style="width:31%"></i><b style="left:33%"></b></span></span></td><td data-label="Next"><span>Membrane, wk <span class="num">04</span> · <a class="btn btn--tertiary" href="#">Read week 03 →</a></span></td></tr>
+          <tr><td class="rh"><b>1989 Langley</b><span>Legal basement suite · 1 change order</span></td><td class="wk" data-label="Week">11</td><td data-label="Stage">Close-in</td><td data-label="Status"><span class="status status--complete">stage complete</span></td><td data-label="Spent"><span><span class="num">$96,300</span> / <span class="num">$98,000</span><span class="meter"><i style="width:98%"></i><b style="left:92%"></b></span></span></td><td data-label="Next"><span>Finishes, wk <span class="num">12</span> · <a class="btn btn--tertiary" href="#">Read week 11 →</a></span></td></tr>
+        </tbody>
+      </table>
+      <article class="feature" aria-labelledby="fe">
+        <div class="ph" data-kitchen="2"></div>
+        <div class="bd">
+          <span class="lab">WEEK 06 · 2026-10-12 → 10-16 · Coquitlam</span>
+          <span class="status status--behind">4 days behind</span>
+          <h3 id="fe">Knob-and-tube above the kitchen ceiling.</h3>
+          <p>The panel upgrade opened a run we had not priced. We stopped, photographed it, and priced the replacement before touching it.</p>
+          <div class="co">
+            <div><span class="num">CO-01</span><span>Ceiling rewire, 3 circuits</span><span class="num">$2,100</span><em>contractor-identified</em></div>
+            <div><span class="num">CO-02</span><span>Undercabinet lighting</span><span class="num">$640</span><em>client-requested</em></div>
+          </div>
+          <a class="btn btn--tertiary" href="#">Read week 06 in full →</a>
+        </div>
+      </article>
+      <p style="margin-top:24px"><a class="btn btn--tertiary" href="#">See the live build log →</a></p>
+    </section>
+  </div>
+
+  <div class="light on-light">
+    <div class="wrap">
+      <section class="sec reveal">
+        <div class="shead"><div class="n">03<b>Services</b></div><div><h2>What we build.</h2></div></div>
+        <div class="tiles">
+          <a href="#"><span class="num">$28k – $120k+</span><h3>Kitchens</h3><p>Six to nine weeks without a kitchen. A temporary one on day one.</p></a>
+          <a href="#"><span class="num">$20k – $40k+</span><h3>Bathrooms</h3><p>Waterproofing photographed before tile.</p></a>
+          <a href="#"><span class="num">$150 – $400 / sq ft</span><h3>Whole home</h3><p>Gut renovations of 1950s–1980s houses.</p></a>
+          <a href="#"><span class="num">$50 – $150 / sq ft</span><h3>Basements &amp; suites</h3><p>Legal suites, by municipality.</p></a>
+          <a href="#"><span class="num">5 materials</span><h3>Siding &amp; cladding</h3><p>Over a real rainscreen.</p></a>
+          <a href="#"><span class="num">$1,000 – $1,500 ea</span><h3>Windows &amp; doors</h3><p>Full-frame or insert, priced.</p></a>
+          <a href="#"><span class="num">15% contingency</span><h3>Additions</h3><p>Second storeys, load-bearing walls.</p></a>
+          <a href="#"><span class="num">strata · commercial</span><h3>General contracting</h3><p>Council-ready weekly reports.</p></a>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="shead"><div class="n">04<b>Pricing</b></div><div><h2>What it costs.</h2><p>These are the ranges we actually contract at in this market. Your range depends on scope, finish and what the building is hiding.</p></div></div>
+      <div class="ranges">
+        <div class="rg"><div class="s">Kitchen<small>builder → high-end</small></div><div class="scale"><span class="span open" style="left:23%;right:4%"></span></div><div class="v">$28,000 – $120,000+</div><div class="ax"><span>$0</span><span>$60k</span><span>$120k</span></div></div>
+        <div class="rg"><div class="s">Bathroom<small>standard 5'×8' → luxury</small></div><div class="scale"><span class="span open" style="left:16.6%;right:66.6%"></span></div><div class="v">$20,000 – $40,000+</div><div class="ax"><span>$0</span><span>$60k</span><span>$120k</span></div></div>
+        <div class="rg"><div class="s">Whole home<small>mid-range → high-end</small></div><div class="scale"><span class="span open" style="left:33.3%;right:15%"></span></div><div class="v">$150 – $400+ / sq ft</div><div class="ax"><span>$0</span><span>$225</span><span>$450 / sq ft</span></div></div>
+        <div class="rg"><div class="s">Basement<small>finish → legal suite +15–30%</small></div><div class="scale"><span class="span" style="left:11%;right:66.6%"></span></div><div class="v">$50 – $150 / sq ft</div><div class="ax"><span>$0</span><span>$225</span><span>$450 / sq ft</span></div></div>
+      </div>
+      <div class="pmeta"><span>RANGES LAST REVIEWED 2026-10-14</span><span>EXCLUDE 5% GST</span><a class="btn btn--secondary" href="#">Get a budget range</a></div>
+    </section>
+  </div>
+
+  <div class="light on-light">
+    <div class="wrap">
+      <section class="sec reveal">
+        <div class="shead"><div class="n">05<b>Finished</b></div><div><h2>Two finished jobs. Signed against final.</h2></div></div>
+        <div class="jobs">
+          <article class="job"><div class="ph" data-kitchen="4"></div><div class="bd">
+            <h3>1968 Burnaby split-level — kitchen and main bath</h3><p class="where">Burnaby · permit <span class="num">BP-2026-04418</span> · 2 change orders</p>
+            <div class="cmp">
+              <div class="r">Signed<span class="b"><i style="width:95.4%"></i></span><span class="v">$71,000</span></div>
+              <div class="r">Final<span class="b"><i class="over" style="width:100%"></i></span><span class="v over">$74,400</span></div>
+              <hr>
+              <div class="r">Planned<span class="b"><i style="width:84.6%"></i></span><span class="v">11 wks</span></div>
+              <div class="r">Actual<span class="b"><i class="over" style="width:100%"></i></span><span class="v over">13 wks</span></div>
+            </div>
+            <p class="verdict"><span class="status status--behind">Over by <span class="num">$3,400</span></span> — knob-and-tube in the ceiling (<span class="num">$2,100</span>, ours to find) and a quartz upgrade (<span class="num">$1,300</span>, client-requested).</p>
+          </div></article>
+          <article class="job"><div class="ph"><div class="slot"><span>PHOTO SLOT · 16:9 · Langley ensuite, completed</span></div></div><div class="bd">
+            <h3>1991 Langley townhouse — two bathrooms</h3><p class="where">Langley · permit <span class="num">BP-26-01173</span> · 1 change order</p>
+            <div class="cmp">
+              <div class="r">Signed<span class="b"><i style="width:100%"></i></span><span class="v">$46,000</span></div>
+              <div class="r">Final<span class="b"><i class="ok" style="width:98.2%"></i></span><span class="v">$45,200</span></div>
+              <hr>
+              <div class="r">Planned<span class="b"><i style="width:100%"></i></span><span class="v">7 wks</span></div>
+              <div class="r">Actual<span class="b"><i class="ok" style="width:100%"></i></span><span class="v">7 wks</span></div>
+            </div>
+            <p class="verdict ok"><span class="status status--ontrack">Under by <span class="num">$800</span></span> — tile came in under allowance; the difference went back to the client.</p>
+          </div></article>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <section class="sec reveal">
+      <div class="shead"><div class="n">06<b>Verify</b></div><div><h2>Check us. We would.</h2><p>BC has no renovation licence. So every claim below has a document, a number and a date.</p></div></div>
+      <div class="docs">
+        <div class="doc chamfer-solo"><span class="t">Business registration</span><span class="big">BC1428817</span><p>Stonecroft Renovation Ltd.</p><span class="stamp">VERIFIED<br>2026-10-01</span></div>
+        <div class="doc chamfer-solo"><span class="t">WorkSafeBC</span><span class="big">Clearance letter</span><p>Issued <span class="num">2026-10-01</span>, re-pulled monthly.</p><span class="stamp">VERIFIED<br>2026-10-01</span></div>
+        <div class="doc chamfer-solo"><span class="t">Liability</span><span class="big">$5,000,000</span><p>Policy <span class="num">CGL-0048817</span>, to <span class="num">2027-06-30</span>.</p><span class="stamp">VERIFIED<br>2026-09-15</span></div>
+        <div class="doc chamfer-solo"><span class="t">Warranty</span><span class="big">2 yrs · 5 yrs</span><p>Workmanship and envelope of new work.</p><span class="stamp">TERMS<br>2026-08-01</span></div>
+      </div>
+      <p class="docs-dl" style="margin-top:28px"><a class="btn btn--secondary" href="#">Download the licence &amp; insurance pack (PDF, 1.2 MB, Oct 2026)</a></p>
+    </section>
+  </div>
+
+  <div class="light on-light">
+    <div class="wrap">
+      <section class="sec reveal">
+        <div class="shead"><div class="n">07<b>Areas</b></div><div><h2>Where we work.</h2></div></div>
+        <div class="chips"><a href="#">Vancouver</a><a href="#">North Vancouver</a><a href="#">West Vancouver</a><a href="#">Burnaby</a><a href="#">Richmond</a><a href="#">New Westminster</a><a href="#">Coquitlam</a><a href="#">Surrey</a><a href="#">Langley</a><a href="#">Abbotsford</a><a href="#">Chilliwack</a></div>
+      </section>
+      <section class="sec reveal" id="book" style="padding-top:0">
+        <div class="shead"><div class="n">08<b>Book</b></div><div></div></div>
+        <div class="bookgrid">
+          <div><p class="big">Book a site visit.</p>
+            <ol class="steps"><li><span class="num">01</span><span>We call within one business day.</span></li><li><span class="num">02</span><span>We visit for <span class="num">60–90</span> minutes, usually within two to three weeks.</span></li><li><span class="num">03</span><span>A fixed-price proposal in <span class="num">5–10</span> business days.</span></li></ol>
+            <p style="margin-top:16px;color:var(--r-slate);font-size:var(--t-small)">No obligation, no deposit, no pressure to decide on the day.</p></div>
+          <div class="formcard"><form class="form-grid" onsubmit="return false" novalidate>
+            <div class="field"><label for="a1">Name</label><input id="a1" type="text" autocomplete="name"></div>
+            <div class="field"><label for="a2">Phone</label><input id="a2" type="tel" inputmode="tel" autocomplete="tel"></div>
+            <div class="field"><label for="a3">Email</label><input id="a3" type="email" inputmode="email" autocomplete="email"></div>
+            <div class="field"><label for="a4">Municipality</label><select id="a4" autocomplete="address-level2"><option value="">Choose…</option><option>Vancouver</option><option>Burnaby</option><option>Coquitlam</option><option>Surrey</option><option>Langley</option></select></div>
+            <div class="field full"><label for="a5">What are you renovating?</label><select id="a5"><option>Kitchen</option><option>Bathroom</option><option>Whole home</option><option>Basement or suite</option><option>Exterior</option><option>Addition</option></select></div>
+            <label class="check full"><input type="checkbox" required> I agree to Stonecroft contacting me about this enquiry.</label>
+            <label class="check full"><input type="checkbox"> Send me the monthly build log summary.</label>
+            <div class="full"><button class="btn btn--primary submit">Request a site visit</button></div>
+          </form></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+
+<footer class="ftr">
+  <div class="wrap">
+    <div class="cols">
+      <div><span class="mark">Stonecroft<span>.</span></span><p class="pf"><b style="color:var(--r-plaster)">Four things, every job.</b> A fixed scope and a fixed price before we start. A published weekly log — spend, schedule, and anything that went wrong. Every permit pulled, every number on this site checkable. One person who answers the phone, named before you sign.</p></div>
+      <div><h4>Services</h4><ul><li><a href="#">Kitchens</a></li><li><a href="#">Bathrooms</a></li><li><a href="#">Whole home</a></li><li><a href="#">Basements &amp; suites</a></li><li><a href="#">Exterior</a></li><li><a href="#">Additions</a></li><li><a href="#">General contracting</a></li></ul></div>
+      <div><h4>Company</h4><ul><li><a href="#">About</a></li><li><a href="#">Process</a></li><li><a href="#">Pricing</a></li><li><a href="#">Build log</a></li><li><a href="#">Verify</a></li><li><a href="#">Journal</a></li></ul></div>
+      <div><h4>Office</h4><p style="color:var(--r-mist)">Unit 4, 3871 North Fraser Way<br>Burnaby, BC V5J 5G6<br><a class="num" href="tel:+16045550142" style="color:var(--r-plaster)">604-555-0142</a><br>Mon–Fri <span class="num">07:30–17:00</span></p></div>
+    </div>
+    <div class="bar"><span>© 2026 Stonecroft Renovation Ltd.</span><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Accessibility</a><span>BC1428817 · WSBC 4471902</span></div>
+  </div>
+</footer>
+
+<div class="mbar on-light"><a class="btn btn--primary" href="tel:+16045550142">Call</a><a class="btn btn--secondary" href="#book">Book a site visit</a></div>
+
+<script src="assets/kitchen.js"></script>
+<script src="assets/site.js"></script>
+<script>
+  const $ = (id) => document.getElementById(id);
+  const D = [
+    { sp: "$0", st: ["ontrack", "on schedule"] }, { sp: "$11,400", st: ["ontrack", "on schedule"] },
+    { sp: "$29,800", st: ["behind", "4 days behind"] }, { sp: "$52,100", st: ["behind", "2 days behind"] },
+    { sp: "$74,400", st: ["behind", "over by $3,400"], over: true },
+  ];
+  const WKS = [0, 1, 3, 6, 13];
+  const LATE = new Set([4, 5, 11, 12, 13]), DONE = new Set([1]);
+  $("wkstrip").innerHTML = Array.from({ length: 14 }, () => "<i></i>").join("");
+  const ticks = [...$("wkstrip").children];
+  const gantt = document.querySelector(".gantt");
+  const ANCHOR = [0, 1, 3, 6, 10, 13.6];
+  initSequence($("seq"), { uid: "b", pinHeight: () => $("seq").querySelector(".pin").offsetHeight,
+    onProgress(p) { const f = p * 5, i = Math.min(4, Math.floor(f)); gantt.style.setProperty("--wk", (ANCHOR[i] + (ANCHOR[i + 1] - ANCHOR[i]) * (f - i)).toFixed(3)); },
+    onStage(n) {
+      const s = KITCHEN_STAGES[n];
+      $("bw").textContent = s.wk; $("nm").textContent = s.name; $("nt").textContent = s.cap;
+      $("sp").textContent = D[n].sp; $("sp").classList.toggle("over", !!D[n].over);
+      $("st").className = "status status--" + D[n].st[0]; $("st").textContent = D[n].st[1];
+      ticks.forEach((t, w) => { t.className = w > WKS[n] ? "" : n === 4 ? "done" : LATE.has(w) ? "late" : DONE.has(w) ? "done" : "on"; });
+    } });
+  initCommon();
+</script>
+</body>
+</html>

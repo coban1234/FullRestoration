@@ -1,0 +1,136 @@
+---
+import Base from "../../../layouts/Base.astro";
+import Section from "../../../components/ui/Section.astro";
+import CTABand from "../../../components/ui/CTABand.astro";
+import KitchenFigure from "../../../components/ui/KitchenFigure.astro";
+import PhotoSlot from "../../../components/ui/PhotoSlot.astro";
+import LogList from "../../../components/ui/LogList.astro";
+import { BeforeAfter } from "../../../components/BeforeAfter";
+import { StatusMark } from "../../../components/StatusMark";
+import { money, pad2, projects, type Project } from "../../../data/projects";
+import { articleSchema, siteUrl } from "../../../lib/schema";
+
+export function getStaticPaths() {
+  return projects.map((p) => ({ params: { slug: p.slug }, props: { p } }));
+}
+const { p } = Astro.props as { p: Project };
+const site = siteUrl(Astro.site);
+const latest = p.log[p.log.length - 1];
+const kitchen = p.scope === "Kitchen";
+const over = p.final !== undefined && p.final > p.signed;
+const pairs = kitchen
+  ? [
+      { before: { stage: 0, label: "Kitchen before" }, after: { stage: p.hero ?? 4, label: "Kitchen at handover" }, caption: "Main view · week 00 and handover" },
+      { before: { stage: 1, label: "Demolition" }, after: { stage: 3, label: "Close-in" }, caption: "Same position · demolition and close-in" },
+      { before: { stage: 2, label: "Rough-in" }, after: { stage: 4, label: "Finished wall" }, caption: "Window wall · rough-in and finished" },
+    ]
+  : [1, 2, 3].map((n) => ({ before: { label: `View ${n} before` }, after: { label: `View ${n} after, same position` }, caption: `View ${n} · same marked camera position` }));
+const title = p.live
+  ? `${p.vintage} ${p.municipality} ${p.scope} — Live, Week ${pad2(latest?.week ?? 0)} | Stonecroft`
+  : `${p.vintage} ${p.municipality} ${p.scope} — ${money(p.final!)}, ${p.weeksActual} Weeks | Stonecroft`;
+const description = p.live
+  ? `${p.title}: signed at ${money(p.signed)}, ${p.weeksPlanned} weeks planned. Live weekly log with spend to date and every change order.`
+  : `${p.title}: signed at ${money(p.signed)}, finished at ${money(p.final!)}; ${p.weeksPlanned} weeks planned, ${p.weeksActual} actual. What we found and what we would do differently.`;
+const firstDate = p.log[0]?.date ?? "2026-01-01";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Projects", href: "/projects/" }, { label: p.short }]} schema={[articleSchema(site, { headline: p.title, path: `/projects/${p.slug}/`, datePublished: firstDate, dateModified: latest?.date, author: "Daniel Okafor", description })]}>
+  <section class="ruled border-b border-line">
+    <div class="container-x py-10 md:py-14">
+      <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+        <p class="eyebrow">{p.municipality} · {p.building} · {p.scope}</p>
+        {p.live ? <StatusMark status={latest.status} label={`Live · ${latest.statusLabel}`} variant="pill" /> : <StatusMark status="complete" label="Complete" variant="pill" />}
+      </div>
+      <h1 class="h1 mt-6 max-w-[24ch]">{p.title}</h1>
+      <dl class="mt-8 grid grid-cols-2 border-l border-t border-line font-mono md:grid-cols-3 lg:grid-cols-6">
+        {[
+          ["Signed", money(p.signed), false],
+          [p.live ? "Spent to date" : "Final", money(p.live ? latest.spent : p.final!), over],
+          ["Changes", String(p.changeOrders.length), false],
+          ["Planned", `${p.weeksPlanned} weeks`, false],
+          [p.live ? "Week" : "Actual", p.live ? `${pad2(latest.week)} of ${p.weeksPlanned}` : `${p.weeksActual} weeks`, !p.live && p.weeksActual! > p.weeksPlanned],
+          ["Permit", p.permit, false],
+        ].map(([k, v, bad]) => (
+          <div class="border-b border-r border-line bg-white p-4"><dt class="font-sans text-[12px] uppercase tracking-[0.1em] text-slate">{k}</dt><dd class:list={["mt-1.5 text-[18px] md:text-[20px]", bad ? "text-clay-dk" : "text-char"]}>{v}</dd></div>
+        ))}
+      </dl>
+      <p class="mt-3 text-[13px] text-slate">Permit {p.permit} issued by {p.municipality === "Langley" ? "the Township of Langley" : `the ${p.municipality === "North Vancouver" ? "District of North Vancouver" : `City of ${p.municipality}`}`}; verifiable by request to the municipality.</p>
+      <div class="mt-8">
+        {kitchen ? <KitchenFigure stage={p.live ? Math.min(p.stageNow, 4) : p.hero ?? 4} uid={`cs-${p.slug}`} ratio="aspect-[16/9]" caption={`${p.municipality} · ${p.vintage} · ${p.live ? "current stage" : "completed"}`} /> : <PhotoSlot ratio="aspect-[16/9]" label={`${p.title} — ${p.live ? "current stage" : "completed wide"}`} />}
+      </div>
+    </div>
+  </section>
+
+  <Section id="asked" num="01" tab="Brief" title="What they asked for">
+    <p class="lede max-w-[66ch]">{p.asked}</p>
+  </Section>
+
+  {!p.live && (
+    <Section id="before-after" num="02" tab="Before / after" title="Before and after" tone="concrete" note="Same marked camera positions, week 00 and handover.">
+      <div class="grid gap-8 lg:grid-cols-3">
+        {pairs.map((pr, i) => <BeforeAfter client:visible uid={`ba-${p.slug}-${i}`} before={pr.before} after={pr.after} caption={pr.caption} />)}
+      </div>
+    </Section>
+  )}
+
+  <Section id="found" num="03" tab="Found" title="What we found" note="The surprises, with what they cost.">
+    {p.found.length ? (
+      <ul class="border-t border-char">
+        {p.found.map((f) => <li class="grid gap-1 border-b border-line py-4 md:grid-cols-[1fr_280px]"><span class="text-[16px]">{f.item}</span><span class="font-mono text-[14px] md:text-right">{f.cost}</span></li>)}
+      </ul>
+    ) : <p class="text-[16px] text-slate">Nothing unexpected so far. If that changes, it will be in that week's log entry.</p>}
+  </Section>
+
+  <Section id="change-orders" num="04" tab="Changes" title={p.changeOrders.length === 1 ? "The change order" : p.changeOrders.length ? `The ${["", "one", "two", "three", "four"][p.changeOrders.length]} change orders` : "Change orders"} tone="concrete">
+    {p.changeOrders.length ? (
+      <div class="chamfer border border-line bg-white px-5 md:px-7">
+        <table class="tbl tbl-stack">
+          <caption class="sr-only">Change orders on this project</caption>
+          <thead><tr><th scope="col">Change</th><th scope="col">Amount</th><th scope="col">Days</th><th scope="col">Requested by</th><th scope="col">Reason</th></tr></thead>
+          <tbody>
+            {p.changeOrders.map((c) => (
+              <tr>
+                <td data-label="Change" class="font-mono font-medium">{c.id} · wk {pad2(c.week)}</td>
+                <td data-label="Amount" class:list={["font-mono", c.amount < 0 ? "text-green-dk" : ""]}>{c.amount < 0 ? "−" : "+"}{money(Math.abs(c.amount))}</td>
+                <td data-label="Days" class="font-mono">{c.days > 0 ? `+${c.days}` : "0"}</td>
+                <td data-label="Requested by"><span class:list={["inline-block px-2 py-0.5 font-mono text-[12px]", c.requestedBy === "client" ? "bg-oak-lt text-oak-dk" : "bg-clay-tint text-clay-dk"]}>{c.requestedBy === "client" ? "Client-requested" : "Contractor-identified"}</span></td>
+                <td data-label="Reason" class="text-slate">{c.reason}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    ) : <p class="text-[16px] text-slate">None.</p>}
+  </Section>
+
+  <Section id="log" num="05" tab="Log" title="The full log" note={`${p.log.length} weekly entries, published as the job ran. Corrections appended, never edited.`}>
+    <LogList project={p} />
+    <p class="mt-6"><a href={`/projects/${p.slug}/log/`} class="btn-secondary w-full sm:w-auto">Read the log with its stage rail</a></p>
+  </Section>
+
+  {p.differently && (
+    <Section id="differently" num="06" tab="Lessons" title="What we would do differently" tone="dark">
+      <p class="max-w-[62ch] font-display text-[22px] font-medium leading-snug text-plaster md:text-[28px]">{p.differently}</p>
+    </Section>
+  )}
+
+  {p.clientWords && (
+    <Section id="client" num="07" tab="Client" title="In the client’s words">
+      <blockquote class="max-w-[40ch] border-l-2 border-clay pl-6 font-display text-[26px] font-medium leading-snug md:text-[34px]">{p.clientWords}</blockquote>
+      <p class="mt-4 text-[14px] text-slate">Given unprompted at handover, printed verbatim with permission.</p>
+    </Section>
+  )}
+
+  {p.spec.length > 0 && (
+    <Section id="spec" num="08" tab="Spec" title="Specification" tone="concrete" note="Materials and the allowances they were bought against.">
+      <div class="chamfer border border-line bg-white px-5 md:px-7">
+        <table class="tbl tbl-stack">
+          <caption class="sr-only">Materials and allowances</caption>
+          <thead><tr><th scope="col">Item</th><th scope="col">Specification</th><th scope="col">Allowance</th></tr></thead>
+          <tbody>{p.spec.map((s) => <tr><td data-label="Item" class="font-display text-[17px] font-medium">{s.item}</td><td data-label="Spec">{s.spec}</td><td data-label="Allowance" class="font-mono">{s.allowance}</td></tr>)}</tbody>
+        </table>
+      </div>
+    </Section>
+  )}
+
+  <CTABand title={`Planning something like this in ${p.municipality}?`} />
+</Base>

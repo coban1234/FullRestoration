@@ -1,0 +1,13 @@
+---
+interface Props { label: string; class?: string }
+const { label, class: cls = "" } = Astro.props;
+---
+<div role="note" aria-label={label} class:list={["chamfer border border-clay bg-clay-tint p-5 md:p-7", cls]}>
+  <p class="flex items-center gap-3 font-mono text-[14px] font-semibold uppercase tracking-[0.06em] text-clay-dk md:text-[16px]">
+    <svg width="12" height="12" viewBox="0 0 10 10" aria-hidden="true" class="shrink-0"><rect width="10" height="10" fill="#B5512E" /></svg>
+    {label}
+  </p>
+  <div class="mt-3 max-w-[64ch] text-[16px] leading-relaxed text-char md:text-[17px]">
+    <slot />
+  </div>
+</div>

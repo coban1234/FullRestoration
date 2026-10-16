@@ -1,0 +1,29 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import { FinishSelector } from "../../components/tools/FinishSelector";
+
+const title = "Kitchen Finish Levels Compared — Builder, Mid-Range, High-End | Stonecroft";
+const description = "What builder, mid-range and high-end actually mean for cabinets, counters, tile, flooring, fixtures, hardware, lighting and paint — with per-item allowances.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Pricing", href: "/pricing/" }, { label: "Finish selector" }]}>
+  <PageHero eyebrow="Pricing / Finishes" title="What “mid-range” actually means" lede="Eight items, three levels, a published allowance for each. Mix them row by row — real kitchens do." primary={null} secondary={{ label: "Get a budget range", href: "/pricing/estimator/" }} />
+  <Section id="selector" num="01" tab="Selector" title="Finish levels, item by item" tone="concrete" note="Allowances, not brands: checkable against any showroom price.">
+    <FinishSelector client:load />
+  </Section>
+  <Section id="why" num="02" tab="Allowances" title="Why allowances, not prices">
+    <div class="prose-sc">
+      <p>An allowance — "tile, $12–18 per square foot supplied" — is how the trade actually contracts. You can walk into any tile showroom and check it. If you choose something above it, the difference is a change order, priced before it is ordered. If you choose below, the difference is a credit.</p>
+      <p>We do not publish brand names. Brands date quickly, and naming one creates a supply promise we might not be able to keep. The product class — "semi-custom plywood boxes, painted shaker, soft-close" — is what decides how a kitchen lasts.</p>
+    </div>
+  </Section>
+  <CTABand />
+</Base>
+<style is:global>
+  @media print {
+    header, footer, nav, .btn-primary, .btn-secondary, [aria-label="Book a site visit"] { display: none !important; }
+    table { min-width: 0 !important; font-size: 11px; }
+  }
+</style>

@@ -1,0 +1,105 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import CTABand from "../components/ui/CTABand.astro";
+import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import FAQ from "../components/ui/FAQ.astro";
+import Disruption from "../components/ui/Disruption.astro";
+import { faqSchema } from "../lib/schema";
+import { permitsVerified } from "../data/schedules";
+
+const munis = [
+  ["Vancouver", "$2,600 – $5,200", "4–10 weeks", "https://vancouver.ca/home-property-development/renovations.aspx"],
+  ["Burnaby", "$2,400 – $4,100", "6–12 weeks", "https://www.burnaby.ca/services-and-payments/permits-and-applications"],
+  ["Surrey", "$2,100 – $3,800", "4–8 weeks", "https://www.surrey.ca/renovating-building-development/building-renovating"],
+  ["Richmond", "$2,200 – $3,900", "4–9 weeks", "https://www.richmond.ca/business-development/building-approvals.htm"],
+  ["North Vancouver (District)", "$2,500 – $4,400", "5–10 weeks", "https://www.dnv.org/property-development/building-permits"],
+  ["Langley (City & Township)", "$1,900 – $3,400", "3–7 weeks", "https://www.tol.ca/en/services/building-permits.aspx"],
+  ["Abbotsford", "$1,800 – $3,200", "3–7 weeks", "https://www.abbotsford.ca/business-development/building-permits"],
+  ["Chilliwack", "$1,700 – $3,000", "3–6 weeks", "https://www.chilliwack.com/main/page.cfm?id=2268"],
+];
+const steps = [
+  ["Check zoning and history", "We look up your address: zoning, past permits, heritage or floodplain overlays."],
+  ["Prepare drawings", "Floor plans, sections and details at the level your municipality requires; engineer's drawings for structural work."],
+  ["Apply", "Online in most of our municipalities. Building, plumbing, electrical and gas permits are separate applications."],
+  ["Respond to review", "Plan reviewers often ask questions. Each round can add one to three weeks."],
+  ["Permit issued", "The permit card goes in your front window, where inspectors expect to find it."],
+  ["Inspections", "Typically footing, framing, insulation, rough-in trades and final. We book them; you do not need to be home."],
+];
+const faqs = [
+  { q: "Do I need a permit to renovate my kitchen?", a: "<p>If plumbing, electrical, gas or walls change, almost certainly. Cabinet replacement with no service changes often does not — confirm with your municipality.</p>" },
+  { q: "Do I need a permit for a bathroom?", a: "<p>For a new bathroom, yes. For a renovation that moves fixtures or adds circuits, usually. Like-for-like fixture swaps usually not.</p>" },
+  { q: "Who issues electrical and plumbing permits?", a: "<p>In BC, electrical and gas permits are regulated by Technical Safety BC, though some municipalities (including Vancouver) issue their own electrical permits. Plumbing permits are usually municipal.</p>" },
+  { q: "What happens if previous owners did unpermitted work?", a: "<p>It often comes to light when we apply. The municipality may require it to be exposed and inspected, or brought up to code. We tell you before we price, if we can see it.</p>" },
+  { q: "Can you start before the permit is issued?", a: "<p>No. Demolition of non-structural finishes is sometimes allowed — we will tell you exactly what your municipality permits — but nothing that needs the permit happens without it.</p>" },
+  { q: "How much do permits cost?", a: "<p>$1,700–$5,200 for a typical renovation, by municipality and scope. The table above has each municipality's range.</p>" },
+];
+const howTo = {
+  "@context": "https://schema.org",
+  "@type": "HowTo",
+  name: "How to get a renovation permit in Metro Vancouver and the Fraser Valley",
+  step: steps.map(([n, t], i) => ({ "@type": "HowToStep", position: i + 1, name: n, text: t })),
+};
+const title = "Do I Need a Permit to Renovate? Vancouver & Fraser Valley | Stonecroft";
+const description = "What needs a renovation permit in Vancouver and the Fraser Valley, what does not, which code applies, and permit fees and timelines by municipality — dated and sourced.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Permits" }]} schema={[faqSchema(faqs), howTo]}>
+  <PageHero eyebrow="Permits & code" title="Do I need a permit to renovate?" lede="Usually, yes. Here is what needs one, what does not, which code applies, and what each municipality charges." stamp={`Last verified: ${permitsVerified}`}>
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Building permit card taped in a front window, Burnaby" caption="Fig. 1 — the most on-brand photograph we own" />
+  </PageHero>
+
+  <Section id="needs" num="01" tab="Needs one" title="What needs a permit">
+    <div class="grid gap-8 md:grid-cols-2">
+      <div>
+        <h3 class="h3">Generally needs a permit</h3>
+        <ul class="prose-sc mt-4"><li>Kitchen renovations that change plumbing, electrical, gas or walls</li><li>Adding a bathroom</li><li>Decks, especially attached or raised</li><li>Structural alterations, including removing a bearing wall</li><li>Secondary suites</li><li>Garages and accessory buildings</li><li>Retaining walls above a set height</li><li>Plumbing and electrical work — separate permits, and in BC electrical and gas are regulated by Technical Safety BC</li></ul>
+      </div>
+      <div>
+        <h3 class="h3">Generally does not</h3>
+        <ul class="prose-sc mt-4"><li>Painting</li><li>Flooring</li><li>Cabinet replacement with no plumbing or electrical change</li><li>Like-for-like fixture swaps</li></ul>
+        <p class="mt-5 border-l-2 border-clay pl-4 text-[15px]">Exemptions vary by municipality and must be confirmed with yours. We do not publish a blanket exemption list as fact.</p>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="why" num="02" tab="Why it matters" title="Why unpermitted work costs more later" tone="concrete">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-4">
+      {[["Insurance", "A claim connected to unpermitted work can be denied."], ["Selling", "You have a disclosure obligation, and buyers' lenders ask."], ["Lending & appraisal", "Unpermitted space may not count toward value or income."], ["Municipal orders", "A municipality can order completed work exposed for inspection, or removed."]].map(([h, t]) => <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">{h}</h3><p class="mt-2 text-[15px] text-slate">{t}</p></li>)}
+    </ul>
+  </Section>
+
+  <Section id="code" num="03" tab="Code" title="The code that applies">
+    <div class="prose-sc">
+      <p>The <strong>BC Building Code 2024</strong> applies province-wide. The City of Vancouver is the exception: it has its own <strong>Vancouver Building By-law</strong>. Stonecroft builds to whichever governs your address.</p>
+      <h3>When a renovation pulls in the rest of the house</h3>
+      <p>The expensive surprise: renovate enough of a building, change its use (adding a suite), or alter its structure, and the municipality can require parts of the house you were not touching to be brought up to current code — fire separation, smoke alarms, seismic, energy. We assess this before the proposal. <a href="/renovations/whole-home/#code">More on code triggers</a>.</p>
+    </div>
+  </Section>
+
+  <Section id="timelines" num="04" tab="By city" title="Fees and timelines by municipality" tone="concrete" note={`Each row verified ${permitsVerified} and linked to the municipality's own page. Re-verified quarterly.`}>
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Permit fees and timelines by municipality</caption>
+        <thead><tr><th scope="col">Municipality</th><th scope="col">Typical fees</th><th scope="col">Current timeline</th><th scope="col">Source</th></tr></thead>
+        <tbody>{munis.map(([m, f, t, u]) => <tr><td data-label="Municipality" class="font-display text-[17px] font-medium">{m}</td><td data-label="Fees" class="font-mono">{f}</td><td data-label="Timeline" class="font-mono">{t}</td><td data-label="Source"><a href={u} class="link text-[14px]" rel="noopener">Official page</a> <span class="font-mono text-[12px] text-slate">· {permitsVerified}</span></td></tr>)}</tbody>
+      </table>
+    </div>
+    <p class="mt-3 text-[14px] text-slate">Vancouver is overhauling its permitting process; its figures are re-checked more often than the others.</p>
+  </Section>
+
+  <Section id="steps" num="05" tab="Steps" title="How an application runs">
+    <ol class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {steps.map(([n, t], i) => <li class="bg-white p-6"><span class="font-mono text-[12px] text-slate">{String(i + 1).padStart(2, "0")}</span><h3 class="mt-2 font-display text-[20px] font-medium">{n}</h3><p class="mt-2 text-[15px] text-slate">{t}</p></li>)}
+    </ol>
+  </Section>
+
+  <Section id="statement" num="06" tab="Our position" title="We do not work without permits." tone="clay">
+    <Disruption label="No permit, no job"><p>For anyone, at any price.</p></Disruption>
+  </Section>
+
+  <Section id="faq" num="07" tab="FAQ" title="Permit questions">
+    <FAQ items={faqs} />
+  </Section>
+  <CTABand />
+</Base>

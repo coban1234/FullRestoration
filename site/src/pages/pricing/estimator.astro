@@ -1,0 +1,44 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import RangeTable from "../../components/ui/RangeTable.astro";
+import { Estimator } from "../../components/tools/Estimator";
+import { interiorRanges } from "../../data/pricing";
+import { municipalities } from "../../data/site";
+import rates from "../../../public/data/rates.json";
+import type { Rates } from "../../lib/estimate";
+
+const title = "Renovation Cost Estimator — Vancouver & Fraser Valley | Stonecroft";
+const description = "Get a renovation budget range for your house in five questions. Contingency shown as its own line. No email required to see the number.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Pricing", href: "/pricing/" }, { label: "Budget estimator" }]} hideBarWhileVisible={["estimator"]}>
+  <PageHero eyebrow="Pricing / Estimator" title="Get a budget range" lede="Five questions. A range, never a single number — with contingency on its own line. No email needed to see it." primary={null} secondary={null} stamp={`Rates updated: ${rates.updated}`} />
+  <section id="estimator" class="bg-concrete py-10 md:py-16">
+    <div class="container-x grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-8">
+        <Estimator client:load rates={rates as Rates} municipalities={municipalities} />
+        <noscript>
+          <div class="chamfer mt-4 border border-line bg-white p-6">
+            <p class="font-display text-[22px] font-medium">The estimator needs JavaScript.</p>
+            <p class="mt-2 text-[16px] text-slate">The full published ranges it uses are below, and on the <a href="/pricing/" class="link">pricing page</a>.</p>
+            <div class="mt-5"><RangeTable rows={interiorRanges} caption="Published ranges" /></div>
+          </div>
+        </noscript>
+      </div>
+      <aside class="space-y-6 text-[15px] leading-relaxed lg:col-span-4">
+        <div class="border-t border-char pt-4">
+          <h2 class="font-display text-[20px] font-medium">How the range is built</h2>
+          <p class="mt-2 text-slate">Construction from our published rates, adjusted for finish and building type; permits for your municipality; design at 5–8% of construction; and contingency at 8%, 12% before 1980, or 15% for structural work — as its own line, inside the total.</p>
+        </div>
+        <div class="border-t border-char pt-4">
+          <h2 class="font-display text-[20px] font-medium">Why condos cost more</h2>
+          <p class="mt-2 text-slate">Elevator booking, restricted hours, common-area protection and strata engineering review. Real costs, not a surcharge.</p>
+        </div>
+        <div class="border-t border-char pt-4">
+          <h2 class="font-display text-[20px] font-medium">How long will it take?</h2>
+          <p class="mt-2 text-slate"><a href="/process/#schedule" class="link">The schedule estimator</a> shows how long you lose the room.</p>
+        </div>
+      </aside>
+    </div>
+  </section>
+</Base>

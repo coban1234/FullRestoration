@@ -1,0 +1,29 @@
+---
+import Base from "../layouts/Base.astro";
+const links = [
+  { label: "Kitchen renovation", href: "/renovations/kitchens/" },
+  { label: "Bathroom renovation", href: "/renovations/bathrooms/" },
+  { label: "Pricing", href: "/pricing/" },
+  { label: "Budget estimator", href: "/pricing/estimator/" },
+  { label: "Projects", href: "/projects/" },
+  { label: "Book a site visit", href: "/book/" },
+];
+---
+<Base title="Page not found | Stonecroft" description="That page doesn't exist." noindex>
+  <section class="ruled">
+    <div class="container-x max-w-[900px] py-16 md:py-24">
+      <p class="font-mono text-[13px] text-slate">404</p>
+      <h1 class="h1 mt-4">That page doesn't exist.</h1>
+      <p class="lede mt-5 text-slate">It may have moved when we rebuilt the site. Search for it, or start from one of these.</p>
+      <form action="https://duckduckgo.com/" method="get" role="search" class="mt-8 flex max-w-[560px] gap-2">
+        <input type="hidden" name="sites" value={Astro.site?.host ?? "stonecroft.ca"} />
+        <label for="q" class="sr-only">Search this site</label>
+        <input id="q" name="q" type="search" placeholder="Search this site" class="min-w-0 flex-1 rounded-sm border border-line-strong bg-white px-3.5 py-3 text-[16px] focus:border-char focus:outline-none" />
+        <button class="btn-secondary" type="submit">Search</button>
+      </form>
+      <ul class="mt-10 grid gap-px border border-line bg-line sm:grid-cols-2">
+        {links.map((l) => <li><a href={l.href} class="flex items-center justify-between bg-plaster px-5 py-4 text-[16px] font-medium hover:bg-concrete">{l.label}<span aria-hidden="true">→</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+</Base>

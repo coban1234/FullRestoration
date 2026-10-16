@@ -1,0 +1,19 @@
+---
+import type { QA } from "../../lib/schema";
+interface Props { items: QA[]; tone?: "light" | "dark" }
+const { items } = Astro.props;
+---
+<div class="border-t border-char">
+  {items.map((it, i) => (
+    <details class="group border-b border-line" open={items.length < 6 && i === 0 ? true : undefined}>
+      <summary class="flex min-h-[64px] cursor-pointer items-center justify-between gap-6 py-4 font-display text-[19px] font-medium leading-snug text-char md:text-[22px]">
+        <h3 class="font-[inherit] text-[inherit]">{it.q}</h3>
+        <span aria-hidden="true" class="faq-plus relative h-4 w-4 shrink-0 transition-transform duration-150">
+          <span class="absolute left-0 top-1/2 h-[2px] w-4 -translate-y-1/2 bg-char"></span>
+          <span class="absolute left-1/2 top-0 h-4 w-[2px] -translate-x-1/2 bg-char"></span>
+        </span>
+      </summary>
+      <div class="prose-sc pb-6 text-[16px]" set:html={it.a} />
+    </details>
+  ))}
+</div>

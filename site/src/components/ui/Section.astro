@@ -1,0 +1,29 @@
+---
+import { SectionHeading } from "../SectionHeading";
+
+interface Props {
+  id: string;
+  num: string;
+  tab: string;
+  title: string;
+  note?: string;
+  tone?: "plaster" | "concrete" | "dark" | "clay" | "white";
+  class?: string;
+}
+const { id, num, tab, title, note, tone = "plaster", class: cls = "" } = Astro.props;
+const bg = {
+  plaster: "bg-plaster",
+  concrete: "bg-concrete",
+  dark: "bg-char text-plaster",
+  clay: "bg-clay-tint",
+  white: "bg-white",
+}[tone];
+---
+<section id={id} aria-labelledby={`${id}-title`} class:list={[bg, "py-14 md:py-20", cls]}>
+  <div class="container-x">
+    <SectionHeading id={`${id}-title`} num={num} tab={tab} title={title} note={note} tone={tone === "dark" ? "dark" : "light"} />
+    <div class="mt-8 md:mt-12">
+      <slot />
+    </div>
+  </div>
+</section>

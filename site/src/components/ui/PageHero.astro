@@ -1,0 +1,48 @@
+---
+interface Action { label: string; href: string }
+interface Props {
+  eyebrow?: string;
+  title: string;
+  lede?: string;
+  primary?: Action | null;
+  secondary?: Action | null;
+  stamp?: string;
+}
+const {
+  eyebrow,
+  title,
+  lede,
+  primary = { label: "Book a site visit", href: "/book/" },
+  secondary = { label: "Get a budget range", href: "/pricing/estimator/" },
+  stamp,
+} = Astro.props;
+const hasArt = Astro.slots.has("art");
+const src = Astro.url.pathname.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "home";
+const withSrc = (href: string) => (href.startsWith("/book/") ? `${href}?src=${src}&pos=hero` : href);
+---
+<section class="ruled border-b border-line">
+  <div class:list={["container-x grid gap-10 py-10 md:py-14 lg:py-16", hasArt && "lg:grid-cols-12 lg:items-center lg:gap-12"]}>
+    <div class:list={[hasArt && "lg:col-span-6"]}>
+      {(eyebrow || stamp) && (
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-line pb-3">
+          {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+          {stamp && <p class="font-mono text-[11px] text-slate">{stamp}</p>}
+        </div>
+      )}
+      <h1 class="h1 mt-6 max-w-[20ch]">{title}</h1>
+      {lede && <p class="lede mt-5 max-w-[46ch] text-slate" set:html={lede} />}
+      <slot name="below-lede" />
+      {(primary || secondary) && (
+        <div class="mt-7 flex flex-col gap-3 sm:flex-row">
+          {primary && <a href={withSrc(primary.href)} class="btn-primary">{primary.label}</a>}
+          {secondary && <a href={secondary.href} class="btn-secondary">{secondary.label}</a>}
+        </div>
+      )}
+    </div>
+    {hasArt && (
+      <div class="lg:col-span-6">
+        <slot name="art" />
+      </div>
+    )}
+  </div>
+</section>

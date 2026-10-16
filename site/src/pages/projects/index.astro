@@ -1,0 +1,59 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import ProjectCard from "../../components/ui/ProjectCard.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import { projects } from "../../data/projects";
+
+const sorted = [...projects].sort((a, b) => Number(a.live) - Number(b.live));
+const scopes = [...new Set(projects.map((p) => p.scope))];
+const munis = [...new Set(projects.map((p) => p.municipality))].sort();
+const decade = (v: string) => `${v.slice(0, 3)}0s`;
+const decades = [...new Set(projects.map((p) => decade(p.vintage)))].sort();
+const band = (n: number) => (n < 40000 ? "under-40k" : n < 75000 ? "40-75k" : "over-75k");
+const bands = [["under-40k", "Under $40,000"], ["40-75k", "$40,000 – $75,000"], ["over-75k", "Over $75,000"]];
+const title = "Renovation Projects — Final Costs & Timelines, Vancouver | Stonecroft";
+const description = "Every Stonecroft renovation with its final cost against the signed price and its weeks against plan. Filter by scope, municipality, vintage and budget.";
+const sel = "h-12 w-full appearance-none rounded-[2px] border border-line-strong bg-white px-3.5 text-[16px]";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Projects" }]}>
+  <PageHero eyebrow="Projects" title="Find a project like yours" lede="Every card shows its final cost. A portfolio without numbers is decoration." primary={null} secondary={null} />
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x">
+      <form method="get" action="/projects/" id="filters" class="grid gap-3 border-b border-char pb-6 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
+        <label><span class="text-[13px] font-medium">Scope</span><select name="scope" class={sel}><option value="">All scopes</option>{scopes.map((s) => <option>{s}</option>)}</select></label>
+        <label><span class="text-[13px] font-medium">Municipality</span><select name="municipality" class={sel}><option value="">All</option>{munis.map((s) => <option>{s}</option>)}</select></label>
+        <label><span class="text-[13px] font-medium">Built</span><select name="vintage" class={sel}><option value="">Any decade</option>{decades.map((s) => <option>{s}</option>)}</select></label>
+        <label><span class="text-[13px] font-medium">Budget</span><select name="budget" class={sel}><option value="">Any budget</option>{bands.map(([v, l]) => <option value={v}>{l}</option>)}</select></label>
+        <button type="submit" class="btn-secondary bg-white">Apply</button>
+      </form>
+      <p id="count" class="mt-4 font-mono text-[13px] text-slate" aria-live="polite">{projects.length} projects</p>
+      <ul id="grid" class="mt-4 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {sorted.map((p) => (
+          <li data-scope={p.scope} data-municipality={p.municipality} data-vintage={decade(p.vintage)} data-budget={band(p.final ?? p.signed)}>
+            <ProjectCard project={p} headingLevel="h2" />
+          </li>
+        ))}
+      </ul>
+      <p id="empty" hidden class="mt-6 text-[16px]">No project matches those filters yet. <a href="/projects/" class="link">Clear filters</a></p>
+    </div>
+  </section>
+  <CTABand />
+</Base>
+<script>
+  const params = new URLSearchParams(location.search);
+  const form = document.getElementById("filters") as HTMLFormElement;
+  const items = [...document.querySelectorAll<HTMLLIElement>("#grid > li")];
+  let shown = 0;
+  for (const [k, v] of params) {
+    const el = form.elements.namedItem(k) as HTMLSelectElement | null;
+    if (el) el.value = v;
+  }
+  items.forEach((li) => {
+    const ok = [...params].every(([k, v]) => !v || li.dataset[k] === v);
+    li.hidden = !ok;
+    if (ok) shown++;
+  });
+  document.getElementById("count")!.textContent = `${shown} of ${items.length} projects`;
+  document.getElementById("empty")!.hidden = shown > 0;
+</script>

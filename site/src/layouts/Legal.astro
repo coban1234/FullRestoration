@@ -1,0 +1,17 @@
+---
+import Base from "./Base.astro";
+interface Props { title: string; description: string; heading: string; updated: string; crumb: string }
+const { title, description, heading, updated, crumb } = Astro.props;
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: crumb }]}>
+  <section class="ruled border-b border-line">
+    <div class="container-x max-w-[900px] py-10 md:py-14">
+      <p class="eyebrow">Legal</p>
+      <h1 class="h1 mt-5">{heading}</h1>
+      <p class="mt-4 font-mono text-[13px] text-slate">Last updated <time datetime={updated}>{updated}</time></p>
+    </div>
+  </section>
+  <div class="container-x max-w-[900px] py-10 md:py-14">
+    <div class="prose-sc"><slot /></div>
+  </div>
+</Base>

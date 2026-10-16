@@ -1,0 +1,33 @@
+---
+import { pricingReviewed } from "../../data/site";
+export interface RangeRow { scope: string; range: string; note?: string }
+interface Props {
+  rows: RangeRow[];
+  caption: string;
+  head?: [string, string, string];
+  pushes?: string;
+  reviewed?: string;
+}
+const { rows, caption, head = ["Scope", "Range", "What it buys"], pushes, reviewed = pricingReviewed } = Astro.props;
+---
+<div>
+  <div class="chamfer border border-line bg-white px-5 md:px-7">
+    <table class="tbl tbl-stack">
+      <caption class="sr-only">{caption}</caption>
+      <thead>
+        <tr><th scope="col">{head[0]}</th><th scope="col">{head[1]}</th><th scope="col">{head[2]}</th></tr>
+      </thead>
+      <tbody>
+        {rows.map((r) => (
+          <tr>
+            <td data-label={head[0]} class="font-display text-[18px] font-medium md:w-[30%]">{r.scope}</td>
+            <td data-label={head[1]} class="whitespace-nowrap font-mono text-[16px] md:w-[28%]">{r.range}</td>
+            <td data-label={head[2]} class="text-[15px] text-slate">{r.note || "—"}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {pushes && <p class="mt-4 max-w-[70ch] text-[15px] leading-relaxed text-char"><span class="font-medium">What pushes it to the top: </span>{pushes}</p>}
+  <p class="mt-3 font-mono text-[12px] text-slate">Ranges last reviewed: {reviewed} · All figures exclude 5% GST</p>
+</div>

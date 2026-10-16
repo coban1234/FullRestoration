@@ -1,0 +1,79 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import CTABand from "../components/ui/CTABand.astro";
+import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import { StatusMark } from "../components/StatusMark";
+import { company, licences, office, team } from "../data/site";
+import { projects } from "../data/projects";
+
+const TODAY = new Date("2026-10-16");
+const ageDays = (d: string) => Math.round((TODAY.getTime() - new Date(d).getTime()) / 86400000);
+const rows = [
+  { claim: "Business registration", published: `${company.legalName} · BC incorporation ${company.registration} · ${office.line1}, ${office.city} ${office.region}`, cadence: "On change", verified: "2026-10-14", doc: "BC Registry extract (PDF)" },
+  { claim: "Business licence", published: licences.map((l) => `${l.municipality} ${l.number}`).join(" · "), cadence: "Annually", verified: "2026-01-15", doc: "Licence copies (PDF)" },
+  { claim: "WorkSafeBC", published: `Account ${company.worksafe} · clearance letter in good standing`, cadence: "Monthly", verified: "2026-10-09", doc: "Clearance letter, issue date visible (PDF)", staleAfter: 35 },
+  { claim: "Liability insurance", published: "Intact Insurance · policy CGL-0048817 · $5,000,000 limit · expires 2027-03-31", cadence: "On renewal", verified: "2026-09-30", doc: "Certificate (PDF)" },
+  { claim: "Builders lien", published: "10% statutory holdback under BC's Builders Lien Act, released 33 days after completion, on every contract", cadence: "Static", verified: "2026-10-14", doc: "Contract clause (PDF)" },
+  { claim: "Warranty", published: "2 years workmanship · 5 years building envelope · exclusions and claims process in full", cadence: "On change", verified: "2026-10-14", doc: "Warranty terms (PDF)" },
+  { claim: "Trade certifications", published: team.filter((t) => t.cert.includes("Red Seal")).map((t) => `${t.name}: ${t.cert}`).join(" · "), cadence: "On change", verified: "2026-10-01", doc: "Certificates (PDF)" },
+  { claim: "Permits", published: projects.map((p) => `${p.permit} (${p.municipality})`).join(" · "), cadence: "Per project", verified: "2026-10-16", doc: "Per case study" },
+];
+const title = "Verify Stonecroft — Licence, WorkSafeBC, Insurance & Permits | Stonecroft";
+const description = "Every claim on this site with the document behind it: BC registration, business licences, WorkSafeBC clearance, $5M liability insurance, warranty and permit numbers.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Verify" }]}>
+  <PageHero eyebrow="Verify" title="Check everything we claim" lede="Each row has the number, the document, and the date we last checked it. If a document lapses, this page says so." primary={null} secondary={{ label: "Download the licence & insurance pack", href: "#pack" }} />
+
+  <Section id="claims" num="01" tab="Claims" title="Claims and documents">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Verifiable claims with documents and verification dates</caption>
+        <thead><tr><th scope="col">Claim</th><th scope="col">What is published</th><th scope="col">Refresh</th><th scope="col">Verified on</th></tr></thead>
+        <tbody>
+          {rows.map((r) => {
+            const stale = r.staleAfter && ageDays(r.verified) > r.staleAfter;
+            return (
+              <tr>
+                <td data-label="Claim" class="font-display text-[18px] font-medium">{r.claim}</td>
+                <td data-label="Published" class="text-[15px]">{r.published}<span class="mt-1 block font-mono text-[12px] text-slate">{r.doc}</span></td>
+                <td data-label="Refresh" class="text-[14px] text-slate">{r.cadence}</td>
+                <td data-label="Verified" class="whitespace-nowrap">
+                  {stale ? <StatusMark status="behind" label={`Expired — renewal in progress, dated ${r.verified}`} /> : <span class="font-mono text-[14px]">{r.verified}</span>}
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 max-w-[66ch] text-[15px] text-slate">Anything on this page can be produced within 24 hours of being asked. If you want to see an original, email <a href={`mailto:${company.email}`} class="link">{company.email}</a>.</p>
+  </Section>
+
+  <Section id="pack" num="02" tab="Pack" title="The licence and insurance pack" tone="dark" note="Registration extract, licences, WorkSafeBC clearance, insurance certificate and warranty terms in one PDF.">
+    <div class="grid gap-6 lg:grid-cols-12 lg:items-center">
+      <div class="lg:col-span-5">
+        <a href="/docs/stonecroft-verification-pack.pdf" class="inline-flex h-12 items-center justify-center gap-3 rounded-[2px] border border-plaster px-6 text-[16px] font-medium text-plaster hover:bg-plaster hover:text-char" download>
+          Download the pack <span class="font-mono text-[12px] text-mist">PDF · 5 documents</span>
+        </a>
+        <p class="mt-4 text-[14px] text-mist">Pack compiled 2026-10-14. Every document inside carries its own issue date.</p>
+      </div>
+      <div class="grid grid-cols-3 gap-3 lg:col-span-7">
+        <PhotoSlot ratio="aspect-[3/4]" label="WorkSafeBC clearance letter (redacted)" />
+        <PhotoSlot ratio="aspect-[3/4]" label="Insurance certificate" />
+        <PhotoSlot ratio="aspect-[3/4]" label="BC Registry extract" />
+      </div>
+    </div>
+  </Section>
+
+  <Section id="how" num="03" tab="How to check" title="How to check us yourself">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-3">
+      <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">BC Registry</h3><p class="mt-2 text-[15px] text-slate">Search <span class="font-mono text-char">{company.registration}</span> on the BC Registries business search.</p></li>
+      <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">WorkSafeBC</h3><p class="mt-2 text-[15px] text-slate">Request a clearance letter for account <span class="font-mono text-char">{company.worksafe}</span> on WorkSafeBC's online clearance service. It is free.</p></li>
+      <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">Permits</h3><p class="mt-2 text-[15px] text-slate">Each case study prints its permit number and municipality. Ask that municipality's permit office to confirm it.</p></li>
+    </ul>
+  </Section>
+
+  <CTABand />
+</Base>

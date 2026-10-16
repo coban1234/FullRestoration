@@ -1,0 +1,66 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import Disruption from "../../components/ui/Disruption.astro";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+import { pricingReviewed } from "../../data/site";
+
+const site = siteUrl(Astro.site);
+const faqs = [
+  { q: "Do I need a permit for a deck?", a: "<p>In most of our municipalities, yes — certainly for any deck attached to the house, more than about 600 mm off the ground, or with a roof. Exemptions for small, low, freestanding decks exist in some places and vary. <a href=\"/permits/\">Permits explained</a>.</p>" },
+  { q: "How high does a guard need to be?", a: "<p>The BC Building Code requires a guard where the deck is more than 600 mm above the ground, with a minimum height of 900 mm on most residential decks and 1,070 mm where the walking surface is more than 1.8 m up. Openings must not let a 100 mm sphere through.</p>" },
+  { q: "Composite or wood?", a: "<p>Pressure-treated or cedar costs less up front and needs staining every 2–4 years. Composite costs roughly twice as much and needs washing, not staining. Both sit on the same pressure-treated frame.</p>" },
+];
+const title = "Decks Vancouver — Permits, Materials & Cost | Stonecroft";
+const description = "Permitted decks across Vancouver and the Fraser Valley: footings, ledgers, guard heights and materials explained, with published costs.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Exterior", href: "/exterior/" }, { label: "Decks & outdoor" }]} schema={[serviceSchema(site, "Decks and outdoor structures", description, "/exterior/decks-and-outdoor/"), faqSchema(faqs)]}>
+  <PageHero eyebrow="Exterior / Decks & outdoor" title="Decks that pass inspection" lede="Most decks here need a permit. We pull it, and build to the parts of the code that keep a deck attached to the house.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Ledger flashed and through-bolted to the rim joist, before decking" />
+  </PageHero>
+
+  <Section id="permit" num="01" tab="Permits" title="Yes, it probably needs a permit">
+    <Disruption label="Most decks require a permit">
+      <p>In most of Vancouver and the Fraser Valley, any deck attached to the house, more than about 600 mm off the ground, or with a roof needs a building permit. Rules vary by municipality — <a href="/permits/" class="font-medium text-clay-dk underline underline-offset-4">see how permits work</a>.</p>
+    </Disruption>
+  </Section>
+
+  <Section id="cost" num="02" tab="Cost" title="Materials and costs" tone="concrete">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Deck materials and costs</caption>
+        <thead><tr><th scope="col">Decking</th><th scope="col">Installed / sq ft</th><th scope="col">Upkeep</th></tr></thead>
+        <tbody>
+          <tr><td data-label="Decking" class="font-display text-[18px] font-medium">Pressure-treated</td><td data-label="Cost" class="font-mono">$55 – $80</td><td data-label="Upkeep" class="text-slate">Stain every 2–3 years</td></tr>
+          <tr><td data-label="Decking" class="font-display text-[18px] font-medium">Western red cedar</td><td data-label="Cost" class="font-mono">$70 – $100</td><td data-label="Upkeep" class="text-slate">Stain every 2–4 years</td></tr>
+          <tr><td data-label="Decking" class="font-display text-[18px] font-medium">Composite</td><td data-label="Cost" class="font-mono">$90 – $140</td><td data-label="Upkeep" class="text-slate">Wash yearly</td></tr>
+          <tr><td data-label="Decking" class="font-display text-[18px] font-medium">Glass guard (add)</td><td data-label="Cost" class="font-mono">$350 – $550 / lin ft</td><td data-label="Upkeep" class="text-slate">Clean</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-4 text-[15px]"><span class="font-medium">What pushes it to the top: </span>height above grade, a slope that needs tall posts, a roof over the deck, and glass guards.</p>
+    <p class="mt-2 font-mono text-[12px] text-slate">Ranges last reviewed: {pricingReviewed} · Includes footings, framing, decking and guards · Excludes 5% GST</p>
+  </Section>
+
+  <Section id="structure" num="03" tab="Structure" title="What makes a legal deck legal">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2">
+      {[
+        ["Footings", "Concrete footings below frost depth on undisturbed soil, sized for the post loads. Not deck blocks on topsoil."],
+        ["Ledger", "Flashed and through-bolted to the house rim joist — the single connection that fails most often in collapses."],
+        ["Beams and joists", "Sized to span tables for the species and grade, with joist hangers at every connection."],
+        ["Guards", "900 mm minimum on most residential decks, 1,070 mm above 1.8 m, no openings a 100 mm sphere can pass, and nothing climbable between 140 and 900 mm."],
+        ["Stairs", "Uniform rise and run, a handrail where there are more than three risers, and a guard on open sides."],
+        ["Setbacks", "Decks count toward setbacks and lot coverage in many zones. We check before we draw."],
+      ].map(([h, t]) => <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">{h}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{t}</p></li>)}
+    </ul>
+  </Section>
+
+  <Section id="faq" num="04" tab="FAQ" title="Deck questions" tone="concrete">
+    <FAQ items={faqs} />
+  </Section>
+  <CTABand />
+</Base>

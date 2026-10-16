@@ -1,0 +1,25 @@
+---
+import Legal from "../layouts/Legal.astro";
+import { company, phone } from "../data/site";
+---
+<Legal title="Accessibility Statement | Stonecroft Renovation" description="Stonecroft's commitment to WCAG 2.1 AA, known gaps on this site, and how to report a problem." heading="Accessibility" updated="2026-10-16" crumb="Accessibility">
+  <p>We want everyone to be able to use this site — to read the logs, check the prices and book a visit — whatever device or assistive technology they use.</p>
+  <h2>Our target</h2>
+  <p>This site is built to meet the <strong>Web Content Accessibility Guidelines (WCAG) 2.1 at level AA</strong>. In practice that means:</p>
+  <ul>
+    <li>Every page works with a keyboard alone, with a visible focus indicator and a "Skip to content" link.</li>
+    <li>Text meets 4.5:1 contrast; status is never shown by colour alone — always with a shape and a word.</li>
+    <li>Forms have visible labels, explain errors in words, and keep what you typed.</li>
+    <li>Tables, the estimator and the schedule work with screen readers; the before-and-after slider is a standard range control.</li>
+    <li>Animation is turned off when your device asks for reduced motion.</li>
+    <li>Pages reflow to 320 px wide and to 200% zoom without losing content.</li>
+  </ul>
+  <h2>Known gaps</h2>
+  <ul>
+    <li>Some older build-log photographs do not yet have detailed descriptions. We are adding them, newest first.</li>
+    <li>Downloadable PDFs (the verification pack, finish schedules) are not yet fully tagged.</li>
+    <li>The service-area map is a simplified diagram; the full list of municipalities is given as text beside it.</li>
+  </ul>
+  <h2>Report a problem</h2>
+  <p>If something on this site doesn't work for you, tell us and we'll fix it or give you the information another way: <a href={`mailto:${company.email}?subject=Accessibility`}>{company.email}</a> or <a href={phone.href}>{phone.display}</a>. We reply within two business days.</p>
+</Legal>

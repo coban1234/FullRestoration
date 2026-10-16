@@ -1,0 +1,119 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import { ScheduleView } from "../../components/tools/ScheduleView";
+import { schedules } from "../../data/schedules";
+
+const stages = [
+  {
+    n: "Site visit & scope", d: "60–90 min, within 2–3 weeks of enquiry",
+    happens: "Your site lead walks the house with you, measures, photographs and asks about how you live in it. Nothing is opened.",
+    decide: "What is in and out of scope, and your budget band.",
+    need: "Access to every room involved, the electrical panel and the crawlspace or basement. Any drawings you have.",
+    use: "Everything.",
+    wrong: "Scope creep in the conversation: a kitchen becomes a kitchen, a bathroom and a hall. We write down what you said and confirm it by email the same day.",
+  },
+  {
+    n: "Fixed-price proposal", d: "5–10 business days",
+    happens: "A written scope, a fixed price with contingency as its own line, allowances per item, a draw schedule and a stage-by-stage schedule.",
+    decide: "Whether to sign, change scope, or walk away with the proposal. It is yours to keep.",
+    need: "Answers to our follow-up questions, usually two or three.",
+    use: "Everything.",
+    wrong: "Comparing it with a quote that excludes permits, contingency or the temporary kitchen. We list what is excluded so you can compare like for like.",
+  },
+  {
+    n: "Contract & deposit", d: "1 week",
+    happens: "The CCDC-based contract, the published change-order policy, the log-consent clause and a 10% deposit.",
+    decide: "Whether your job appears in the public log. You can opt out.",
+    need: "Signature and deposit. Your insurer told about the work.",
+    use: "Everything.",
+    wrong: "Nothing usually — but we will not start design work without a signed contract.",
+  },
+  {
+    n: "Design & permits", d: "4–12 weeks, municipality-dependent",
+    happens: "Layout and permit drawings, engineer where required, finish selections, and the permit application. Long-lead items ordered.",
+    decide: "Every finish, by a dated deadline. Late decisions are the main cause of schedule slips.",
+    need: "Decisions on time. Direct engagement of the structural engineer where one is needed.",
+    use: "Everything.",
+    wrong: "The municipality. Permit queues are not ours to control; we publish the current timeline for your city.",
+  },
+  {
+    n: "Pre-start meeting", d: "half a day, on site",
+    happens: "We walk the schedule with you: dust barriers, the temporary kitchen, which days the water or power are off, where the bin goes.",
+    decide: "Working-hours preferences, pets, keys and parking.",
+    need: "The rooms cleared of belongings.",
+    use: "Everything until day one.",
+    wrong: "Belongings left in the work area. We will move furniture; we will not pack your kitchen.",
+  },
+  {
+    n: "Construction", d: "per scope — see the schedule estimator",
+    happens: "Demolition, rough-in, inspections, close-in, finishes. A weekly log every Friday, with spend and status.",
+    decide: "Change orders, if any, with a written cost and schedule impact before work proceeds.",
+    need: "Access, and answers to questions within two business days.",
+    use: "Everything outside the sealed work area. See the disruption block for your scope.",
+    wrong: "What is behind the walls. Pre-1980 houses carry 12% contingency for exactly this reason.",
+  },
+  {
+    n: "Deficiency walk, closeout & warranty", d: "1–2 weeks",
+    happens: "A written deficiency list at substantial completion, closed item by item. Final inspection. Closeout binder with warranties and photographs.",
+    decide: "When the deficiency list is complete.",
+    need: "The final draw; the 10% holdback is released 33 days later.",
+    use: "Everything.",
+    wrong: "Small items lingering. Every one has a date against it, and the list is published as the final log entry.",
+  },
+];
+const title = "How a Renovation Works — 7 Stages, Timelines & Change Orders | Stonecroft";
+const description = "The seven stages of a Stonecroft renovation: what happens, how long, what you decide, what you can use, and what typically goes wrong. Plus our change-order policy.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Process" }]}>
+  <PageHero eyebrow="Process" title="How a renovation runs, stage by stage" lede="Seven stages. Each one with what happens, how long it takes, what you decide — and what typically goes wrong." />
+
+  <Section id="stages" num="01" tab="Stages" title="Seven stages">
+    <ol class="space-y-6">
+      {stages.map((s, i) => (
+        <li class="chamfer grid gap-6 border border-line bg-white p-5 md:p-8 lg:grid-cols-12">
+          <div class="lg:col-span-4">
+            <p class="font-mono text-[13px] text-slate">Stage {i + 1} of 7</p>
+            <h3 class="mt-2 font-display text-[26px] font-medium leading-tight">{s.n}</h3>
+            <p class="mt-2 font-mono text-[15px] text-char">{s.d}</p>
+            <PhotoSlot class="mt-5" ratio="aspect-[3/2]" label={`${s.n} — on site`} />
+          </div>
+          <dl class="grid gap-5 text-[15px] leading-relaxed md:grid-cols-2 lg:col-span-8">
+            <div><dt class="text-[13px] font-medium text-slate">What happens</dt><dd class="mt-1">{s.happens}</dd></div>
+            <div><dt class="text-[13px] font-medium text-slate">What you decide</dt><dd class="mt-1">{s.decide}</dd></div>
+            <div><dt class="text-[13px] font-medium text-slate">What we need from you</dt><dd class="mt-1">{s.need}</dd></div>
+            <div><dt class="text-[13px] font-medium text-slate">What you can use in the house</dt><dd class="mt-1">{s.use}</dd></div>
+            <div class="border-l-2 border-clay pl-4 md:col-span-2"><dt class="text-[13px] font-medium text-clay-dk">What typically goes wrong</dt><dd class="mt-1">{s.wrong}</dd></div>
+          </dl>
+        </li>
+      ))}
+    </ol>
+  </Section>
+
+  <Section id="schedule" num="02" tab="Schedule" title="How long will my house be unusable?" tone="concrete" note="Pick a scope. The disruption block is the part that matters.">
+    <ScheduleView client:visible initial="medium-kitchen" selectable headingLevel="h3" />
+    <h3 class="h3 mt-12">Schedules for nine common scopes</h3>
+    <ul class="mt-4 grid gap-x-8 border-t border-char sm:grid-cols-2 lg:grid-cols-3">
+      {schedules.map((s) => <li class="border-b border-line"><a href={`/process/schedule/${s.slug}/`} class="flex min-h-[52px] items-center justify-between gap-3 text-[16px] hover:text-clay-dk"><span>How long does a {s.name.toLowerCase()} take?</span><span class="font-mono text-[13px] text-slate">{s.onSite}</span></a></li>)}
+    </ul>
+  </Section>
+
+  <Section id="change-orders" num="03" tab="Change orders" title="Our change-order policy, in full">
+    <div class="prose-sc">
+      <ol>
+        <li>Every change order is written and states four things: <strong>the cost</strong>, <strong>the schedule impact in days</strong>, <strong>the reason</strong>, and <strong>who requested it</strong> — you, or us.</li>
+        <li>No work on a change proceeds until it is signed by you. Not on a phone call, not on a text.</li>
+        <li>Changes we identify — something behind a wall that was not visible at the site visit — are photographed and shown to you the same day.</li>
+        <li>Changes are priced at the same rates as the contract, which are stated in it.</li>
+        <li>Credits work the same way: if an allowance comes in under, the difference is a change order in your favour.</li>
+        <li>Every change order is published in that week's log entry, with all four fields.</li>
+      </ol>
+      <p>"Who asked for this" is what separates a change order from a cost overrun. Publishing it is what makes the change orders in our log credible. <a href="/journal/change-order-vs-overrun/">How to tell a change order from an overrun</a>.</p>
+    </div>
+  </Section>
+
+  <CTABand />
+</Base>

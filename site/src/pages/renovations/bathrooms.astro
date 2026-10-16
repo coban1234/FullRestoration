@@ -1,0 +1,115 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import RangeTable from "../../components/ui/RangeTable.astro";
+import Disruption from "../../components/ui/Disruption.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import LogList from "../../components/ui/LogList.astro";
+import { BeforeAfter } from "../../components/BeforeAfter";
+import { ScheduleView } from "../../components/tools/ScheduleView";
+import { bathroomRanges } from "../../data/pricing";
+import { getProject, money } from "../../data/projects";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const langley = getProject("1991-langley-townhouse-bathrooms");
+const northVan = getProject("1974-north-vancouver-bathroom");
+
+const faqs = [
+  { q: "How much does a bathroom renovation cost in Vancouver?", a: "<p>A standard 5'×8' bathroom with a full tear-out, new waterproofing and a tiled shower is $20,000–$35,000. Luxury bathrooms — freestanding tub, steam, heated floors, custom glass — start at $40,000. Moving the toilet or the drain is what pushes a standard bathroom to the top of its range.</p>" },
+  { q: "How long will I be without a bathroom?", a: "<p>Three to five weeks for the room itself. If it is your only bathroom, the toilet stays connected for all but 4–6 days, and you get those dates at the pre-start meeting.</p>" },
+  { q: "Do I need a permit?", a: "<p>If plumbing moves, or electrical is added, yes. Like-for-like fixture swaps often do not. It varies by municipality; we confirm it with yours. <a href=\"/permits/\">Permits explained</a>.</p>" },
+  { q: "Which waterproofing system do you use?", a: "<p>A bonded sheet membrane over the whole shower and the floor, lapped and sealed at every seam, installed to the manufacturer's system warranty and to CSA B79 drain requirements. It is flood-tested for 24 hours and photographed before any tile goes on.</p>" },
+  { q: "Can you put in a curbless shower?", a: "<p>Usually, in a house — by recessing the floor between joists. In a condo the slab often makes it impossible without strata engineering approval. We tell you which at the site visit.</p>" },
+  { q: "Can I move the toilet in a condo?", a: "<p>Rarely. The toilet connects to a shared stack in a fixed place, and coring a new hole in a post-tensioned slab is not something a strata will approve lightly. See the section on what cannot move, below.</p>" },
+];
+const title = "Bathroom Renovation Vancouver — Cost & Timeline | Stonecroft";
+const description = "Bathroom renovations across Vancouver and the Fraser Valley from $20,000. Published costs, photographed waterproofing, and a 3–5 week disruption window.";
+---
+<Base
+  title={title}
+  description={description}
+  crumbs={[{ label: "Home", href: "/" }, { label: "Renovations", href: "/renovations/" }, { label: "Bathrooms" }]}
+  schema={[serviceSchema(site, "Bathroom renovation", description, "/renovations/bathrooms/", { low: 20000, high: 40000 }), faqSchema(faqs)]}
+>
+  <PageHero eyebrow="Renovations / Bathrooms" title="Bathroom renovation in Vancouver and the Fraser Valley" lede="From <span class='font-mono text-char'>$20,000</span>. Three to five weeks without the room — and the toilet stays live for all but a few days.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Bathroom membrane, seams lapped, before tile — North Vancouver, week 03" caption="Fig. 1 — the part nobody will ever see again" />
+  </PageHero>
+
+  <Section id="cost" num="01" tab="Cost" title="What a bathroom costs here" note="These are the ranges we actually contract at in this market.">
+    <RangeTable rows={bathroomRanges} caption="Bathroom renovation cost ranges" head={["Bathroom", "Range", "What it buys"]} pushes="moving the toilet or drain, a curbless shower, heated floors, and a condo that limits working hours and access." />
+    <p class="mt-6"><a href="/pricing/estimator/" class="link">Get a range for your bathroom</a></p>
+  </Section>
+
+  <Section id="disruption" num="02" tab="Disruption" title="What you lose, and for how long" tone="clay">
+    <Disruption label="Only bathroom unusable: 3–5 weeks">
+      <p>If this is your only bathroom, we stage the work to keep the toilet live for all but 4–6 days, and we tell you which days at the pre-start meeting.</p>
+    </Disruption>
+    <div class="prose-sc mt-8">
+      <p>The shower is the thing you lose for the full stretch. Most clients use a gym, a neighbour or family for three to four weeks. On two-bathroom jobs we do one, then the other, so one always works — it takes about two weeks longer and nobody leaves the house.</p>
+    </div>
+  </Section>
+
+  <Section id="waterproofing" num="03" tab="Waterproofing" title="Waterproofing, photographed" note="The single most common failure point in a bathroom, invisible once it is finished — which is why it is where cheap contractors cut.">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <p>We use a <strong>bonded sheet membrane system</strong> on every wet wall and the full floor — not paint-on over the shower only. Seams are lapped 50 mm and sealed; every penetration (valve, shower arm, niche) gets a pre-formed collar. Drains are installed to <strong>CSA B79</strong> and bonded to the membrane, and the whole assembly is installed to the manufacturer's system specification so its warranty actually applies.</p>
+        <p>Before a single tile goes on, the shower is plugged and <strong>flood-tested for 24 hours</strong>. Then it is photographed — seams, corners, drain, niche — and the photographs go into that week's log entry and your closeout binder.</p>
+        <p>Those photographs are the only proof anyone will ever have of what is behind the tile. If a contractor cannot show you theirs, assume there are none.</p>
+      </div>
+      <div class="grid gap-4 lg:col-span-5">
+        <PhotoSlot label="Membrane seams lapped and sealed at the niche" caption="Seams · 50 mm laps" />
+        <PhotoSlot label="Flood test, hour 24, water line marked" caption="Flood test · 24 h" />
+      </div>
+    </div>
+  </Section>
+
+  <Section id="strata" num="04" tab="Condo" title="What cannot move in a condo or townhouse" tone="concrete" note="This kills bathroom projects late and expensively. We check it at the site visit, not after demolition.">
+    <ul class="grid gap-px border border-line bg-line md:grid-cols-2">
+      {[
+        ["The toilet", "Connects to a shared stack in a fixed position. Moving it in a concrete building means coring the slab — strata engineering approval at best, refusal at worst."],
+        ["The shower drain", "Usually sits over a sleeve in the slab. A curbless shower may be impossible without lowering the slab, which most stratas will not allow."],
+        ["Risers and shut-offs", "Supply risers are common property. You cannot relocate them; you can only build around them, with access panels kept."],
+        ["The exhaust route", "Fans connect to a shared duct or a fixed exterior penetration. New penetrations through the envelope need strata approval."],
+        ["Working hours", "Most stratas allow 08:00–17:00 on weekdays only. That is built into our schedule, not discovered on day one."],
+        ["Waterproofing standard", "Many strata bylaws now require a specific membrane standard and an inspection. We build to it and give the strata the photographs."],
+      ].map(([h, t]) => (
+        <li class="bg-white p-6"><h3 class="font-display text-[20px] font-medium">{h}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{t}</p></li>
+      ))}
+    </ul>
+    <p class="mt-6 text-[15px]">Strata committee? <a href="/general-contracting/" class="link">How we work with councils and property managers</a></p>
+  </Section>
+
+  <Section id="schedule" num="05" tab="Schedule" title="A bathroom, stage by stage">
+    <ScheduleView initial="bathroom" headingLevel="h3" />
+  </Section>
+
+  <Section id="built" num="06" tab="Built" title="Two bathrooms we built" tone="concrete">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="lg:col-span-7">
+        <BeforeAfter client:visible uid="bba" before={{ label: "Langley ensuite, 1991 fibreglass stall" }} after={{ label: "Langley ensuite, curbless shower" }} caption="Langley · 1991 townhouse · same camera position, week 00 and handover" />
+      </div>
+      <div class="lg:col-span-5">
+        <h3 class="font-display text-[26px] font-medium leading-tight"><a href={`/projects/${langley.slug}/`} class="hover:underline">{langley.title}</a></h3>
+        <p class="mt-4 font-mono text-[15px]">{money(langley.signed)} signed · {money(langley.final!)} final · {langley.weeksActual}/{langley.weeksPlanned} weeks</p>
+        <p class="mt-4 text-[15px] leading-relaxed text-slate">{langley.asked}</p>
+        <a href={`/projects/${langley.slug}/`} class="mt-3 inline-flex min-h-[44px] items-center text-[15px] font-medium text-clay-dk underline underline-offset-4">Case study and full log</a>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="live" num="07" tab="Log" title="A bathroom on site right now" note={`${northVan.title}. Updated every Friday.`}>
+    <LogList project={northVan} />
+    <p class="mt-6"><a href={`/projects/${northVan.slug}/log/`} class="btn-secondary w-full sm:w-auto">Follow this job</a></p>
+  </Section>
+
+  <Section id="faq" num="08" tab="FAQ" title="Bathroom questions, answered" tone="concrete">
+    <FAQ items={faqs} />
+    <p class="mt-6 text-[15px] text-slate">Doing the kitchen too? <a href="/renovations/kitchens/" class="link">Kitchen renovation</a> · <a href="/pricing/" class="link">All pricing</a></p>
+  </Section>
+
+  <CTABand title="Start with a site visit." />
+</Base>

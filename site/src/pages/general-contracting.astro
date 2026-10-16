@@ -1,0 +1,86 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import Section from "../components/ui/Section.astro";
+import CTABand from "../components/ui/CTABand.astro";
+import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import { serviceSchema, siteUrl } from "../lib/schema";
+
+const site = siteUrl(Astro.site);
+const responsibilities = [
+  ["Scope", "A written scope of work, item by item, that your council can approve and hold us to."],
+  ["Schedule", "A stage-by-stage schedule with named trades and dates, updated weekly."],
+  ["Trade procurement & coordination", "We tender, hire and manage every subtrade, and they are named on your schedule."],
+  ["Permits & inspections", "Applications, drawings coordination, inspection booking and sign-off."],
+  ["Site safety & WorkSafeBC compliance", "Prime contractor responsibilities, site-specific safety plan, daily hazard assessments."],
+  ["Change control", "Every change priced, scheduled and signed before work proceeds — and published."],
+  ["Lien management", "Statutory 10% holdback, statutory declarations from every trade before release."],
+  ["Deficiency closeout", "A written deficiency list at substantial completion, closed item by item."],
+  ["Warranty administration", "One number to call for two years, and the paperwork for every manufacturer warranty."],
+];
+const docs = [
+  "WorkSafeBC clearance letter, current month",
+  "$5,000,000 commercial general liability certificate",
+  "WCB registration number",
+  "Site-specific safety plan",
+  "Insurance certificate naming the strata corporation as additional insured",
+  "Stage-by-stage schedule",
+  "Lien holdback schedule",
+  "Weekly report — the build log, as a web page and a council-ready PDF",
+];
+const title = "General Contractor — Vancouver, Strata & Commercial | Stonecroft";
+const description = "General contracting for strata corporations and small commercial projects across Vancouver and the Fraser Valley. Documentation package, contract models and weekly reports.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "General contracting" }]} schema={[serviceSchema(site, "General contracting, strata and small commercial", description, "/general-contracting/")]}>
+  <PageHero eyebrow="General contracting" title="General contracting for stratas and small commercial" lede="Written for the person who has to justify the decision to a council, a board or an owners' meeting — in writing." secondary={{ label: "Download the licence & insurance pack", href: "/verify/#pack" }} />
+
+  <Section id="gc" num="01" tab="What a GC does" title="What we take responsibility for" note="Stated as a list, so it can go straight into a council minute.">
+    <ol class="grid gap-px border border-line bg-line md:grid-cols-2 lg:grid-cols-3">
+      {responsibilities.map(([h, t], i) => <li class="bg-white p-6"><span class="font-mono text-[12px] text-slate">{String(i + 1).padStart(2, "0")}</span><h3 class="mt-2 font-display text-[20px] font-medium">{h}</h3><p class="mt-2 text-[15px] leading-relaxed text-slate">{t}</p></li>)}
+    </ol>
+  </Section>
+
+  <Section id="strata" num="02" tab="Strata" title="Working inside a strata" tone="concrete">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="prose-sc lg:col-span-7">
+        <ul>
+          <li><strong>Bylaws.</strong> We read yours before we price, and build the working hours, noise limits and contractor rules into the schedule.</li>
+          <li><strong>Elevator and loading bay booking.</strong> Booked for every delivery day at pre-start, in one request, so the property manager is asked once.</li>
+          <li><strong>Restricted hours.</strong> Most stratas allow 08:00–17:00 weekdays. Our schedule assumes that, not a seven-day week.</li>
+          <li><strong>Common-area protection.</strong> Floor, wall and elevator protection on every route, photographed before and after.</li>
+          <li><strong>Depreciation-report-driven work.</strong> We price against the report's line items so the council can compare like for like.</li>
+          <li><strong>The AGM and special-levy cycle.</strong> We can provide a budget-grade range for an AGM, then a fixed price once the levy is approved, and sequence the work around the vote.</li>
+        </ul>
+      </div>
+      <PhotoSlot class="lg:col-span-5" ratio="aspect-[4/5]" label="Elevator protection pads and common-corridor floor protection" />
+    </div>
+  </Section>
+
+  <Section id="documents" num="03" tab="Documents" title="The documentation package" note="What wins committee decisions. All of it, before you sign.">
+    <ul class="grid gap-x-10 border-t border-char md:grid-cols-2">
+      {docs.map((d, i) => <li class="flex gap-4 border-b border-line py-4 text-[16px]"><span class="font-mono text-[13px] text-slate">{String(i + 1).padStart(2, "0")}</span>{d}</li>)}
+    </ul>
+    <p class="mt-6"><a href="/verify/" class="btn-secondary w-full sm:w-auto">Check every document on the verify page</a></p>
+  </Section>
+
+  <Section id="contracts" num="04" tab="Contracts" title="Three contract models, plainly" tone="concrete">
+    <div class="grid gap-4 lg:grid-cols-3">
+      <div class="chamfer border-2 border-char bg-white p-6">
+        <p class="eyebrow">Our default</p>
+        <h3 class="h3 mt-2">Fixed price</h3>
+        <p class="mt-3 text-[15px] leading-relaxed">One price for a defined scope. Changes are priced before they happen. Best when the scope can be fully described — most strata repair and renovation work can.</p>
+      </div>
+      <div class="chamfer border border-line bg-white p-6">
+        <h3 class="h3">Cost-plus with a guaranteed maximum</h3>
+        <p class="mt-3 text-[15px] leading-relaxed text-slate">Actual cost plus an agreed fee, capped at a maximum price. Open-book. Useful when part of the scope cannot be known until the building is opened up.</p>
+      </div>
+      <div class="chamfer border border-line bg-white p-6">
+        <h3 class="h3">Construction management</h3>
+        <p class="mt-3 text-[15px] leading-relaxed text-slate">We manage trades you contract directly, for a fee. More control for the owner; more risk carried by the owner too.</p>
+      </div>
+    </div>
+    <p class="mt-6 max-w-[66ch] text-[16px] leading-relaxed">We offer fixed price by default because a council can approve a number and hold us to it. Where the scope genuinely cannot be fixed, we will say so and propose a guaranteed maximum instead.</p>
+  </Section>
+
+  <CTABand title="Bring us to your next council meeting." text="We will walk the building with your property manager, then send a written scope and price your council can vote on." secondary={{ label: "See the build log format", href: "/build-log/" }} />
+</Base>

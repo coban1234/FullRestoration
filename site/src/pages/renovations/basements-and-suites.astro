@@ -1,0 +1,125 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import RangeTable from "../../components/ui/RangeTable.astro";
+import Disruption from "../../components/ui/Disruption.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import LogList from "../../components/ui/LogList.astro";
+import { basementRanges } from "../../data/pricing";
+import { getProject, money } from "../../data/projects";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const surrey = getProject("1979-surrey-rancher-legal-suite");
+const langley = getProject("1989-langley-basement-suite");
+
+const requirements = [
+  ["Ceiling height", "Minimum clear height over the required area of each room, with limits on how much beams and ducts can drop below it.", "Fails inspection. Lowering a slab or rerouting ducts after the fact is the most expensive fix on this list."],
+  ["Egress windows", "Every bedroom needs an openable window with a minimum clear opening and a maximum sill height, plus a window well with drainage.", "No bedroom can be declared. A one-bedroom becomes a studio, and the rent drops."],
+  ["Fire separation", "Rated assembly between units — typically 5/8\" Type X drywall on resilient channel, sealed penetrations, rated doors and interconnected smoke alarms.", "Uninsurable as a suite. The most common reason a finished basement is not a legal one."],
+  ["Separate heating & ventilation", "No shared return air between units. Usually a dedicated HRV or a fully separated duct system.", "Smoke and fire travel through shared ducts; inspectors will not pass it."],
+  ["Parking", "Many municipalities require one extra off-street space for a suite.", "Permit refused regardless of how good the suite is."],
+  ["Business licence", "Several municipalities require a rental or business licence for the suite once it is occupied.", "Fines, and a suite you cannot legally rent."],
+  ["Zoning", "The lot must permit a secondary suite, and some zones limit it to one per lot or require owner occupancy.", "No permit at all. We check zoning before the site visit."],
+];
+
+const munis = [
+  ["Vancouver", "Permitted in most residential zones; VBBL governs", "Not required", "Required"],
+  ["Burnaby", "Permitted in most single-family zones", "1 additional space", "Not required"],
+  ["Surrey", "Permitted; published suite checklist", "1 additional space", "Required (utility fee)"],
+  ["Langley (Township)", "Permitted outside some ALR lots", "1 additional space", "Required"],
+  ["Abbotsford", "Permitted with registration", "1 additional space", "Registration required"],
+  ["Chilliwack", "Permitted in most zones", "1 additional space", "Not required"],
+];
+
+const faqs = [
+  { q: "What does a basement renovation cost?", a: "<p>$50–$150 per square foot to finish. A 1,000 sq ft basement is $50,000–$150,000. Making it a legal suite adds 15–30% on top.</p>" },
+  { q: "Is my finished basement a legal suite?", a: "<p>Only if it was permitted and passed inspection as one. If you are not sure, your municipality can tell you from the permit history on the address.</p>" },
+  { q: "Can you legalise an existing suite?", a: "<p>Often. It usually means opening walls for fire separation and inspection, enlarging bedroom windows, and separating ventilation — so it costs more than people expect, but less than building from scratch.</p>" },
+  { q: "How long does a legal suite take?", a: "<p>Nine to thirteen weeks on site; 13–23 weeks including permits. Upstairs stays live throughout.</p>" },
+  { q: "What will a suite rent for?", a: "<p>It depends heavily on municipality and size. We publish comparisons in the journal rather than a calculator, because a calculator would be guessing.</p>" },
+  { q: "Do I need an engineer?", a: "<p>Only for structural changes — a new beam, an enlarged opening in a foundation wall. When you do, you engage the engineer directly; we explain why on the <a href=\"/additions/\">additions page</a>.</p>" },
+];
+const title = "Basement Renovation & Legal Suites — Vancouver & Fraser Valley | Stonecroft";
+const description = "Basement finishing from $50 per square foot and legal secondary suites across Vancouver and the Fraser Valley. Municipal requirements compared, costs published.";
+---
+<Base
+  title={title}
+  description={description}
+  crumbs={[{ label: "Home", href: "/" }, { label: "Renovations", href: "/renovations/" }, { label: "Basements & suites" }]}
+  schema={[serviceSchema(site, "Basement renovation and legal secondary suites", description, "/renovations/basements-and-suites/", { low: 50000, high: 150000 }), faqSchema(faqs)]}
+>
+  <PageHero eyebrow="Renovations / Basements & suites" title="Basement renovation and legal suites" lede="<span class='font-mono text-char'>$50–$150</span> per square foot to finish. A legal suite adds <span class='font-mono text-char'>15–30%</span> — and is worth it.">
+    <PhotoSlot slot="art" ratio="aspect-[4/3]" label="Fire-separation board on resilient channel, Langley suite, week 07" caption="Fig. 1 — the layer that makes a suite legal" />
+  </PageHero>
+
+  <Section id="cost" num="01" tab="Cost" title="What a basement costs here" note="These are the ranges we actually contract at in this market.">
+    <RangeTable rows={basementRanges} caption="Basement and suite cost ranges" head={["Scope", "Range", "Note"]} pushes="low ceilings that need ducts rerouted, new egress windows cut through concrete, and a separate entrance." />
+    <div class="chamfer mt-10 border border-char bg-white p-6 md:p-8">
+      <p class="eyebrow">Worked example</p>
+      <p class="mt-3 font-display text-[24px] font-medium md:text-[30px]">A 1,000 sq ft basement: <span class="font-mono">$50,000 – $150,000</span></p>
+      <p class="mt-2 text-[16px] text-slate">As a legal suite, add 15–30%: roughly <span class="font-mono text-char">$57,500 – $195,000</span>.</p>
+    </div>
+  </Section>
+
+  <Section id="legal" num="02" tab="Legal" title="What makes a suite legal, not just finished" tone="concrete">
+    <Disruption label="Finished is not legal">
+      <p>A suite that is finished but not legal cannot be insured as a suite, cannot be declared as income to a lender, and is a disclosure problem when you sell.</p>
+    </Disruption>
+    <div class="chamfer mt-8 border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Legal secondary suite requirements</caption>
+        <thead><tr><th scope="col">Requirement</th><th scope="col">What it means</th><th scope="col">If you miss it</th></tr></thead>
+        <tbody>
+          {requirements.map(([a, b, c]) => <tr><td data-label="Requirement" class="font-display text-[18px] font-medium">{a}</td><td data-label="Means" class="text-[15px]">{b}</td><td data-label="If missed" class="text-[15px] text-clay-dk">{c}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+  </Section>
+
+  <Section id="municipalities" num="03" tab="By city" title="Six municipalities, six sets of rules" note="Verified 2026-09-30 against each municipality's published suite requirements. Confirm against your address — rules change.">
+    <div class="chamfer border border-line bg-white px-5 md:px-7">
+      <table class="tbl tbl-stack">
+        <caption class="sr-only">Secondary suite rules by municipality</caption>
+        <thead><tr><th scope="col">Municipality</th><th scope="col">Suites</th><th scope="col">Extra parking</th><th scope="col">Licence / registration</th></tr></thead>
+        <tbody>
+          {munis.map(([a, b, c, d]) => <tr><td data-label="Municipality" class="font-display text-[18px] font-medium">{a}</td><td data-label="Suites" class="text-[15px]">{b}</td><td data-label="Parking" class="font-mono text-[14px]">{c}</td><td data-label="Licence" class="text-[15px]">{d}</td></tr>)}
+        </tbody>
+      </table>
+    </div>
+    <p class="mt-3 font-mono text-[12px] text-slate">Last verified: 2026-09-30 · re-checked quarterly</p>
+  </Section>
+
+  <Section id="built" num="04" tab="Built" title="A suite we built" tone="concrete">
+    <div class="grid gap-8 lg:grid-cols-12">
+      <div class="grid grid-cols-2 gap-3 lg:col-span-7">
+        <PhotoSlot ratio="aspect-square" label="Surrey basement before — open joists" />
+        <PhotoSlot ratio="aspect-square" label="Surrey suite after — same position" />
+      </div>
+      <div class="lg:col-span-5">
+        <h3 class="font-display text-[26px] font-medium leading-tight"><a href={`/projects/${surrey.slug}/`} class="hover:underline">{surrey.title}</a></h3>
+        <p class="mt-4 font-mono text-[15px]">{money(surrey.signed)} signed · {money(surrey.final!)} final · {surrey.weeksActual}/{surrey.weeksPlanned} weeks · {surrey.permit}</p>
+        <p class="mt-4 text-[15px] leading-relaxed text-slate">Surrey's suite inspection passed first time.</p>
+        <a href={`/projects/${surrey.slug}/`} class="mt-3 inline-flex min-h-[44px] items-center text-[15px] font-medium text-clay-dk underline underline-offset-4">Case study and full log</a>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="live" num="05" tab="Log" title="A suite on site right now" note={langley.title}>
+    <LogList project={langley} limit={5} />
+    <p class="mt-6"><a href={`/projects/${langley.slug}/log/`} class="btn-secondary w-full sm:w-auto">All {langley.log.length} weeks of this job</a></p>
+  </Section>
+
+  <Section id="faq" num="06" tab="FAQ" title="Basement and suite questions" tone="concrete">
+    <FAQ items={faqs} />
+  </Section>
+
+  <CTABand
+    title="What a legal suite rents for in your municipality."
+    text="We compared suite rules and typical rents across six Fraser Valley municipalities. No calculator — just the published numbers and where they come from."
+    secondary={{ label: "Read the comparison", href: "/journal/legal-secondary-suites-compared/" }}
+  />
+</Base>

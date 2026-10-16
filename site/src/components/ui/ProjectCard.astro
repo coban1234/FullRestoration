@@ -1,0 +1,41 @@
+---
+import { KitchenArt } from "../KitchenArt";
+import { StatusMark } from "../StatusMark";
+import { money, pad2, type Project } from "../../data/projects";
+interface Props { project: Project; headingLevel?: "h2" | "h3" }
+const { project: p, headingLevel = "h3" } = Astro.props;
+const H = headingLevel;
+const latest = p.log[p.log.length - 1];
+const over = p.final !== undefined && p.final > p.signed;
+const art = p.hero ?? (p.scope === "Kitchen" ? Math.min(p.stageNow, 4) : undefined);
+---
+<article class="chamfer flex h-full flex-col border border-line bg-white">
+  <a href={`/projects/${p.slug}/`} class="group flex h-full flex-col" aria-label={p.title}>
+    <div class="relative aspect-[3/2] overflow-hidden border-b border-line bg-concrete">
+      {art !== undefined ? (
+        <KitchenArt stage={art} uid={`pc-${p.slug}`} alt={`Illustration: ${p.title}`} className="absolute inset-0" />
+      ) : (
+        <div role="img" aria-label={`Photograph to come: ${p.title}`} class="photo-slot absolute inset-0 flex items-center justify-center p-4 text-center">
+          <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{p.short}</span></span>
+        </div>
+      )}
+      {p.live && latest && (
+        <span class="absolute left-3 top-3 bg-white px-2 py-1"><StatusMark status={latest.status} label={`Live · wk ${pad2(latest.week)}`} /></span>
+      )}
+    </div>
+    <div class="flex flex-1 flex-col p-5">
+      <p class="text-[13px] text-slate">{p.municipality} · {p.scope} · <span class="font-mono">{p.vintage}</span></p>
+      <H class="mt-2 font-display text-[21px] font-medium leading-tight text-char group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4">{p.title}</H>
+      <dl class="mt-auto grid grid-cols-2 gap-3 border-t border-line pt-4 font-mono text-[14px]">
+        <div>
+          <dt class="font-sans text-[12px] text-slate">{p.live ? "Signed" : "Final cost"}</dt>
+          <dd class:list={["mt-0.5", over ? "text-clay-dk" : "text-char"]}>{money(p.final ?? p.signed)}{over && <span class="ml-1 text-[12px]">+{money(p.final! - p.signed)}</span>}</dd>
+        </div>
+        <div>
+          <dt class="font-sans text-[12px] text-slate">Weeks</dt>
+          <dd class="mt-0.5 text-char">{p.live ? `${pad2(latest?.week ?? 0)} of ${p.weeksPlanned}` : `${p.weeksActual} / ${p.weeksPlanned} planned`}</dd>
+        </div>
+      </dl>
+    </div>
+  </a>
+</article>

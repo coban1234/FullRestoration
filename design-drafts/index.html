@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en-CA">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stonecroft — four home-page drafts (spec v1.1)</title>
+<link rel="stylesheet" href="assets/base.css">
+<style>
+  body { background: var(--r-plaster); }
+  main { padding: 48px 0 72px; }
+  .top { display: grid; gap: 16px; border-bottom: 1px solid var(--r-char); padding-bottom: 28px; }
+  .top h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(2.25rem, 6vw, 4.5rem); line-height: .95; letter-spacing: -.03em; }
+  .top p { color: var(--r-slate); font-size: var(--t-lead); max-width: 46rem; }
+  .meta { font-family: var(--font-mono); font-size: .75rem; color: var(--r-slate); display: flex; flex-wrap: wrap; gap: 6px 20px; }
+  .grid { margin-top: 32px; display: grid; gap: 24px; }
+  .card { display: flex; flex-direction: column; text-decoration: none; background: var(--r-white); border: 1px solid var(--r-line-strong); }
+  .card:hover { border-color: var(--r-char); }
+  .card .ph { aspect-ratio: 16/9; border-bottom: 1px solid var(--r-line-strong); }
+  .card .bd { padding: 20px; display: grid; gap: 8px; }
+  .card .n { font-family: var(--font-mono); font-size: .75rem; color: var(--r-clay-dk); }
+  .card h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.75rem; letter-spacing: -.02em; line-height: 1.05; }
+  .card p { font-size: var(--t-small); color: var(--r-slate); }
+  .card ul { font-size: var(--t-small); display: grid; gap: 4px; margin-top: 4px; }
+  .card li::before { content: "— "; color: var(--r-slate); }
+  .card .go { margin-top: 8px; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; }
+  @media (min-width: 900px) { .grid { grid-template-columns: 1fr 1fr; gap: 32px; } main { padding: 80px 0 120px; } }
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="top">
+    <span class="meta"><span>STONECROFT · HOME PAGE §7.1</span><span>SPEC v1.1</span><span>2026-10-16</span></span>
+    <h1>Four drafts of The Build Log.</h1>
+    <p>Same content, same tokens, same rules: mobile-first, one primary button per screen, status always shape + colour + words. Four different ways of publishing the middle of the job. Open each on a phone (or at 360×640) as well as on desktop.</p>
+    <span class="meta"><span>ALL FIGURES ARE PLACEHOLDERS</span><span>NO STOCK OR AI PHOTOGRAPHY</span><span>KITCHEN = SVG STAND-IN</span></span>
+  </header>
+  <div class="grid">
+    <a class="card" href="01-drawing-set.html"><div class="ph" data-kitchen="4" aria-hidden="true"></div><div class="bd">
+      <span class="n">01</span><h2>Drawing Set</h2><p>The faithful reading of the spec. Plaster, annotation rail and dimension lines; a live job ledger rides the kitchen as it rebuilds.</p>
+      <ul><li>Mobile: full-bleed kitchen behind the headline</li><li>Chamfered cards, stacked price table</li></ul><span class="go">Open draft 01</span></div></a>
+    <a class="card" href="02-site-board.html"><div class="ph" data-kitchen="2" aria-hidden="true"></div><div class="bd">
+      <span class="n">02</span><h2>Site Board</h2><p>Dark site-office board. A 13-week Gantt with a TODAY cursor tracks the scroll; the late job sits at the top of a departures-style table.</p>
+      <ul><li>Mobile: framed photo flexes to fill the screen</li><li>Signed-vs-final bars, stamped documents</li></ul><span class="go">Open draft 02</span></div></a>
+    <a class="card" href="03-title-block.html"><div class="ph" data-kitchen="1" aria-hidden="true"></div><div class="bd">
+      <span class="n">03</span><h2>Title Block</h2><p>An architectural sheet. Numbered callouts mark what changed each stage, a title block keeps the ledger and lists change orders as revisions, and a scrubber drags through the weeks.</p>
+      <ul><li>Mobile: compact sheet, one-line callout caption</li><li>Cost schedule drawn as dimension lines</li></ul><span class="go">Open draft 03</span></div></a>
+    <a class="card" href="04-the-weekly.html"><div class="ph" data-kitchen="3" aria-hidden="true"></div><div class="bd">
+      <span class="n">04</span><h2>The Weekly</h2><p>A broadsheet published every Friday. The kitchen is the front-page photo, a contact sheet is the stage control, and the delay is the lead story.</p>
+      <ul><li>Mobile: masthead strip, scrollable contact sheet</li><li>Final accounts, public notices, reply card</li></ul><span class="go">Open draft 04</span></div></a>
+  </div>
+</main>
+<script src="assets/kitchen.js"></script>
+<script>paintKitchens();</script>
+</body>
+</html>

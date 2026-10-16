@@ -1,0 +1,39 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import { articles } from "../../data/journal";
+
+const title = "Renovation Journal — Costs, Permits & Contracts, Vancouver | Stonecroft";
+const description = "Long-form articles on what renovation costs in Vancouver, permits, contracts and older housing stock — written by the people who do the work.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Journal" }]}>
+  <PageHero eyebrow="Journal" title="The journal" lede="What we have learned from building, written down. Every article uses photographs and numbers from our own jobs, and is signed by the person who wrote it." primary={null} secondary={null} />
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x">
+      <ol class="border-t border-char">
+        {articles.map((a) => (
+          <li class="border-b border-line">
+            {a.body ? (
+              <a href={`/journal/${a.slug}/`} class="group grid gap-2 py-6 md:grid-cols-[60px_1fr_220px] md:gap-6">
+                <span class="font-mono text-[13px] text-slate">{String(a.n).padStart(2, "0")}</span>
+                <span>
+                  <span class="block font-display text-[22px] font-medium leading-snug group-hover:underline group-hover:decoration-1 group-hover:underline-offset-4 md:text-[26px]">{a.title}</span>
+                  <span class="mt-2 block text-[15px] text-slate">{a.excerpt}</span>
+                </span>
+                <span class="text-[14px] md:text-right"><span class="block">{a.author}</span><time class="font-mono text-[13px] text-slate" datetime={a.published}>{a.published}</time></span>
+              </a>
+            ) : (
+              <div class="grid gap-2 py-6 opacity-70 md:grid-cols-[60px_1fr_220px] md:gap-6">
+                <span class="font-mono text-[13px] text-slate">{String(a.n).padStart(2, "0")}</span>
+                <span><span class="block font-display text-[20px] font-medium leading-snug md:text-[22px]">{a.title}</span><span class="mt-2 block text-[15px] text-slate">{a.excerpt}</span></span>
+                <span class="text-[14px] md:text-right"><span class="block">{a.author}</span><span class="font-mono text-[13px] text-slate">Publishing {a.scheduled}</span></span>
+              </div>
+            )}
+          </li>
+        ))}
+      </ol>
+    </div>
+  </section>
+  <CTABand />
+</Base>

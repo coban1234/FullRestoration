@@ -1,0 +1,62 @@
+---
+import Base from "../layouts/Base.astro";
+import PageHero from "../components/ui/PageHero.astro";
+import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import ContactForm from "../components/booking/ContactForm";
+import { company, phone, office, regions } from "../data/site";
+import { launchCities, cities } from "../data/cities";
+
+const title = "Contact Stonecroft Renovation — Burnaby, BC | 604-555-0142";
+const description = "Call, email or visit Stonecroft Renovation in Burnaby. Office hours Mon–Fri 07:30–17:00. Serving Metro Vancouver and the Fraser Valley.";
+const cityHref = (p: string) => {
+  const slug = p.toLowerCase().replace(/\s+/g, "-");
+  return launchCities.includes(slug) && cities.find((c) => c.slug === slug) ? `/service-areas/${slug}/` : null;
+};
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Contact" }]}>
+  <PageHero eyebrow="Contact" title="Talk to the people who would do the work." lede="We answer the phone ourselves during office hours. Messages are answered within one business day." primary={{ label: "Book a site visit", href: "/book/" }} secondary={null} />
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x grid gap-10 lg:grid-cols-12">
+      <div class="lg:col-span-5">
+        <address class="not-italic">
+          <dl class="border-t border-char">
+            <div class="grid grid-cols-[110px_1fr] gap-4 border-b border-line py-4">
+              <dt class="text-[14px] text-slate">Phone</dt>
+              <dd><a href={phone.href} class="font-mono text-[20px] underline decoration-1 underline-offset-4">{phone.display}</a></dd>
+            </div>
+            <div class="grid grid-cols-[110px_1fr] gap-4 border-b border-line py-4">
+              <dt class="text-[14px] text-slate">Email</dt>
+              <dd><a href={`mailto:${company.email}`} class="link">{company.email}</a></dd>
+            </div>
+            <div class="grid grid-cols-[110px_1fr] gap-4 border-b border-line py-4">
+              <dt class="text-[14px] text-slate">Office</dt>
+              <dd>{company.legalName}<br />{office.line1}<br />{office.city} {office.region} <span class="font-mono">{office.postal}</span><br /><span class="text-[14px] text-slate">By appointment — we are usually on site.</span></dd>
+            </div>
+            <div class="grid grid-cols-[110px_1fr] gap-4 border-b border-line py-4">
+              <dt class="text-[14px] text-slate">Hours</dt>
+              <dd class="font-mono text-[15px]">{company.hours}</dd>
+            </div>
+          </dl>
+        </address>
+        <h2 class="h3 mt-10">Where we work</h2>
+        {regions.map((r) => (
+          <div class="mt-4">
+            <p class="text-[14px] font-medium text-slate">{r.label}</p>
+            <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1.5 text-[15px]">
+              {r.places.map((p) => { const h = cityHref(p); return <li>{h ? <a href={h} class="link">{p}</a> : p}</li>; })}
+            </ul>
+          </div>
+        ))}
+        <p class="mt-4 text-[15px]"><a href="/service-areas/" class="link">Service area map</a></p>
+      </div>
+      <div class="lg:col-span-7">
+        <div class="border border-char bg-white p-5 md:p-8">
+          <h2 class="h3">Send a message</h2>
+          <p class="mt-2 text-[15px] text-slate">For questions that aren't a booking — suppliers, past clients, press.</p>
+          <div class="mt-6"><ContactForm client:visible /></div>
+        </div>
+        <PhotoSlot class="mt-8" ratio="aspect-[16/9]" label="Exterior of the Burnaby office and workshop" caption={`${office.line1}, ${office.city}`} />
+      </div>
+    </div>
+  </section>
+</Base>

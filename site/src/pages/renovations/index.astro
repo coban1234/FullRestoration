@@ -1,0 +1,96 @@
+---
+import Base from "../../layouts/Base.astro";
+import PageHero from "../../components/ui/PageHero.astro";
+import Section from "../../components/ui/Section.astro";
+import FAQ from "../../components/ui/FAQ.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import KitchenFigure from "../../components/ui/KitchenFigure.astro";
+import { BeforeAfter } from "../../components/BeforeAfter";
+import { LogEntryCard } from "../../components/buildLog/LogEntryCard";
+import { allEntries } from "../../data/projects";
+import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
+
+const site = siteUrl(Astro.site);
+const cards = [
+  { name: "Kitchens", href: "/renovations/kitchens/", range: "$28–120k", note: "Six to nine weeks without a kitchen, and a temporary one from day one.", stage: 3 },
+  { name: "Bathrooms", href: "/renovations/bathrooms/", range: "$20–40k+", note: "Waterproofing flood-tested and photographed before tile.", label: "Bathroom membrane before tile" },
+  { name: "Whole home", href: "/renovations/whole-home/", range: "$150–400 / sq ft", note: "Gut renovations of 1950s–80s houses, with honest advice on when not to.", label: "Whole home at demolition" },
+  { name: "Basements & suites", href: "/renovations/basements-and-suites/", range: "$50–150 / sq ft", note: "Legal secondary suites, municipality by municipality.", label: "Suite fire separation" },
+];
+const interior = allEntries.filter((e) => e.project.live && ["Kitchen", "Bathroom"].includes(e.project.scope));
+const liveTwo = [interior.find((e) => e.status === "behind") ?? interior[0], interior.find((e) => e.project.scope === "Bathroom")!].filter(Boolean);
+const faqs = [
+  { q: "What does a home renovation cost in Vancouver?", a: "<p>Kitchens $28,000–$120,000+, bathrooms $20,000–$40,000+, whole homes $150–$400 per square foot and basements $50–$150 per square foot. <a href=\"/pricing/\">Full published pricing</a>.</p>" },
+  { q: "Do you do small jobs?", a: "<p>Our minimum is around $20,000. Below that a specialist trade will serve you better and cost less than a general contractor.</p>" },
+  { q: "How far ahead do you book?", a: "<p>Site visits are two to three weeks out. Construction usually starts 6–14 weeks after signing, once design and permits are through.</p>" },
+  { q: "Can we stay in the house?", a: "<p>For kitchens, bathrooms and basements, yes. For whole-home renovations, no — plan for 10–16 weeks elsewhere.</p>" },
+  { q: "Do you pull permits?", a: "<p>Always. We do not work without them. <a href=\"/permits/\">How permits work</a>.</p>" },
+  { q: "Who will be on site?", a: "<p>Our own carpenters and a named site lead, with licensed electrical, plumbing and gas subtrades named on your schedule before you sign.</p>" },
+];
+const title = "Home Renovation Vancouver & Fraser Valley — Interior | Stonecroft";
+const description = "Kitchen, bathroom, whole-home and basement renovation across Vancouver, Burnaby, Surrey and the Fraser Valley. Published prices, fixed scope, weekly build log.";
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Renovations" }]} schema={[serviceSchema(site, "Interior renovation", description, "/renovations/"), faqSchema(faqs)]}>
+  <PageHero eyebrow="Renovations" title="Interior renovation, Vancouver and the Fraser Valley" />
+  <div class="container-x -mt-4 pb-4 md:-mt-6">
+    <PhotoSlot ratio="aspect-[21/9]" label="Burnaby split-level, rough-in, open studs and new wiring, week 03" caption="In progress — the way most of a renovation actually looks" />
+  </div>
+
+  <Section id="what" num="01" tab="What we do" title="Four interiors, one crew">
+    <p class="lede max-w-[62ch]">We renovate kitchens, bathrooms, basements and whole houses across Metro Vancouver and the Fraser Valley — mostly 1950s to 1990s houses, plus strata townhouses and condos. Typical projects run <span class="font-mono">$28,000</span> to <span class="font-mono">$500,000+</span>. Every one has a fixed scope and price before we start, every permit pulled, and a weekly log you can read while it happens. Our own carpenters do the work; licensed trades are named on your schedule before you sign.</p>
+  </Section>
+
+  <Section id="ways-in" num="02" tab="Ways in" title="Four ways in" tone="concrete" note="Every card shows its range, because you were going to wonder.">
+    <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      {cards.map((c, i) => (
+        <li>
+          <a href={c.href} class="chamfer group flex h-full flex-col border border-line bg-white hover:border-char">
+            <div class="relative aspect-[4/3] overflow-hidden border-b border-line">
+              {c.stage !== undefined ? (
+                <KitchenFigure stage={c.stage} uid={`hub${i}`} class="!border-0 !p-0 [&_figcaption]:hidden" />
+              ) : (
+                <div class="photo-slot flex h-full items-center justify-center p-4 text-center" role="img" aria-label={`Photograph to come: ${c.label}`}>
+                  <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{c.label}</span></span>
+                </div>
+              )}
+            </div>
+            <div class="flex flex-1 flex-col p-5">
+              <h3 class="font-display text-[24px] font-medium group-hover:underline group-hover:underline-offset-4">{c.name}</h3>
+              <p class="mt-1 font-mono text-[17px] text-char">{c.range}</p>
+              <p class="mt-3 text-[15px] leading-relaxed text-slate">{c.note}</p>
+            </div>
+          </a>
+        </li>
+      ))}
+    </ul>
+  </Section>
+
+  <Section id="how" num="03" tab="Process" title="How a build runs">
+    <ol class="grid gap-px border border-line bg-line sm:grid-cols-2 lg:grid-cols-7">
+      {[["Site visit", "60–90 min"], ["Proposal", "5–10 days"], ["Contract", "1 week"], ["Design & permits", "4–12 wks"], ["Pre-start", "½ day"], ["Construction", "per scope"], ["Closeout", "1–2 wks"]].map(([n, d], i) => (
+        <li class="bg-white p-4"><span class="font-mono text-[12px] text-slate">{i + 1}</span><p class="mt-2 font-display text-[18px] font-medium leading-tight">{n}</p><p class="mt-1 font-mono text-[13px] text-slate">{d}</p></li>
+      ))}
+    </ol>
+    <p class="mt-6"><a href="/process/" class="link">See the full process</a></p>
+  </Section>
+
+  <Section id="before-after" num="04" tab="Before / after" title="One kitchen, before and after" tone="concrete">
+    <div class="max-w-[900px]">
+      <BeforeAfter client:visible uid="hubba" before={{ stage: 0, label: "Burnaby kitchen, 1968 original" }} after={{ stage: 4, label: "Burnaby kitchen at handover" }} caption="Burnaby · 1968 split-level · drag, or use the arrow keys" />
+    </div>
+  </Section>
+
+  <Section id="live" num="05" tab="Live" title="Interior jobs on site now">
+    <div class="grid gap-4 lg:grid-cols-2">
+      {liveTwo.map((e) => <LogEntryCard entry={e} />)}
+    </div>
+    <p class="mt-6"><a href="/build-log/" class="link">See the live build log</a></p>
+  </Section>
+
+  <Section id="faq" num="06" tab="FAQ" title="Questions people ask first" tone="concrete">
+    <FAQ items={faqs} />
+  </Section>
+
+  <CTABand />
+</Base>

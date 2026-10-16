@@ -1,0 +1,41 @@
+---
+import Base from "../../../layouts/Base.astro";
+import PageHero from "../../../components/ui/PageHero.astro";
+import Section from "../../../components/ui/Section.astro";
+import CTABand from "../../../components/ui/CTABand.astro";
+import { ScheduleView } from "../../../components/tools/ScheduleView";
+import { dur, schedules, type ScheduleScope } from "../../../data/schedules";
+
+export function getStaticPaths() {
+  return schedules.map((s) => ({ params: { scope: s.slug }, props: { s } }));
+}
+const { s } = Astro.props as { s: ScheduleScope };
+const others = schedules.filter((x) => x.slug !== s.slug);
+const title = `How Long Does a ${s.name} Renovation Take? ${s.onSite.replace(/ /g, "")} on Site | Stonecroft`;
+const description = `A ${s.short} takes ${s.onSite} on site and ${s.total} from signing, permits included. Stage-by-stage schedule and how long you lose the room.`;
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Process", href: "/process/" }, { label: `${s.name} schedule` }]}>
+  <PageHero eyebrow={`Process / Schedule`} title={`How long does a ${s.name.toLowerCase()} renovation take?`} lede={`<span class='font-mono text-char'>${s.onSite}</span> on site. <span class='font-mono text-char'>${s.total}</span> from signing, permits included.`} />
+  <Section id="schedule" num="01" tab="Schedule" title="Stage by stage" note={s.intro}>
+    <ScheduleView initial={s.slug} headingLevel="h3" />
+  </Section>
+  <Section id="detail" num="02" tab="Detail" title="Each stage, in words" tone="concrete">
+    <ol class="border-t border-char">
+      {s.stages.map((st, i) => (
+        <li class="grid gap-2 border-b border-line py-4 md:grid-cols-[60px_1fr_160px]">
+          <span class="font-mono text-[13px] text-slate">{String(i + 1).padStart(2, "0")}</span>
+          <span class="font-display text-[19px] font-medium">{st.name}</span>
+          <span class="font-mono text-[15px] md:text-right">{dur(st.min, st.max)}</span>
+        </li>
+      ))}
+    </ol>
+    <p class="mt-6 max-w-[66ch] text-[15px] leading-relaxed text-slate">These durations are typical sequencing for this scope in Metro Vancouver and the Fraser Valley. Your contract carries your own schedule, and the weekly log shows it against reality.</p>
+  </Section>
+  <Section id="other" num="03" tab="Other scopes" title="Other schedules">
+    <ul class="grid gap-x-8 border-t border-char sm:grid-cols-2 lg:grid-cols-4">
+      {others.map((o) => <li class="border-b border-line"><a href={`/process/schedule/${o.slug}/`} class="flex min-h-[52px] items-center justify-between gap-3 hover:text-clay-dk"><span>{o.name}</span><span class="font-mono text-[13px] text-slate">{o.onSite}</span></a></li>)}
+    </ul>
+    <p class="mt-6"><a href="/process/" class="link">The seven stages of every job</a></p>
+  </Section>
+  <CTABand />
+</Base>

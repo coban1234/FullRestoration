@@ -1,0 +1,48 @@
+---
+import { StatusMark } from "../StatusMark";
+import { KitchenArt } from "../KitchenArt";
+import { money, pad2, type Project, type WeekEntry } from "../../data/projects";
+interface Props { project: Project; entry: WeekEntry; headingLevel?: "h1" | "h2"; link?: boolean }
+const { project: p, entry: e, headingLevel = "h2", link = true } = Astro.props;
+const H = headingLevel;
+const href = `/projects/${p.slug}/log/week-${e.week}/`;
+const pct = Math.round((e.spent / p.signed) * 100);
+const kitchen = p.scope === "Kitchen";
+---
+<article id={`week-${e.week}`} class="chamfer border border-line bg-white">
+  {!e.gap && (
+    <div class="relative aspect-[16/9] overflow-hidden border-b border-line bg-concrete">
+      {kitchen && e.illustration !== undefined ? (
+        <KitchenArt stage={e.illustration} uid={`le-${p.slug}-${e.week}`} alt={`Illustration: ${p.short}, week ${pad2(e.week)}, ${e.stage.toLowerCase()}`} className="absolute inset-0" />
+      ) : (
+        <div role="img" aria-label={`Photograph to come: ${p.short}, week ${pad2(e.week)}`} class="photo-slot absolute inset-0 flex items-center justify-center p-4 text-center">
+          <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">Week {pad2(e.week)} · {e.stage}</span></span>
+        </div>
+      )}
+    </div>
+  )}
+  <div class="p-5 md:p-8">
+    <div class="flex flex-wrap items-center justify-between gap-3 font-mono text-[13px] text-slate">
+      <span>Week <span class="text-char">{pad2(e.week)}</span> · <time datetime={e.date}>{e.date}</time></span>
+      <span>{e.stage}</span>
+    </div>
+    <H class:list={["mt-4 font-display font-medium leading-tight text-char", headingLevel === "h1" ? "text-[30px] md:text-[44px]" : "text-[24px] md:text-[30px]"]}>
+      {link ? <a href={href} class="hover:underline hover:decoration-1 hover:underline-offset-4">{e.title}</a> : e.title}
+    </H>
+    {e.gap ? (
+      <p class="mt-4 border-l-2 border-line-strong pl-4 text-[16px] text-slate">{e.body[0]}</p>
+    ) : (
+      <>
+        <div class="mt-4"><StatusMark status={e.status} label={e.statusLabel} variant="pill" /></div>
+        <dl class="mt-6 grid grid-cols-1 gap-3 border-y border-line py-4 font-mono sm:grid-cols-3">
+          <div><dt class="font-sans text-[12px] text-slate">Spent to date</dt><dd class="mt-1 text-[20px]">{money(e.spent)}</dd></div>
+          <div><dt class="font-sans text-[12px] text-slate">Signed budget</dt><dd class="mt-1 text-[20px]">{money(p.signed)}</dd></div>
+          <div><dt class="font-sans text-[12px] text-slate">Share spent</dt><dd class:list={["mt-1 text-[20px]", pct > 100 && "text-clay-dk"]}>{pct}%</dd></div>
+        </dl>
+        <div class="prose-sc mt-6 text-[16px]">{e.body.map((b) => <p>{b}</p>)}</div>
+        {e.changeOrder && <p class="mt-6 inline-block border-l-2 border-clay bg-clay-tint px-3 py-2 font-mono text-[13px] text-clay-dk">{e.changeOrder}</p>}
+      </>
+    )}
+    {e.correction && <p class="mt-6 border-t border-dashed border-line-strong pt-4 font-mono text-[13px] text-char">{e.correction}</p>}
+  </div>
+</article>

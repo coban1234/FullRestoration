@@ -1,0 +1,72 @@
+---
+import type { GetStaticPaths, Page } from "astro";
+import Base from "../../layouts/Base.astro";
+import CTABand from "../../components/ui/CTABand.astro";
+import { LogEntryCard } from "../../components/buildLog/LogEntryCard";
+import { STAGE_RAIL, allEntries, projects, type FlatEntry } from "../../data/projects";
+
+export const getStaticPaths = (({ paginate }) => paginate(allEntries, { pageSize: 12 })) satisfies GetStaticPaths;
+const { page } = Astro.props as { page: Page<FlatEntry> };
+const title = page.currentPage === 1 ? "Live Build Log — Every Active Renovation, Weekly | Stonecroft" : `Live Build Log — Page ${page.currentPage} | Stonecroft`;
+const description = "Every active Stonecroft job, updated weekly with spend against budget, delays and change orders. Including the weeks that go badly.";
+const live = projects.filter((p) => p.live);
+const sel = "h-12 w-full appearance-none rounded-[2px] border border-line-strong bg-white px-3.5 text-[16px]";
+const stageKey = (s: string) => STAGE_RAIL.find((r) => s.toLowerCase().startsWith(r.toLowerCase().split(" ")[0])) ?? s;
+---
+<Base title={title} description={description} crumbs={[{ label: "Home", href: "/" }, { label: "Build log" }]}>
+  <section class="ruled border-b border-line">
+    <div class="container-x py-10 md:py-14">
+      <p class="eyebrow flex items-center gap-2"><span class="h-2 w-2 rounded-full bg-green" aria-hidden="true"></span>Build log · {live.length} live jobs</p>
+      <h1 class="h1 mt-5">What we are building right now</h1>
+      <p class="lede mt-4 max-w-[46ch] text-slate">Every active job, updated weekly. Including the weeks that go badly.</p>
+      <ul class="mt-8 grid gap-3 md:grid-cols-3">
+        {live.map((p) => <li><a href={`/projects/${p.slug}/log/`} class="chamfer flex min-h-[56px] items-center justify-between gap-3 border border-line bg-white px-4 hover:border-char"><span class="text-[15px] font-medium">{p.short}</span><span class="font-mono text-[12px] text-slate">wk {String(p.log.length).padStart(2, "0")}</span></a></li>)}
+      </ul>
+    </div>
+  </section>
+  <section class="bg-concrete py-10 md:py-14">
+    <div class="container-x">
+      <form method="get" id="log-filters" class="grid gap-3 border-b border-char pb-6 sm:grid-cols-3 sm:items-end">
+        <label><span class="text-[13px] font-medium">Project</span><select name="project" class={sel}><option value="">All projects</option>{projects.map((p) => <option value={p.slug}>{p.short}</option>)}</select></label>
+        <label><span class="text-[13px] font-medium">Stage</span><select name="stage" class={sel}><option value="">All stages</option>{STAGE_RAIL.map((s) => <option>{s}</option>)}</select></label>
+        <button type="submit" class="btn-secondary bg-white">Apply</button>
+      </form>
+      <p id="log-count" class="mt-4 font-mono text-[13px] text-slate">{page.total} entries · page {page.currentPage} of {page.lastPage}</p>
+      <ol id="log-grid" class="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        {page.data.map((e) => (
+          <li data-project={e.project.slug} data-stage={stageKey(e.stage)}>
+            <LogEntryCard entry={e} headingLevel="h2" />
+          </li>
+        ))}
+      </ol>
+      <nav aria-label="Pagination" class="mt-10 flex flex-wrap items-center justify-between gap-4 border-t border-char pt-6">
+        {page.url.prev ? <a href={page.url.prev} class="btn-secondary bg-white" rel="prev">← Newer entries</a> : <span />}
+        <ol class="flex gap-2 font-mono text-[14px]">
+          {Array.from({ length: page.lastPage }, (_, i) => i + 1).map((n) => (
+            <li><a href={n === 1 ? "/build-log/" : `/build-log/${n}/`} aria-current={n === page.currentPage ? "page" : undefined} class:list={["inline-flex h-11 w-11 items-center justify-center border", n === page.currentPage ? "border-char bg-char text-plaster" : "border-line bg-white"]}>{n}</a></li>
+          ))}
+        </ol>
+        {page.url.next ? <a href={page.url.next} class="btn-secondary bg-white" rel="next">Older entries →</a> : <span />}
+      </nav>
+    </div>
+  </section>
+  <CTABand />
+</Base>
+<script>
+  const params = new URLSearchParams(location.search);
+  const form = document.getElementById("log-filters") as HTMLFormElement;
+  const items = [...document.querySelectorAll<HTMLLIElement>("#log-grid > li")];
+  for (const [k, v] of params) {
+    const el = form.elements.namedItem(k) as HTMLSelectElement | null;
+    if (el) el.value = v;
+  }
+  if ([...params.values()].some(Boolean)) {
+    let shown = 0;
+    items.forEach((li) => {
+      const ok = [...params].every(([k, v]) => !v || li.dataset[k] === v);
+      li.hidden = !ok;
+      if (ok) shown++;
+    });
+    document.getElementById("log-count")!.textContent = `${shown} matching entries on this page`;
+  }
+</script>
