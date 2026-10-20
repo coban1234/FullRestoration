@@ -1,5 +1,6 @@
 import React from "react";
 import { KitchenArt } from "./KitchenArt";
+import { SceneArt } from "./SceneArt";
 
 interface PolaroidProps {
   stage?: number;
@@ -20,13 +21,7 @@ export function Polaroid({ stage, uid, alt, caption, tilt = "left", className = 
           {stage !== undefined ? (
             <KitchenArt stage={stage} uid={uid} alt={alt} className="h-full w-full" />
           ) : (
-            <div role="img" aria-label={alt} className="photo-slot flex h-full w-full items-center justify-center p-6 text-center">
-              <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">
-                Photo slot
-                <br />
-                <span className="normal-case tracking-normal">{alt.replace(/^Photo slot:\s*/i, "")}</span>
-              </span>
-            </div>
+            <SceneArt label={alt.replace(/^Photo slot:\s*/i, "")} uid={uid ?? "pol"} className="h-full w-full" />
           )}
         </div>
         <figcaption className="px-0.5 pb-1 pt-3 font-mono text-[11px] leading-snug text-slate">{caption}</figcaption>

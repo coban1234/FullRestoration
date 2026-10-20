@@ -199,7 +199,7 @@ export const finishedJobs: FinishedJob[] = [
     place: "Langley",
     built: "1991",
     title: "Two bathrooms in a townhouse",
-    alt: "Photo slot: finished townhouse ensuite.",
+    alt: "Finished townhouse ensuite, curbless shower.",
     caption: "Langley · 1991 townhouse · handover wk 07",
     signed: 46000,
     final: 45200,

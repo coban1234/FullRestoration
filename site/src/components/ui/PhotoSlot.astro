@@ -1,11 +1,13 @@
 ---
-/** Placeholder for a real site photograph (spec §12: documentary, no stock, no AI). Replace with <img> once shot. */
+/** Illustrated stand-in for a site photograph (spec §12). Replace with <img> once real photography exists. */
+import { SceneArt } from "../SceneArt";
 interface Props { label: string; caption?: string; ratio?: string; class?: string }
 const { label, caption, ratio = "aspect-[3/2]", class: cls = "" } = Astro.props;
+const uid = "s" + [...label].reduce((h, c) => (h * 31 + c.charCodeAt(0)) >>> 0, 7).toString(36);
 ---
 <figure class:list={["border border-line bg-white p-2.5", cls]}>
-  <div role="img" aria-label={`Photograph to come: ${label}`} class:list={["photo-slot flex items-center justify-center p-6 text-center", ratio]}>
-    <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="mt-1 inline-block normal-case tracking-normal text-char">{label}</span></span>
+  <div class:list={["relative overflow-hidden bg-concrete", ratio]}>
+    <SceneArt label={label} uid={uid} className="absolute inset-0" />
   </div>
   {caption && <figcaption class="px-0.5 pb-0.5 pt-2.5 font-mono text-[11px] leading-snug text-slate">{caption}</figcaption>}
 </figure>

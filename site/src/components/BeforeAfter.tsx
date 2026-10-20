@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { KitchenArt } from "./KitchenArt";
+import { SceneArt } from "./SceneArt";
 
 type Side = { stage?: number; label: string };
 
@@ -12,15 +13,7 @@ interface BeforeAfterProps {
 
 function Pane({ side, uid }: { side: Side; uid: string }) {
   if (side.stage !== undefined) return <KitchenArt stage={side.stage} uid={uid} alt={side.label} className="absolute inset-0" />;
-  return (
-    <div role="img" aria-label={`Photograph to come: ${side.label}`} className="photo-slot absolute inset-0 flex items-center justify-center p-6 text-center">
-      <span className="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">
-        Photo slot
-        <br />
-        <span className="normal-case tracking-normal text-char">{side.label}</span>
-      </span>
-    </div>
-  );
+  return <SceneArt label={side.label} uid={uid} className="absolute inset-0" />;
 }
 
 const Chip = ({ children, right }: { children: string; right?: boolean }) => (

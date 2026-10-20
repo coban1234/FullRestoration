@@ -4,13 +4,14 @@ import PageHero from "../../components/ui/PageHero.astro";
 import Section from "../../components/ui/Section.astro";
 import CTABand from "../../components/ui/CTABand.astro";
 import PhotoSlot from "../../components/ui/PhotoSlot.astro";
+import { SceneArt } from "../../components/SceneArt";
 import { serviceSchema, siteUrl } from "../../lib/schema";
 
 const site = siteUrl(Astro.site);
 const cards = [
   { name: "Siding & cladding", href: "/exterior/siding-and-cladding/", range: "$9–40 / sq ft", note: "Fibre cement, engineered wood, cedar, metal — over a drained rainscreen.", label: "Rainscreen strapping before cladding" },
   { name: "Windows & doors", href: "/exterior/windows-and-doors/", range: "$1,000–1,500 each", note: "Full-frame or insert replacement, as part of a renovation scope.", label: "Full-frame window opening, flashed" },
-  { name: "Decks & outdoor", href: "/exterior/decks-and-outdoor/", range: "Permitted", note: "Decks that pass inspection: footings, beams, guards and ledgers.", label: "Deck ledger flashing and joist hangers" },
+  { name: "Decks & outdoor", href: "/exterior/decks-and-outdoor/", range: "Permitted", note: "Decks that pass inspection: footings, beams, guards and ledgers.", label: "Finished deck and guards" },
 ];
 const title = "Exterior Renovation Vancouver — Siding, Windows & Decks | Stonecroft";
 const description = "Siding, cladding, window replacement and decks across Vancouver and the Fraser Valley, built as part of a renovation scope. Published prices and a weekly log.";
@@ -34,8 +35,8 @@ const description = "Siding, cladding, window replacement and decks across Vanco
       {cards.map((c) => (
         <li>
           <a href={c.href} class="chamfer group flex h-full flex-col border border-line bg-white hover:border-char">
-            <div class="photo-slot flex aspect-[4/3] items-center justify-center border-b border-line p-4 text-center" role="img" aria-label={`Photograph to come: ${c.label}`}>
-              <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{c.label}</span></span>
+            <div class="relative aspect-[4/3] overflow-hidden border-b border-line">
+              <SceneArt label={c.label} uid={`ext-${c.href.split("/")[2]}`} className="absolute inset-0" />
             </div>
             <div class="flex flex-1 flex-col p-5">
               <h3 class="font-display text-[24px] font-medium group-hover:underline group-hover:underline-offset-4">{c.name}</h3>

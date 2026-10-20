@@ -12,6 +12,12 @@ export function getStaticPaths() {
 const { a } = Astro.props as { a: Article };
 const site = siteUrl(Astro.site);
 const author = team.find((t) => t.name === a.author);
+const heroLabel: Record<string, string> = {
+  "kitchen-renovation-cost-vancouver-2026": "Burnaby kitchen at handover",
+  "how-to-read-a-renovation-quote": "Fixed-price proposal on the kitchen table",
+  "legal-secondary-suites-compared": "Surrey suite after — same position",
+  "change-order-vs-overrun": "Burnaby split-level, rough-in, open studs and new wiring",
+};
 const words = a.body!.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).length;
 ---
 <Base title={`${a.title} | Stonecroft`} description={a.excerpt} crumbs={[{ label: "Home", href: "/" }, { label: "Journal", href: "/journal/" }, { label: a.title.length > 48 ? a.title.slice(0, 46) + "…" : a.title }]} schema={[articleSchema(site, { headline: a.title, path: `/journal/${a.slug}/`, datePublished: a.published!, dateModified: a.modified, author: a.author, description: a.excerpt })]}>
@@ -24,7 +30,7 @@ const words = a.body!.replace(/<[^>]+>/g, " ").split(/\s+/).filter(Boolean).leng
       </div>
     </header>
     <div class="container-x max-w-[900px] py-10 md:py-14">
-      <PhotoSlot ratio="aspect-[16/9]" label="Photograph from a Stonecroft job illustrating this article" class="mb-10" />
+      <PhotoSlot ratio="aspect-[16/9]" label={heroLabel[a.slug] ?? "Kitchen at handover"} class="mb-10" />
       <div class="prose-sc" set:html={a.body} />
       {a.related && (
         <aside class="mt-12 border-t border-char pt-5">

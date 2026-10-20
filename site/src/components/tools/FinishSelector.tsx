@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { LEVELS, finishBasis, finishRows, finishesUpdated, type Level } from "../../data/finishes";
+import { swatchSVG } from "../../lib/scenes";
 
 const money = (n: number) => "$" + Math.round(n).toLocaleString("en-CA");
 
@@ -93,7 +94,11 @@ export function FinishSelector() {
                             className="sr-only"
                           />
                         )}
-                        <span className="photo-slot mb-2 block h-14 w-full" aria-hidden="true" />
+                        <span
+                          className="mb-2 block h-14 w-full overflow-hidden border border-line [&>svg]:block [&>svg]:h-full [&>svg]:w-full"
+                          aria-hidden="true"
+                          dangerouslySetInnerHTML={{ __html: swatchSVG(r.label, LEVELS.findIndex((x) => x.key === l.key)) }}
+                        />
                         <span className="block text-[14px] leading-snug text-char">{c.cls}</span>
                         <span className="mt-1.5 block font-mono text-[13px] text-char">{c.allowance}</span>
                         <span className="mt-0.5 block font-mono text-[11px] text-slate">

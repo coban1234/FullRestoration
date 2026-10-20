@@ -1,5 +1,6 @@
 ---
 import { KitchenArt } from "../KitchenArt";
+import { SceneArt } from "../SceneArt";
 import { StatusMark } from "../StatusMark";
 import { money, pad2, type Project } from "../../data/projects";
 interface Props { project: Project; headingLevel?: "h2" | "h3" }
@@ -15,9 +16,7 @@ const art = p.hero ?? (p.scope === "Kitchen" ? Math.min(p.stageNow, 4) : undefin
       {art !== undefined ? (
         <KitchenArt stage={art} uid={`pc-${p.slug}`} alt={`Illustration: ${p.title}`} className="absolute inset-0" />
       ) : (
-        <div role="img" aria-label={`Photograph to come: ${p.title}`} class="photo-slot absolute inset-0 flex items-center justify-center p-4 text-center">
-          <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{p.short}</span></span>
-        </div>
+        <SceneArt label={`${p.title} — ${p.live ? "current stage" : "completed wide"}`} uid={`pc-${p.slug}`} className="absolute inset-0" />
       )}
       {p.live && latest && (
         <span class="absolute left-3 top-3 bg-white px-2 py-1"><StatusMark status={latest.status} label={`Live · wk ${pad2(latest.week)}`} /></span>

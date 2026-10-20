@@ -4,6 +4,7 @@ import PageHero from "../components/ui/PageHero.astro";
 import Section from "../components/ui/Section.astro";
 import CTABand from "../components/ui/CTABand.astro";
 import PhotoSlot from "../components/ui/PhotoSlot.astro";
+import { SceneArt } from "../components/SceneArt";
 import { promiseHeading, promises, team } from "../data/site";
 
 const title = "About Stonecroft — A Renovation Firm That Publishes Its Logs | Stonecroft";
@@ -26,9 +27,9 @@ const description = "Who Stonecroft is, why we publish a weekly log of every job
 
   <Section id="crew" num="02" tab="Crew" title="The crew" tone="concrete" note="Photographed on site, not in a studio.">
     <ul class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-      {team.map((t) => (
+      {team.map((t, i) => (
         <li class="chamfer border border-line bg-white">
-          <div class="photo-slot flex aspect-[4/5] items-center justify-center border-b border-line p-3 text-center" role="img" aria-label={`Photograph to come: ${t.name} on site`}><span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{t.name}, on site</span></span></div>
+          <div class="relative aspect-[4/5] overflow-hidden border-b border-line"><SceneArt label={`Portrait: ${t.name}, crew member, on site`} scene={{ kind: "portrait", tone: i }} uid={`tm-${t.name.split(" ")[0].toLowerCase()}`} className="absolute inset-0" /></div>
           <div class="p-4">
             <h3 class="font-display text-[19px] font-medium">{t.name}</h3>
             <p class="mt-1 text-[14px] leading-snug text-slate">{t.role}</p>

@@ -1,6 +1,7 @@
 ---
 import { StatusMark } from "../StatusMark";
 import { KitchenArt } from "../KitchenArt";
+import { SceneArt } from "../SceneArt";
 import { money, pad2, type Project, type WeekEntry } from "../../data/projects";
 interface Props { project: Project; entry: WeekEntry; headingLevel?: "h1" | "h2"; link?: boolean }
 const { project: p, entry: e, headingLevel = "h2", link = true } = Astro.props;
@@ -15,9 +16,7 @@ const kitchen = p.scope === "Kitchen";
       {kitchen && e.illustration !== undefined ? (
         <KitchenArt stage={e.illustration} uid={`le-${p.slug}-${e.week}`} alt={`Illustration: ${p.short}, week ${pad2(e.week)}, ${e.stage.toLowerCase()}`} className="absolute inset-0" />
       ) : (
-        <div role="img" aria-label={`Photograph to come: ${p.short}, week ${pad2(e.week)}`} class="photo-slot absolute inset-0 flex items-center justify-center p-4 text-center">
-          <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">Week {pad2(e.week)} · {e.stage}</span></span>
-        </div>
+        <SceneArt label={`${p.title}, week ${pad2(e.week)}, ${e.stage}`} uid={`le-${p.slug}-${e.week}`} className="absolute inset-0" />
       )}
     </div>
   )}

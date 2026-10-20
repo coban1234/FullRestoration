@@ -7,6 +7,7 @@ import CTABand from "../../components/ui/CTABand.astro";
 import PhotoSlot from "../../components/ui/PhotoSlot.astro";
 import KitchenFigure from "../../components/ui/KitchenFigure.astro";
 import { BeforeAfter } from "../../components/BeforeAfter";
+import { SceneArt } from "../../components/SceneArt";
 import { LogEntryCard } from "../../components/buildLog/LogEntryCard";
 import { allEntries } from "../../data/projects";
 import { faqSchema, serviceSchema, siteUrl } from "../../lib/schema";
@@ -50,9 +51,7 @@ const description = "Kitchen, bathroom, whole-home and basement renovation acros
               {c.stage !== undefined ? (
                 <KitchenFigure stage={c.stage} uid={`hub${i}`} class="!border-0 !p-0 [&_figcaption]:hidden" />
               ) : (
-                <div class="photo-slot flex h-full items-center justify-center p-4 text-center" role="img" aria-label={`Photograph to come: ${c.label}`}>
-                  <span class="font-mono text-[11px] uppercase tracking-[0.12em] text-slate">Photo slot<br /><span class="normal-case tracking-normal text-char">{c.label}</span></span>
-                </div>
+                <SceneArt label={c.label!} uid={`hub${i}`} className="absolute inset-0" />
               )}
             </div>
             <div class="flex flex-1 flex-col p-5">
