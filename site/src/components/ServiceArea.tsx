@@ -40,7 +40,13 @@ export function ServiceArea() {
                         {place} <span aria-hidden="true">→</span>
                       </a>
                     ) : (
-                      <span className="inline-flex h-11 items-center rounded-[2px] border border-line bg-white px-4 text-[15px] text-char">{place}</span>
+                      <a
+                        href={`/book/?city=${encodeURIComponent(place)}&src=home-areas`}
+                        aria-label={`Book a site visit in ${place}`}
+                        className="inline-flex h-11 items-center rounded-[2px] border border-line bg-white px-4 text-[15px] text-char hover:border-char hover:bg-char hover:text-plaster"
+                      >
+                        {place}
+                      </a>
                     )}
                   </li>
                 ))}

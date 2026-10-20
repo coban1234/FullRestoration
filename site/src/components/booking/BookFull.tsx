@@ -62,6 +62,8 @@ export function BookFull() {
     if (!f) return;
     (f.elements.namedItem("src") as HTMLInputElement).value = p.get("src") || document.referrer || "direct";
     (f.elements.namedItem("pos") as HTMLInputElement).value = p.get("pos") || "";
+    const city = p.get("city");
+    if (city && municipalities.includes(city)) (f.elements.namedItem("municipality") as HTMLSelectElement).value = city;
     try {
       const est = sessionStorage.getItem("sc-estimate");
       if (est) (f.elements.namedItem("estimator") as HTMLInputElement).value = est;

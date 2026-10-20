@@ -27,7 +27,7 @@ const description = "Stonecroft renovates across 11 municipalities: Vancouver, N
       <figcaption class="mt-2 font-mono text-[11px] text-slate">Schematic, not to scale · clay dots have a full city page</figcaption>
     </figure>
   </Section>
-  <Section id="list" num="02" tab="Areas" title="Eleven municipalities" tone="concrete" note="Four have full city pages today. We add one a month, as we have real local projects and photographs to show.">
+  <Section id="list" num="02" tab="Areas" title="Eleven municipalities" tone="concrete" note="Four have full city pages today (marked →). We add one a month, as we have real local projects and photographs to show. Tap any other city to book a visit there.">
     <div class="grid gap-10 lg:grid-cols-[3fr_1fr]">
       {regions.map((r) => (
         <div>
@@ -35,7 +35,7 @@ const description = "Stonecroft renovates across 11 municipalities: Vancouver, N
           <ul class="mt-4 flex flex-wrap gap-2">
             {r.places.map((pl) => {
               const s = slugify(pl);
-              return <li id={s}>{launchCities.includes(s) ? <a href={`/service-areas/${s}/`} class="inline-flex h-11 items-center gap-2 rounded-[2px] border border-char bg-white px-4 text-[15px] font-medium hover:bg-char hover:text-plaster">{pl} →</a> : <span class="inline-flex h-11 items-center rounded-[2px] border border-line bg-white px-4 text-[15px]">{pl}</span>}</li>;
+              return <li id={s}>{launchCities.includes(s) ? <a href={`/service-areas/${s}/`} class="inline-flex h-11 items-center gap-2 rounded-[2px] border border-char bg-white px-4 text-[15px] font-medium hover:bg-char hover:text-plaster">{pl} →</a> : <a href={`/book/?city=${encodeURIComponent(pl)}&src=service-areas`} aria-label={`Book a site visit in ${pl}`} class="inline-flex h-11 items-center rounded-[2px] border border-line bg-white px-4 text-[15px] hover:border-char hover:bg-char hover:text-plaster">{pl}</a>}</li>;
             })}
           </ul>
         </div>
