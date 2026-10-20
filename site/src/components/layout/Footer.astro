@@ -47,7 +47,7 @@ const year = 2026;
         <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[14px]">
           {municipalities.map((m) => {
             const slug = slugify(m);
-            const href = launchCities.includes(slug) ? `/service-areas/${slug}/` : `/service-areas/#${slug}`;
+            const href = launchCities.includes(slug) ? `/service-areas/${slug}/` : `/book/?city=${encodeURIComponent(m)}&src=footer`;
             return <li><a href={href} class="inline-flex min-h-[32px] items-center underline-offset-4 hover:underline hover:text-clay-br">{m}</a></li>;
           })}
         </ul>
