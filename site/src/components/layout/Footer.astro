@@ -3,58 +3,69 @@ import { company, companyLinks, municipalities, office, phone, promiseHeading, p
 import { launchCities } from "../../data/cities";
 const services = serviceGroups.flatMap((g) => g.services);
 const year = 2026;
+const linkClass = "flex min-h-[44px] items-center border-b border-char-lt text-[15px] hover:text-clay-br lg:min-h-[36px] lg:border-0";
+const headClass = "font-mono text-[11px] uppercase tracking-[0.14em] text-mist";
 ---
 <footer class="bg-char pb-28 pt-16 text-plaster md:pt-20 lg:pb-12">
   <div class="container-x">
-    <div class="grid gap-12 lg:grid-cols-12 lg:gap-10">
-      <div class="lg:col-span-4">
-        <p class="font-display text-[26px] font-semibold">Stonecroft</p>
-        <p class="mt-4 font-display text-[20px] font-medium leading-snug">{promiseHeading}</p>
-        <ol class="mt-3 grid gap-2 text-[15px] leading-relaxed text-mist">
+    <div class="grid gap-10 lg:grid-cols-12 lg:gap-12">
+      <div class="lg:col-span-7">
+        <p class="font-display text-[28px] font-semibold leading-none">Stonecroft</p>
+        <p class="mt-6 font-display text-[20px] font-medium leading-snug">{promiseHeading}</p>
+        <ol class="mt-4 grid gap-x-8 gap-y-4 text-[15px] leading-relaxed text-mist sm:grid-cols-2">
           {promises.map((p, i) => (
-            <li class="flex gap-3"><span class="font-mono text-[12px] text-plaster pt-[3px]">{String(i + 1).padStart(2, "0")}</span>{p.text}</li>
+            <li class="flex gap-3 border-t border-char-lt pt-3">
+              <span class="pt-[3px] font-mono text-[12px] text-clay-br">{String(i + 1).padStart(2, "0")}</span>
+              <span>{p.text}</span>
+            </li>
           ))}
         </ol>
       </div>
-      <nav aria-label="Services" class="lg:col-span-2">
-        <h2 class="text-[13px] font-medium text-mist">Services</h2>
-        <ul class="mt-3 grid">
-          {services.map((s) => (
-            <li><a href={s.path} class="flex min-h-[44px] items-center border-b border-char-lt text-[15px] hover:text-clay-br lg:min-h-[34px] lg:border-0">{s.name}</a></li>
-          ))}
-        </ul>
-      </nav>
-      <nav aria-label="Company" class="lg:col-span-2">
-        <h2 class="text-[13px] font-medium text-mist">Company</h2>
-        <ul class="mt-3 grid">
-          {companyLinks.map((l) => (
-            <li><a href={l.href} class="flex min-h-[44px] items-center border-b border-char-lt text-[15px] hover:text-clay-br lg:min-h-[34px] lg:border-0">{l.label}</a></li>
-          ))}
-        </ul>
-      </nav>
-      <div class="lg:col-span-4">
-        <h2 class="text-[13px] font-medium text-mist">Office</h2>
-        <address class="mt-3 text-[15px] not-italic leading-relaxed">
-          {office.line1}<br />{office.city}, {office.region} <span class="font-mono">{office.postal}</span><br />
-          <a href={phone.href} class="inline-flex min-h-[44px] items-center font-mono text-[16px] hover:text-clay-br">{phone.display}</a><br />
-          <a href={`mailto:${company.email}`} class="underline underline-offset-4 hover:text-clay-br">{company.email}</a><br />
-          <span class="text-mist">Mon–Fri <span class="font-mono">07:30–17:00</span></span>
-        </address>
-        <a href="/verify/#pack" class="mt-5 inline-flex min-h-[48px] items-center justify-center rounded-[2px] border border-plaster px-4 py-2 text-center text-[15px] leading-tight font-medium hover:bg-char-lt">
-          Download the licence &amp; insurance pack (PDF)
-        </a>
-        <h2 class="mt-8 text-[13px] font-medium text-mist">Where we work</h2>
-        <ul class="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-[14px]">
-          {municipalities.map((m) => {
-            const slug = slugify(m);
-            const href = launchCities.includes(slug) ? `/service-areas/${slug}/` : `/book/?city=${encodeURIComponent(m)}&src=footer`;
-            return <li><a href={href} class="inline-flex min-h-[32px] items-center underline-offset-4 hover:underline hover:text-clay-br">{m}</a></li>;
-          })}
-        </ul>
+
+      <div class="lg:col-span-5">
+        <div class="rounded-[2px] border border-char-lt bg-char-lt/40 p-5 sm:p-6">
+          <h2 class={headClass}>Office</h2>
+          <a href={phone.href} class="mt-3 inline-flex min-h-[44px] items-center font-mono text-[24px] hover:text-clay-br">{phone.display}</a>
+          <address class="mt-1 grid gap-1 text-[15px] not-italic leading-relaxed">
+            <a href={`mailto:${company.email}`} class="w-fit underline underline-offset-4 hover:text-clay-br">{company.email}</a>
+            <span>{office.line1}<br />{office.city}, {office.region} <span class="font-mono">{office.postal}</span></span>
+            <span class="text-mist">Mon–Fri <span class="font-mono">07:30–17:00</span></span>
+          </address>
+          <a href="/verify/#pack" class="mt-5 flex min-h-[48px] w-full items-center justify-center gap-2 rounded-[2px] border border-plaster px-3 py-2 text-center text-[15px] font-medium leading-tight hover:bg-plaster hover:text-char">
+            Licence &amp; insurance pack (PDF) <span aria-hidden="true">↓</span>
+          </a>
+        </div>
       </div>
     </div>
 
-    <div class="mt-12 flex flex-col gap-3 border-t border-slate pt-6 text-[13px] text-mist md:flex-row md:flex-wrap md:items-center md:justify-between">
+    <div class="mt-12 grid gap-10 border-t border-char-lt pt-10 sm:grid-cols-2 lg:grid-cols-12 lg:gap-12">
+      <nav aria-label="Services" class="lg:col-span-3">
+        <h2 class={headClass}>Services</h2>
+        <ul class="mt-3 grid">
+          {services.map((s) => <li><a href={s.path} class={linkClass}>{s.name}</a></li>)}
+        </ul>
+      </nav>
+      <nav aria-label="Company" class="lg:col-span-3">
+        <h2 class={headClass}>Company</h2>
+        <ul class="mt-3 grid">
+          {companyLinks.map((l) => <li><a href={l.href} class={linkClass}>{l.label}</a></li>)}
+        </ul>
+      </nav>
+      <nav aria-label="Where we work" class="sm:col-span-2 lg:col-span-6">
+        <h2 class={headClass}>Where we work</h2>
+        <ul class="mt-3 columns-2 gap-x-8 md:columns-3 [&>li]:break-inside-avoid">
+          {municipalities.map((m) => {
+            const slug = slugify(m);
+            const hasPage = launchCities.includes(slug);
+            const href = hasPage ? `/service-areas/${slug}/` : `/book/?city=${encodeURIComponent(m)}&src=footer`;
+            return <li><a href={href} class={`${linkClass} gap-1.5`}>{m}{hasPage && <span aria-hidden="true" class="text-clay-br">→</span>}</a></li>;
+          })}
+        </ul>
+        <p class="mt-4 text-[13px] text-mist"><span class="text-clay-br">→</span> has a city page · other cities open booking</p>
+      </nav>
+    </div>
+
+    <div class="mt-12 flex flex-col gap-3 border-t border-char-lt pt-6 text-[13px] text-mist md:flex-row md:flex-wrap md:items-center md:justify-between">
       <p>© <span class="font-mono">{year}</span> {company.legalName}</p>
       <ul class="flex flex-wrap gap-x-5">
         <li><a href="/privacy/" class="inline-flex min-h-[44px] items-center hover:text-plaster">Privacy</a></li>
