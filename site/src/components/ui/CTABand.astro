@@ -14,14 +14,14 @@ const src = Astro.url.pathname.replace(/^\/|\/$/g, "").replace(/\//g, "-") || "h
 ---
 <section aria-label="Book a site visit" class="bg-char py-14 text-plaster md:py-20">
   <div class="container-x grid gap-8 lg:grid-cols-12 lg:items-end">
-    <div class="lg:col-span-7">
+    <div class="lg:col-span-6 xl:col-span-7">
       <h2 class="font-display text-[32px] font-semibold leading-[1.05] md:text-[48px]">{title}</h2>
       <p class="mt-4 max-w-[54ch] text-[17px] leading-relaxed text-mist">{text}</p>
     </div>
-    <div class="flex flex-col gap-3 sm:flex-row lg:col-span-5 lg:justify-end">
-      <a href={`/book/?src=${src}&pos=footer`} class="btn-primary">Book a site visit</a>
+    <div class="flex flex-col gap-3 sm:flex-row lg:col-span-6 lg:justify-end xl:col-span-5">
+      <a href={`/book/?src=${src}&pos=footer`} class="btn-primary whitespace-nowrap">Book a site visit</a>
       {secondary && (
-        <a href={secondary.href} class="inline-flex h-12 items-center justify-center rounded-[2px] border border-plaster px-6 text-[16px] font-medium text-plaster transition-colors duration-150 hover:bg-plaster hover:text-char">{secondary.label}</a>
+        <a href={secondary.href} class="inline-flex h-12 items-center justify-center whitespace-nowrap rounded-[2px] border border-plaster px-6 text-center text-[16px] font-medium text-plaster transition-colors duration-150 hover:bg-plaster hover:text-char">{secondary.label}</a>
       )}
     </div>
     <p class="text-[15px] text-mist lg:col-span-12">Or call <a href={phone.href} class="font-mono text-plaster underline underline-offset-4">{phone.display}</a>, weekdays <span class="font-mono">07:30–17:00</span>.</p>

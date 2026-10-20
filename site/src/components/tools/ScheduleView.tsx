@@ -133,12 +133,12 @@ export function ScheduleView({ initial, selectable = false, headingLevel = "h2" 
           </a>
           .
         </p>
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row">
-          <a href="/book/?src=schedule&pos=mid" className="btn-primary">
+        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <a href="/book/?src=schedule&pos=mid" className="btn-primary sm:whitespace-nowrap">
             Book a site visit
           </a>
           {s.example && (
-            <a href={s.example.href} className="btn-secondary">
+            <a href={s.example.href} className="btn-secondary sm:whitespace-nowrap">
               {s.example.label} →
             </a>
           )}
